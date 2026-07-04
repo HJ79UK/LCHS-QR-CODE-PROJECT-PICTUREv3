@@ -778,10 +778,13 @@
             color: white;
             border: none;
             cursor: pointer;
-            display: inline-flex;
+            display: none; /* hidden by default, shown only when queue >= threshold */
             align-items: center;
             gap: 0.3rem;
             transition: background 0.2s;
+        }
+        .sync-now-btn.visible {
+            display: inline-flex;
         }
         .sync-now-btn:hover {
             background: #1d4ed8;
@@ -1608,11 +1611,19 @@
                 }
                 queueIconsContainer.innerHTML = iconsHtml;
                 queueCountLabel.textContent = `(${count})`;
-                syncNowBtn.disabled = false;
+                // Show sync button only if count >= threshold
+                if (count >= QUEUE_WARNING_THRESHOLD) {
+                    syncNowBtn.classList.add('visible');
+                    syncNowBtn.disabled = false;
+                } else {
+                    syncNowBtn.classList.remove('visible');
+                    syncNowBtn.disabled = true;
+                }
             } else {
                 queueIndicator.classList.add('hidden');
                 queueIconsContainer.innerHTML = '';
                 queueCountLabel.textContent = '(0)';
+                syncNowBtn.classList.remove('visible');
                 syncNowBtn.disabled = true;
             }
 
@@ -1700,13 +1711,11 @@
             syncNowBtn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Syncing...';
             showToast('Force syncing...', 'info');
 
-            // Temporarily stop normal interval
             if (syncIntervalId) {
                 clearInterval(syncIntervalId);
                 syncIntervalId = null;
             }
 
-            // Process aggressively until queue empty
             let processedCount = 0;
             while (pendingQueue.length > 0) {
                 const batch = pendingQueue.slice(0, MAX_BATCH_SIZE);
@@ -1727,22 +1736,19 @@
                         processedCount += indices.length;
                     } else {
                         console.warn('Force sync batch failed:', res.message);
-                        break; // stop on failure
+                        break;
                     }
                 } catch (e) {
                     console.error('Force sync error:', e);
                     break;
                 }
-                // Small delay to avoid hammering the server (set to 1000ms per user request)
                 await new Promise(r => setTimeout(r, 1000));
             }
 
-            // Restore normal sync interval
             if (pendingQueue.length === 0) {
                 showToast(`Force synced ${processedCount} record(s) to DB.`, 'success');
             } else {
                 showToast(`Force sync completed ${processedCount} records. ${pendingQueue.length} remaining.`, 'warning');
-                // restart normal sync
                 startSync();
             }
 
@@ -1901,7 +1907,6 @@
                 currentUser = user;
                 currentUserRole = res.role || 'user';
 
-                // Fetch master list (both user and admin)
                 await fetchMasterList();
 
                 if (currentUserRole === 'admin') {
@@ -2008,7 +2013,6 @@
             updateSaveButton();
             updatePhotoButton();
 
-            // Queue warning and sync button
             syncNowBtn.addEventListener('click', forceSync);
 
             bikeInput.addEventListener('input', function() {
@@ -2846,7 +2850,7 @@
         // ── INIT ──
         switchView('view-login');
         document.getElementById('login-user').focus();
-        updateQueueUI(); // ensure UI reflects existing queue
+        updateQueueUI();
 
         console.log('✅ QR Code Bike Registration System ready (optimized).');
         console.log('📊 GAS URL: ' + GAS_WEB_APP_URL);
@@ -2859,7 +2863,7 @@
         console.log('🖼️ Photo zoom 150% with instant resize.');
         console.log('🔔 Sync toast shows only once when queue is fully cleared.');
         console.log('⚠️ Queue warning appears when > 25 pending records.');
-        console.log('🔄 "Sync Now" button forces immediate flush of the queue (1s delay between batches).');
+        console.log('🔄 "Sync Now" button appears only when queue >= 25 (1s delay between batches).');
     </script>
 </body>
 </html>
