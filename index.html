@@ -792,6 +792,14 @@
             font-weight: 500;
             letter-spacing: 0.025em;
         }
+        .login-version {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+        }
+        #view-login {
+            position: relative;
+        }
     </style>
 </head>
 <body>
@@ -800,6 +808,8 @@
 
     <!-- ========== VIEW 1: LOGIN ========== -->
     <div id="view-login" class="w-full max-w-md card p-6 md:p-8">
+        <!-- Version banner added -->
+        <span class="version-badge login-version">v2.4</span>
         <div class="text-center mb-6">
             <div class="flex justify-center mb-3">
                 <i data-lucide="bike" class="w-14 h-14 text-red-600"></i>
@@ -838,7 +848,7 @@
             </h1>
             <div class="flex items-center gap-2">
                 <span id="logged-in-user" class="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full font-medium"></span>
-                <span class="version-badge">v2.3</span>
+                <span class="version-badge">v2.4</span>
             </div>
         </div>
 
@@ -930,7 +940,7 @@
                 <button onclick="logout()" class="text-sm text-gray-500 hover:text-gray-800 flex items-center gap-1 transition">
                     <i data-lucide="log-out" class="w-4 h-4"></i> Log Out
                 </button>
-                <span class="version-badge">v2.3</span>
+                <span class="version-badge">v2.4</span>
             </div>
         </div>
 
@@ -1190,7 +1200,7 @@
 
         // ─── CONFIGURATION ───
         const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzarD-UASyG6cMD-O9Gt-DjIQ5MCVuXsZFVr092kfE4gzex_lyJqPhmLxN5dYxicDy8gQ/exec";
-        const APP_VERSION = "v2.3";
+        const APP_VERSION = "v2.4";
 
         // ─── State ───
         let currentUser = null;
@@ -1264,7 +1274,7 @@
         const statusDot = document.getElementById('status-dot');
         const refreshBtn = document.getElementById('refresh-stats-btn');
 
-        // ── Helper: format date ──
+        // ── Helper: format date (kept for dashboard, but admin reports use raw strings)
         function formatDateToDMY(date) {
             if (!date || isNaN(date.getTime())) return '';
             const d = String(date.getDate()).padStart(2, '0');
@@ -1279,6 +1289,7 @@
             return `${d}/${m}/${y} ${h}:${min}:${sec}`;
         }
 
+        // Parse date from any string (only used for dashboard, not for admin reports)
         function parseDateFromAnyString(dateStr) {
             if (!dateStr) return null;
             dateStr = dateStr.trim();
@@ -2278,7 +2289,7 @@
             }
         }
 
-        // ── loadHistory ──
+        // ── loadHistory (now uses raw date strings from backend) ──
         async function loadHistory() {
             var container = document.getElementById('history-list-container');
             container.innerHTML = '<p class="text-sm text-gray-500 text-center py-4"><i data-lucide="loader-2" class="w-5 h-5 animate-spin mx-auto"></i></p>';
@@ -2300,11 +2311,8 @@
                         container.innerHTML = '';
                         for (let i = 0; i < maxDisplay; i++) {
                             const cols = dataRows[i];
+                            // Use the raw date string directly (backend already formats dd/MM/yyyy HH:mm:ss)
                             let dateDisplay = cols[0] || '';
-                            const dateObj = parseDateFromAnyString(dateDisplay);
-                            if (dateObj) {
-                                dateDisplay = formatDateToDMY(dateObj);
-                            }
                             const duplicateNote = cols[4] ? '⚠️' : '✓';
                             container.innerHTML += '<div class="flex items-center justify-between p-3 bg-white rounded-xl border border-gray-200 shadow-sm text-sm">' +
                                 '<div><span class="font-mono font-medium text-gray-800">' + (cols[2] || '') +
@@ -2325,7 +2333,7 @@
             }
         }
 
-        // ── ALL RECORDS ──
+        // ── ALL RECORDS (raw date strings, no reformatting) ──
         function renderRows(rows, total) {
             var container = document.getElementById('records-container');
             if (!rows || rows.length === 0) {
@@ -2352,12 +2360,7 @@
                     } else if (c === 4 && cell && cell.toLowerCase().includes('warning')) {
                         html += '<td class="duplicate-warning">' + cell + '</td>';
                     } else {
-                        if (c === 0) {
-                            const dateObj = parseDateFromAnyString(cell);
-                            if (dateObj) {
-                                cell = formatDateToDMY(dateObj);
-                            }
-                        }
+                        // For date column (c===0), we display the raw string from backend
                         html += '<td>' + cell + '</td>';
                     }
                 }
@@ -2562,7 +2565,7 @@
             showToast('Refreshing stats…', 'info');
         }
 
-        // ── Date range helper ──
+        // ── Date range helper (for CSV export) ──
         function getPeriodRange(period) {
             const now = new Date();
             const start = new Date(now);
@@ -2913,7 +2916,7 @@
         document.getElementById('login-user').focus();
         updateQueueUI();
 
-        console.log('✅ QR Code Bike Registration System ready (v2.3).');
+        console.log(`✅ QR Code Bike Registration System ready (${APP_VERSION}).`);
         console.log('📊 GAS URL: ' + GAS_WEB_APP_URL);
         console.log('📸 Photo: WebP format, 200px, quality 0.7.');
         console.log('🚲 Master list cached, validation instant.');
@@ -2929,6 +2932,7 @@
         console.log('🔒 Duplicate protection: processing lock prevents overlapping syncs.');
         console.log('📌 Version: ' + APP_VERSION);
         console.log('📱 After QR scan, page scrolls smoothly to Submit button.');
+        console.log('📅 Admin reports now display raw dates from backend (dd/mm/yyyy HH:mm:ss) without reformatting.');
     </script>
 </body>
 </html>
