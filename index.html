@@ -808,7 +808,7 @@
 
     <!-- ========== VIEW 1: LOGIN ========== -->
     <div id="view-login" class="w-full max-w-md card p-6 md:p-8">
-        <span class="version-badge login-version">v2.6</span>
+        <span class="version-badge login-version">v2.8</span>
         <div class="text-center mb-6">
             <div class="flex justify-center mb-3">
                 <i data-lucide="bike" class="w-14 h-14 text-red-600"></i>
@@ -847,7 +847,7 @@
             </h1>
             <div class="flex items-center gap-2">
                 <span id="logged-in-user" class="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full font-medium"></span>
-                <span class="version-badge">v2.6</span>
+                <span class="version-badge">v2.8</span>
             </div>
         </div>
 
@@ -939,7 +939,7 @@
                 <button onclick="logout()" class="text-sm text-gray-500 hover:text-gray-800 flex items-center gap-1 transition">
                     <i data-lucide="log-out" class="w-4 h-4"></i> Log Out
                 </button>
-                <span class="version-badge">v2.6</span>
+                <span class="version-badge">v2.8</span>
             </div>
         </div>
 
@@ -1199,7 +1199,7 @@
 
         // ─── CONFIGURATION ───
         const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzarD-UASyG6cMD-O9Gt-DjIQ5MCVuXsZFVr092kfE4gzex_lyJqPhmLxN5dYxicDy8gQ/exec";
-        const APP_VERSION = "v2.6";
+        const APP_VERSION = "v2.8";
 
         // ─── State ───
         let currentUser = null;
@@ -1222,6 +1222,7 @@
         // ── Network backoff state ──
         let syncFailCount = 0;
         let nextAllowedSyncTime = 0;
+        let networkToastShown = false;
 
         // ── DOM refs ──
         const queueIndicator = document.getElementById('queue-indicator');
@@ -1277,7 +1278,7 @@
         const statusDot = document.getElementById('status-dot');
         const refreshBtn = document.getElementById('refresh-stats-btn');
 
-        // ── Helper: format date (kept for dashboard) ──
+        // ── Helper: format date ──
         function formatDateToDMY(date) {
             if (!date || isNaN(date.getTime())) return '';
             const d = String(date.getDate()).padStart(2, '0');
@@ -1576,7 +1577,7 @@
             }
         }
 
-        // ── API CALL (no cache‑busting, clean fetch) ──
+        // ── API CALL ──
         async function apiCall(action, payload) {
             console.log(`📤 API Call: ${action}`, payload);
             try {
@@ -1650,6 +1651,7 @@
                 // Reset network health when queue is empty
                 syncFailCount = 0;
                 nextAllowedSyncTime = 0;
+                networkToastShown = false;
             }
 
             if (count > QUEUE_WARNING_THRESHOLD) {
@@ -1686,7 +1688,7 @@
             return removedCount;
         }
 
-        // ── Background sync with backoff and online check ──
+        // ── Background sync with backoff and individual fallback ──
         function startSync() {
             if (syncIntervalId) return;
             syncIntervalId = setInterval(() => {
@@ -1707,19 +1709,16 @@
 
         async function processQueue() {
             if (isProcessing || pendingQueue.length === 0) return;
-            // Skip if offline or in cooldown
-            if (!navigator.onLine) {
-                // Device offline – just skip silently
-                return;
-            }
+            if (!navigator.onLine) return;
             if (Date.now() < nextAllowedSyncTime) return;
 
             isProcessing = true;
             console.log(`🔄 Processing queue (${pendingQueue.length} items)...`);
+
             try {
+                // Try batch first
                 const batch = pendingQueue.slice(0, MAX_BATCH_SIZE);
                 const indices = batch.map((_, i) => i);
-
                 const payload = {
                     records: batch.map(r => ({
                         user: r.user,
@@ -1729,31 +1728,94 @@
                         timestamp: r.timestamp
                     }))
                 };
-
                 const res = await apiCall('saveDataBatch', payload);
 
                 if (res.success) {
                     console.log(`✅ Batch of ${batch.length} sent successfully.`);
                     removeFromQueue(indices, true);
-                    // Reset backoff on success
                     syncFailCount = 0;
                     nextAllowedSyncTime = 0;
+                    networkToastShown = false;
+                    isProcessing = false;
+                    return;
                 } else {
-                    throw new Error(res.message || 'Server rejected batch');
+                    // Batch failed – fallback to sending individually
+                    console.warn('Batch failed, falling back to individual sends:', res.message);
+                    // Show a toast with the batch error once
+                    if (!networkToastShown) {
+                        networkToastShown = true;
+                        showToast(`Batch failed: ${res.message || 'Unknown error'}. Retrying individually...`, 'warning');
+                    }
+                    // Process each record in the batch individually
+                    const failedIndices = [];
+                    for (let i = 0; i < batch.length; i++) {
+                        const record = batch[i];
+                        try {
+                            const individualPayload = {
+                                user: record.user,
+                                bikeNumber: record.bikeNumber,
+                                barcode: record.barcode,
+                                bikePhoto: record.bikePhoto,
+                                timestamp: record.timestamp
+                            };
+                            const individualRes = await apiCall('saveData', individualPayload);
+                            if (individualRes.success) {
+                                // Remove this specific record from queue
+                                const idx = pendingQueue.indexOf(record);
+                                if (idx !== -1) {
+                                    pendingQueue.splice(idx, 1);
+                                    updateQueueUI();
+                                    console.log(`✅ Individual record sent: ${record.bikeNumber}`);
+                                }
+                            } else {
+                                failedIndices.push(i);
+                                console.warn(`❌ Individual record failed: ${record.bikeNumber} - ${individualRes.message}`);
+                            }
+                        } catch (e) {
+                            failedIndices.push(i);
+                            console.error(`❌ Individual record error: ${record.bikeNumber}`, e);
+                        }
+                        // Small delay between individual sends to avoid rate-limiting
+                        await new Promise(r => setTimeout(r, 200));
+                    }
+                    if (failedIndices.length === 0) {
+                        // All individual sends succeeded, reset backoff
+                        syncFailCount = 0;
+                        nextAllowedSyncTime = 0;
+                        networkToastShown = false;
+                        // Queue already updated via splice
+                        if (pendingQueue.length === 0) {
+                            stopSyncIfIdle();
+                            showToast('All records synced successfully.', 'success');
+                        }
+                    } else {
+                        // Some records failed; we'll retry them later
+                        syncFailCount++;
+                        const cooldownDelay = Math.min(1000 * Math.pow(2, syncFailCount - 1), 10000);
+                        nextAllowedSyncTime = Date.now() + cooldownDelay;
+                        // Only show a toast if we haven't shown one recently
+                        if (!networkToastShown) {
+                            networkToastShown = true;
+                            showToast(`Some records failed. Retrying in ${Math.round(cooldownDelay/1000)}s...`, 'warning');
+                        }
+                    }
                 }
             } catch (e) {
+                // Network or other error
                 syncFailCount++;
-                // Exponential backoff: 1s, 2s, 4s, 8s, capped at 10s
                 const cooldownDelay = Math.min(1000 * Math.pow(2, syncFailCount - 1), 10000);
                 nextAllowedSyncTime = Date.now() + cooldownDelay;
-
                 console.error('❌ Sync error:', e);
-                // Only show a toast if we have failed at least 3 times consecutively
-                if (syncFailCount >= 3) {
-                    showToast(`Network unstable. Retrying in ${Math.round(cooldownDelay/1000)}s...`, 'error');
+                if (!networkToastShown) {
+                    networkToastShown = true;
+                    showToast(`Network unstable. Will retry automatically.`, 'warning');
                 }
             } finally {
                 isProcessing = false;
+                // If queue is empty, ensure interval stops
+                if (pendingQueue.length === 0) {
+                    stopSyncIfIdle();
+                }
             }
         }
 
@@ -1767,7 +1829,6 @@
             syncNowBtn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Syncing...';
             showToast('Force syncing...', 'info');
 
-            // Stop the normal interval temporarily
             if (syncIntervalId) {
                 clearInterval(syncIntervalId);
                 syncIntervalId = null;
@@ -1776,7 +1837,6 @@
             let processedCount = 0;
             try {
                 while (pendingQueue.length > 0) {
-                    // Wait for any ongoing processing to finish
                     while (isProcessing) {
                         await new Promise(r => setTimeout(r, 100));
                     }
@@ -1797,26 +1857,50 @@
                         if (res.success) {
                             removeFromQueue(indices, true);
                             processedCount += indices.length;
-                            // Reset backoff on success
                             syncFailCount = 0;
                             nextAllowedSyncTime = 0;
+                            networkToastShown = false;
                         } else {
-                            console.warn('Force sync batch failed:', res.message);
-                            showToast(`Force sync failed: ${res.message}`, 'error');
-                            break;
+                            // Fallback to individual
+                            for (let i = 0; i < batch.length; i++) {
+                                const record = batch[i];
+                                try {
+                                    const individualPayload = {
+                                        user: record.user,
+                                        bikeNumber: record.bikeNumber,
+                                        barcode: record.barcode,
+                                        bikePhoto: record.bikePhoto,
+                                        timestamp: record.timestamp
+                                    };
+                                    const individualRes = await apiCall('saveData', individualPayload);
+                                    if (individualRes.success) {
+                                        const idx = pendingQueue.indexOf(record);
+                                        if (idx !== -1) {
+                                            pendingQueue.splice(idx, 1);
+                                            updateQueueUI();
+                                            processedCount++;
+                                        }
+                                    } else {
+                                        console.warn('Individual failed:', record.bikeNumber);
+                                    }
+                                } catch (e) {
+                                    console.error('Individual error:', e);
+                                }
+                                await new Promise(r => setTimeout(r, 200));
+                            }
+                            if (pendingQueue.length === 0) {
+                                break;
+                            }
                         }
                     } catch (e) {
                         console.error('Force sync error:', e);
-                        showToast(`Force sync error: ${e.message}`, 'error');
                         break;
                     } finally {
                         isProcessing = false;
                     }
-                    // small pause between batches
                     await new Promise(r => setTimeout(r, 1000));
                 }
             } finally {
-                // Restore normal interval
                 if (pendingQueue.length > 0) {
                     startSync();
                 }
@@ -2121,7 +2205,6 @@
                 updateSaveButton();
             });
 
-            // ─── Visibility change: trigger sync when tab becomes visible ───
             document.addEventListener('visibilitychange', function() {
                 if (!document.hidden && pendingQueue.length > 0 && !isProcessing) {
                     console.log('👁️ Tab became visible – triggering immediate sync.');
@@ -2138,7 +2221,6 @@
             setTimeout(function() { barcodeInput.style.borderColor = ''; }, 2000);
             updateSaveButton();
             stopQrScanner();
-            // Scroll to submit button
             scrollToSubmit();
         }
 
@@ -2183,12 +2265,10 @@
             }, 500);
         }
 
-        // ── QR scanner error (ignore) ──
         function onQrCodeError(errorMessage) {
             if (errorMessage && errorMessage.includes('No QR code')) return;
         }
 
-        // ── QR scanner stop ──
         function stopQrScanner() {
             if (qrScannerInstance) {
                 try {
@@ -2206,7 +2286,6 @@
             isScanning = false;
         }
 
-        // ── Click outside modal to close scanner ──
         document.addEventListener('click', function(e) {
             var modal = document.getElementById('qr-scanner-modal');
             if (modal && !modal.classList.contains('hidden-view')) {
@@ -2317,7 +2396,7 @@
             }
         }
 
-        // ── loadHistory (raw date strings) ──
+        // ── loadHistory ──
         async function loadHistory() {
             var container = document.getElementById('history-list-container');
             container.innerHTML = '<p class="text-sm text-gray-500 text-center py-4"><i data-lucide="loader-2" class="w-5 h-5 animate-spin mx-auto"></i></p>';
@@ -2360,7 +2439,7 @@
             }
         }
 
-        // ── ALL RECORDS (raw date strings) ──
+        // ── ALL RECORDS ──
         function renderRows(rows, total) {
             var container = document.getElementById('records-container');
             if (!rows || rows.length === 0) {
@@ -2959,7 +3038,7 @@
         console.log('📌 Version: ' + APP_VERSION);
         console.log('📱 After QR scan, page scrolls smoothly to Submit button.');
         console.log('📅 Admin reports now display raw dates from backend (dd/mm/yyyy HH:mm:ss) without reformatting.');
-        console.log('📶 Mobile network fix: offline detection + exponential backoff with limited toasts (only after 3 consecutive failures).');
+        console.log('📶 Mobile network fix: if batch fails, system falls back to individual sends to avoid infinite loop.');
     </script>
 </body>
 </html>
