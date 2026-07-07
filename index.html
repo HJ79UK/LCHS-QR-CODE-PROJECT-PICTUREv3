@@ -800,6 +800,51 @@
         #view-login {
             position: relative;
         }
+
+        /* ─── Login Progress Bar ─── */
+        .login-progress-container {
+            margin-top: 1rem;
+            display: none;
+        }
+        .login-progress-container.active {
+            display: block;
+        }
+        .login-progress-bar-bg {
+            width: 100%;
+            height: 6px;
+            background: #e5e7eb;
+            border-radius: 9999px;
+            overflow: hidden;
+            margin-top: 0.25rem;
+        }
+        .login-progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #dc2626, #ef4444);
+            border-radius: 9999px;
+            transition: width 0.5s ease;
+        }
+        .login-progress-text {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+        .login-progress-label {
+            font-weight: 500;
+        }
+        .login-progress-percent {
+            font-weight: 600;
+            color: #dc2626;
+        }
+        .login-progress-status {
+            font-size: 0.7rem;
+            color: #6b7280;
+            text-align: center;
+            margin-top: 0.25rem;
+        }
     </style>
 </head>
 <body>
@@ -808,7 +853,7 @@
 
     <!-- ========== VIEW 1: LOGIN ========== -->
     <div id="view-login" class="w-full max-w-md card p-6 md:p-8">
-        <span class="version-badge login-version">v2.9</span>
+        <span class="version-badge login-version">v3.0</span>
         <div class="text-center mb-6">
             <div class="flex justify-center mb-3">
                 <i data-lucide="bike" class="w-14 h-14 text-red-600"></i>
@@ -826,7 +871,7 @@
                 <input type="password" id="login-pass" required class="input-field mt-1" placeholder="Enter password" />
             </div>
             <div class="flex flex-col gap-3 pt-2">
-                <button type="submit" class="btn-red w-full">
+                <button type="submit" id="login-btn" class="btn-red w-full">
                     <span id="login-text">Login</span>
                     <i id="login-spinner" data-lucide="loader-2" class="w-4 h-4 animate-spin hidden"></i>
                 </button>
@@ -837,6 +882,18 @@
             </div>
         </form>
         <div id="test-result" class="mt-3 text-xs text-gray-500 text-center hidden"></div>
+
+        <!-- ─── Login Progress Bar ─── -->
+        <div id="login-progress-container" class="login-progress-container">
+            <div class="login-progress-bar-bg">
+                <div id="login-progress-bar" class="login-progress-bar" style="width: 0%;"></div>
+            </div>
+            <div class="login-progress-text">
+                <span id="login-progress-label" class="login-progress-label">Connecting...</span>
+                <span id="login-progress-percent" class="login-progress-percent">0%</span>
+            </div>
+            <div id="login-progress-status" class="login-progress-status">Initializing...</div>
+        </div>
     </div>
 
     <!-- ========== VIEW 2: DATA ENTRY ========== -->
@@ -847,7 +904,7 @@
             </h1>
             <div class="flex items-center gap-2">
                 <span id="logged-in-user" class="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full font-medium"></span>
-                <span class="version-badge">v2.9</span>
+                <span class="version-badge">v3.0</span>
             </div>
         </div>
 
@@ -939,7 +996,7 @@
                 <button onclick="logout()" class="text-sm text-gray-500 hover:text-gray-800 flex items-center gap-1 transition">
                     <i data-lucide="log-out" class="w-4 h-4"></i> Log Out
                 </button>
-                <span class="version-badge">v2.9</span>
+                <span class="version-badge">v3.0</span>
             </div>
         </div>
 
@@ -1199,7 +1256,7 @@
 
         // ─── CONFIGURATION ───
         const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzarD-UASyG6cMD-O9Gt-DjIQ5MCVuXsZFVr092kfE4gzex_lyJqPhmLxN5dYxicDy8gQ/exec";
-        const APP_VERSION = "v2.9";
+        const APP_VERSION = "v3.0";
 
         // ─── State ───
         let currentUser = null;
@@ -1230,6 +1287,13 @@
         const queueWarning = document.getElementById('queue-warning');
         const syncNowBtn = document.getElementById('sync-now-btn');
         const submitBtn = document.getElementById('save-button');
+
+        // ── Login progress refs ──
+        const loginProgressContainer = document.getElementById('login-progress-container');
+        const loginProgressBar = document.getElementById('login-progress-bar');
+        const loginProgressLabel = document.getElementById('login-progress-label');
+        const loginProgressPercent = document.getElementById('login-progress-percent');
+        const loginProgressStatus = document.getElementById('login-progress-status');
 
         // ── State for bike validation ──
         let bikeNumberValid = false;
@@ -1711,7 +1775,6 @@
             console.log(`🔄 Processing queue (${pendingQueue.length} items remaining)...`);
 
             try {
-                // Take the FIRST record only
                 const record = pendingQueue[0];
                 const payload = {
                     user: record.user,
@@ -1725,14 +1788,11 @@
 
                 if (res.success) {
                     console.log(`✅ Record sent: ${record.bikeNumber}`);
-                    // Remove the first record (index 0)
                     removeFromQueue(0, true);
-                    // Reset backoff on success
                     syncFailCount = 0;
                     nextAllowedSyncTime = 0;
                     networkToastShown = false;
                 } else {
-                    // Record failed – keep it in queue, apply backoff
                     console.warn(`❌ Record failed: ${record.bikeNumber} - ${res.message}`);
                     syncFailCount++;
                     const cooldownDelay = Math.min(1000 * Math.pow(2, syncFailCount - 1), 10000);
@@ -1743,7 +1803,6 @@
                     }
                 }
             } catch (e) {
-                // Network or other error
                 syncFailCount++;
                 const cooldownDelay = Math.min(1000 * Math.pow(2, syncFailCount - 1), 10000);
                 nextAllowedSyncTime = Date.now() + cooldownDelay;
@@ -1754,14 +1813,13 @@
                 }
             } finally {
                 isProcessing = false;
-                // If queue is empty, ensure interval stops
                 if (pendingQueue.length === 0) {
                     stopSyncIfIdle();
                 }
             }
         }
 
-        // ── Manual "Sync Now" – one record at a time ──
+        // ── Manual "Sync Now" ──
         let isForceSyncing = false;
 
         async function forceSync() {
@@ -1875,6 +1933,12 @@
             const resultDiv = document.getElementById('test-result');
             resultDiv.classList.add('hidden');
             resultDiv.innerHTML = '';
+            // Hide progress bar if visible
+            loginProgressContainer.classList.remove('active');
+            loginProgressBar.style.width = '0%';
+            loginProgressPercent.textContent = '0%';
+            loginProgressLabel.textContent = 'Connecting...';
+            loginProgressStatus.textContent = 'Initializing...';
         }
 
         // ── TOAST ──
@@ -1942,6 +2006,14 @@
             }
         }
 
+        // ── Login progress updater ──
+        function updateLoginProgress(percent, label, status) {
+            loginProgressBar.style.width = percent + '%';
+            loginProgressPercent.textContent = percent + '%';
+            if (label) loginProgressLabel.textContent = label;
+            if (status) loginProgressStatus.textContent = status;
+        }
+
         // ── ADMIN TAB SWITCHING ──
         function switchAdminTab(tab) {
             adminTab = tab;
@@ -1986,39 +2058,96 @@
             e.preventDefault();
             var user = document.getElementById('login-user').value.trim();
             var pass = document.getElementById('login-pass').value;
-            if (!user || !pass) return showToast('Please fill in all fields.', 'warning');
+            if (!user || !pass) {
+                showToast('Please fill in all fields.', 'warning');
+                return;
+            }
 
+            // Show progress bar
+            loginProgressContainer.classList.add('active');
+            updateLoginProgress(0, 'Connecting...', 'Initializing...');
             toggleSpinner('login', true);
+            document.getElementById('login-btn').disabled = true;
+
             try {
+                // Step 1: Connecting (0-20%)
+                await new Promise(r => setTimeout(r, 200));
+                updateLoginProgress(15, 'Connecting...', 'Establishing connection to server...');
+
                 var res = await apiCall('login', { username: user, password: pass });
                 if (!res.success) throw new Error(res.message || 'Login failed.');
+
+                updateLoginProgress(40, 'Authenticating...', 'User credentials verified.');
 
                 currentUser = user;
                 currentUserRole = res.role || 'user';
 
+                // Step 2: Fetch master list (40-70%)
+                updateLoginProgress(55, 'Fetching master list...', 'Loading bike number database...');
                 await fetchMasterList();
+                updateLoginProgress(70, 'Master list loaded.', `${masterListCache.length} bike numbers found.`);
 
+                // Step 3: Loading user data (70-90%)
+                updateLoginProgress(80, 'Loading user data...', 'Preparing your workspace...');
+                await new Promise(r => setTimeout(r, 300));
+
+                if (currentUserRole === 'admin') {
+                    // Admin: load additional data
+                    updateLoginProgress(85, 'Loading admin data...', 'Fetching users, history and records...');
+                    // We'll load these in background after switching view
+                } else {
+                    updateLoginProgress(88, 'Setting up...', 'Preparing registration form...');
+                }
+
+                // Step 4: Finalize (90-100%)
+                updateLoginProgress(95, 'Almost ready...', 'Finalizing...');
+                await new Promise(r => setTimeout(r, 200));
+
+                // Switch view
                 if (currentUserRole === 'admin') {
                     switchView('view-admin');
                     showToast('Admin welcome, ' + user + '!', 'success');
                     startRefreshCycle();
+                    // Load admin data in background (progress already at 95%)
+                    // We'll use a small delay to show 100% before loading
+                    updateLoginProgress(98, 'Loading admin data...', 'Please wait...');
+                    // Trigger admin data loads (they will run in background)
                     loadStats();
                     loadUsers();
                     loadHistory();
                     loadRecords(1);
+                    // Final progress
+                    setTimeout(() => {
+                        updateLoginProgress(100, 'Welcome!', 'Login complete.');
+                        setTimeout(() => {
+                            loginProgressContainer.classList.remove('active');
+                        }, 600);
+                    }, 400);
                 } else {
                     document.getElementById('logged-in-user').textContent = user;
                     switchView('view-data');
                     showToast('Welcome, ' + user + '!', 'success');
+                    updateLoginProgress(100, 'Welcome!', 'Login complete.');
+                    setTimeout(() => {
+                        loginProgressContainer.classList.remove('active');
+                    }, 600);
                 }
+
                 document.getElementById('login-form').reset();
                 const resultDiv = document.getElementById('test-result');
                 resultDiv.classList.add('hidden');
                 resultDiv.innerHTML = '';
+
             } catch (err) {
                 showToast(err.message || 'Invalid credentials.', 'error');
+                loginProgressContainer.classList.remove('active');
+                loginProgressBar.style.width = '0%';
+                loginProgressPercent.textContent = '0%';
+                loginProgressLabel.textContent = 'Connecting...';
+                loginProgressStatus.textContent = 'Initializing...';
             } finally {
                 toggleSpinner('login', false, 'Login');
+                document.getElementById('login-btn').disabled = false;
             }
         }
 
@@ -2041,6 +2170,12 @@
             }
             switchView('view-login');
             showToast('Logged out.', 'info');
+            // Reset login progress
+            loginProgressContainer.classList.remove('active');
+            loginProgressBar.style.width = '0%';
+            loginProgressPercent.textContent = '0%';
+            loginProgressLabel.textContent = 'Connecting...';
+            loginProgressStatus.textContent = 'Initializing...';
         }
 
         // ── BIKE NUMBER VALIDATION ──
@@ -2958,6 +3093,7 @@
         console.log('📱 After QR scan, page scrolls smoothly to Submit button.');
         console.log('📅 Admin reports display raw dates from backend (dd/mm/yyyy HH:mm:ss).');
         console.log('📶 Mobile optimised: small payloads, one record at a time.');
+        console.log('📊 Login progress bar with percentage and status messages added.');
     </script>
 </body>
 </html>
