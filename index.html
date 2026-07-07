@@ -808,8 +808,7 @@
 
     <!-- ========== VIEW 1: LOGIN ========== -->
     <div id="view-login" class="w-full max-w-md card p-6 md:p-8">
-        <!-- Version banner added -->
-        <span class="version-badge login-version">v2.5</span>
+        <span class="version-badge login-version">v2.6</span>
         <div class="text-center mb-6">
             <div class="flex justify-center mb-3">
                 <i data-lucide="bike" class="w-14 h-14 text-red-600"></i>
@@ -848,7 +847,7 @@
             </h1>
             <div class="flex items-center gap-2">
                 <span id="logged-in-user" class="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full font-medium"></span>
-                <span class="version-badge">v2.5</span>
+                <span class="version-badge">v2.6</span>
             </div>
         </div>
 
@@ -940,7 +939,7 @@
                 <button onclick="logout()" class="text-sm text-gray-500 hover:text-gray-800 flex items-center gap-1 transition">
                     <i data-lucide="log-out" class="w-4 h-4"></i> Log Out
                 </button>
-                <span class="version-badge">v2.5</span>
+                <span class="version-badge">v2.6</span>
             </div>
         </div>
 
@@ -1200,7 +1199,7 @@
 
         // ─── CONFIGURATION ───
         const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzarD-UASyG6cMD-O9Gt-DjIQ5MCVuXsZFVr092kfE4gzex_lyJqPhmLxN5dYxicDy8gQ/exec";
-        const APP_VERSION = "v2.5";
+        const APP_VERSION = "v2.6";
 
         // ─── State ───
         let currentUser = null;
@@ -1278,7 +1277,7 @@
         const statusDot = document.getElementById('status-dot');
         const refreshBtn = document.getElementById('refresh-stats-btn');
 
-        // ── Helper: format date (kept for dashboard, but admin reports use raw strings) ──
+        // ── Helper: format date (kept for dashboard) ──
         function formatDateToDMY(date) {
             if (!date || isNaN(date.getTime())) return '';
             const d = String(date.getDate()).padStart(2, '0');
@@ -1293,7 +1292,6 @@
             return `${d}/${m}/${y} ${h}:${min}:${sec}`;
         }
 
-        // Parse date from any string (only used for dashboard, not for admin reports)
         function parseDateFromAnyString(dateStr) {
             if (!dateStr) return null;
             dateStr = dateStr.trim();
@@ -1578,15 +1576,11 @@
             }
         }
 
-        // ── API CALL with cache-busting timestamp for mobile networks ──
+        // ── API CALL (no cache‑busting, clean fetch) ──
         async function apiCall(action, payload) {
             console.log(`📤 API Call: ${action}`, payload);
             try {
-                // Append a timestamp to force a fresh connection on 4G/5G
-                const url = new URL(GAS_WEB_APP_URL);
-                url.searchParams.set('nocache', Date.now());
-
-                const response = await fetch(url.toString(), {
+                const response = await fetch(GAS_WEB_APP_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify({ action, ...payload })
@@ -1604,7 +1598,6 @@
             } catch (e) {
                 console.error(`❌ API Call failed for ${action}:`, e);
                 let msg = 'Network error communicating with the database. ';
-                // Catch the instant network drop
                 if (e.message.includes('Failed to fetch') || e.message.includes('Load failed')) {
                     msg += 'The mobile network dropped the connection. The system will retry automatically.';
                 } else {
@@ -1693,7 +1686,7 @@
             return removedCount;
         }
 
-        // ── Background sync with concurrency lock and backoff ──
+        // ── Background sync with backoff and online check ──
         function startSync() {
             if (syncIntervalId) return;
             syncIntervalId = setInterval(() => {
@@ -1714,8 +1707,11 @@
 
         async function processQueue() {
             if (isProcessing || pendingQueue.length === 0) return;
-
-            // Skip this cycle if we are in a network cooldown period
+            // Skip if offline or in cooldown
+            if (!navigator.onLine) {
+                // Device offline – just skip silently
+                return;
+            }
             if (Date.now() < nextAllowedSyncTime) return;
 
             isProcessing = true;
@@ -1739,19 +1735,23 @@
                 if (res.success) {
                     console.log(`✅ Batch of ${batch.length} sent successfully.`);
                     removeFromQueue(indices, true);
-                    syncFailCount = 0; // Reset network health
+                    // Reset backoff on success
+                    syncFailCount = 0;
                     nextAllowedSyncTime = 0;
                 } else {
                     throw new Error(res.message || 'Server rejected batch');
                 }
             } catch (e) {
                 syncFailCount++;
-                // Calculate cooldown: 2s, 4s, 8s... capped at 30 seconds.
-                const cooldownDelay = Math.min(2000 * Math.pow(2, syncFailCount), 30000);
+                // Exponential backoff: 1s, 2s, 4s, 8s, capped at 10s
+                const cooldownDelay = Math.min(1000 * Math.pow(2, syncFailCount - 1), 10000);
                 nextAllowedSyncTime = Date.now() + cooldownDelay;
 
                 console.error('❌ Sync error:', e);
-                showToast(`Network unstable. Retrying in ${Math.round(cooldownDelay/1000)}s...`, 'error');
+                // Only show a toast if we have failed at least 3 times consecutively
+                if (syncFailCount >= 3) {
+                    showToast(`Network unstable. Retrying in ${Math.round(cooldownDelay/1000)}s...`, 'error');
+                }
             } finally {
                 isProcessing = false;
             }
@@ -2317,7 +2317,7 @@
             }
         }
 
-        // ── loadHistory (now uses raw date strings from backend) ──
+        // ── loadHistory (raw date strings) ──
         async function loadHistory() {
             var container = document.getElementById('history-list-container');
             container.innerHTML = '<p class="text-sm text-gray-500 text-center py-4"><i data-lucide="loader-2" class="w-5 h-5 animate-spin mx-auto"></i></p>';
@@ -2339,7 +2339,6 @@
                         container.innerHTML = '';
                         for (let i = 0; i < maxDisplay; i++) {
                             const cols = dataRows[i];
-                            // Use the raw date string directly (backend already formats dd/MM/yyyy HH:mm:ss)
                             let dateDisplay = cols[0] || '';
                             const duplicateNote = cols[4] ? '⚠️' : '✓';
                             container.innerHTML += '<div class="flex items-center justify-between p-3 bg-white rounded-xl border border-gray-200 shadow-sm text-sm">' +
@@ -2361,7 +2360,7 @@
             }
         }
 
-        // ── ALL RECORDS (raw date strings, no reformatting) ──
+        // ── ALL RECORDS (raw date strings) ──
         function renderRows(rows, total) {
             var container = document.getElementById('records-container');
             if (!rows || rows.length === 0) {
@@ -2388,7 +2387,6 @@
                     } else if (c === 4 && cell && cell.toLowerCase().includes('warning')) {
                         html += '<td class="duplicate-warning">' + cell + '</td>';
                     } else {
-                        // For date column (c===0), we display the raw string from backend
                         html += '<td>' + cell + '</td>';
                     }
                 }
@@ -2961,7 +2959,7 @@
         console.log('📌 Version: ' + APP_VERSION);
         console.log('📱 After QR scan, page scrolls smoothly to Submit button.');
         console.log('📅 Admin reports now display raw dates from backend (dd/mm/yyyy HH:mm:ss) without reformatting.');
-        console.log('📶 Mobile network fix: cache-busting timestamps and exponential backoff on 4G/5G.');
+        console.log('📶 Mobile network fix: offline detection + exponential backoff with limited toasts (only after 3 consecutive failures).');
     </script>
 </body>
 </html>
