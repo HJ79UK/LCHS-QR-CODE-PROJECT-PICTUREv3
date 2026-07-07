@@ -803,7 +803,7 @@
 
         /* ─── Login Progress Bar ─── */
         .login-progress-container {
-            margin-top: 1rem;
+            margin-top: 0.75rem;
             display: none;
         }
         .login-progress-container.active {
@@ -853,7 +853,7 @@
 
     <!-- ========== VIEW 1: LOGIN ========== -->
     <div id="view-login" class="w-full max-w-md card p-6 md:p-8">
-        <span class="version-badge login-version">v3.0</span>
+        <span class="version-badge login-version">v3.1</span>
         <div class="text-center mb-6">
             <div class="flex justify-center mb-3">
                 <i data-lucide="bike" class="w-14 h-14 text-red-600"></i>
@@ -880,20 +880,20 @@
                     <i data-lucide="wifi" class="w-4 h-4"></i> Test Backend Connection
                 </button>
             </div>
+
+            <!-- ─── Login Progress Bar ─── -->
+            <div id="login-progress-container" class="login-progress-container">
+                <div class="login-progress-bar-bg">
+                    <div id="login-progress-bar" class="login-progress-bar" style="width: 0%;"></div>
+                </div>
+                <div class="login-progress-text">
+                    <span id="login-progress-label" class="login-progress-label">Connecting...</span>
+                    <span id="login-progress-percent" class="login-progress-percent">0%</span>
+                </div>
+                <div id="login-progress-status" class="login-progress-status">Initializing...</div>
+            </div>
         </form>
         <div id="test-result" class="mt-3 text-xs text-gray-500 text-center hidden"></div>
-
-        <!-- ─── Login Progress Bar ─── -->
-        <div id="login-progress-container" class="login-progress-container">
-            <div class="login-progress-bar-bg">
-                <div id="login-progress-bar" class="login-progress-bar" style="width: 0%;"></div>
-            </div>
-            <div class="login-progress-text">
-                <span id="login-progress-label" class="login-progress-label">Connecting...</span>
-                <span id="login-progress-percent" class="login-progress-percent">0%</span>
-            </div>
-            <div id="login-progress-status" class="login-progress-status">Initializing...</div>
-        </div>
     </div>
 
     <!-- ========== VIEW 2: DATA ENTRY ========== -->
@@ -904,7 +904,7 @@
             </h1>
             <div class="flex items-center gap-2">
                 <span id="logged-in-user" class="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full font-medium"></span>
-                <span class="version-badge">v3.0</span>
+                <span class="version-badge">v3.1</span>
             </div>
         </div>
 
@@ -996,7 +996,7 @@
                 <button onclick="logout()" class="text-sm text-gray-500 hover:text-gray-800 flex items-center gap-1 transition">
                     <i data-lucide="log-out" class="w-4 h-4"></i> Log Out
                 </button>
-                <span class="version-badge">v3.0</span>
+                <span class="version-badge">v3.1</span>
             </div>
         </div>
 
@@ -1256,7 +1256,7 @@
 
         // ─── CONFIGURATION ───
         const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzarD-UASyG6cMD-O9Gt-DjIQ5MCVuXsZFVr092kfE4gzex_lyJqPhmLxN5dYxicDy8gQ/exec";
-        const APP_VERSION = "v3.0";
+        const APP_VERSION = "v3.1";
 
         // ─── State ───
         let currentUser = null;
@@ -3093,7 +3093,7 @@
         console.log('📱 After QR scan, page scrolls smoothly to Submit button.');
         console.log('📅 Admin reports display raw dates from backend (dd/mm/yyyy HH:mm:ss).');
         console.log('📶 Mobile optimised: small payloads, one record at a time.');
-        console.log('📊 Login progress bar with percentage and status messages added.');
+        console.log('📊 Login progress bar now appears directly under the Login button.');
     </script>
 </body>
 </html>
