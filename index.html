@@ -809,7 +809,7 @@
     <!-- ========== VIEW 1: LOGIN ========== -->
     <div id="view-login" class="w-full max-w-md card p-6 md:p-8">
         <!-- Version banner added -->
-        <span class="version-badge login-version">v2.4</span>
+        <span class="version-badge login-version">v2.5</span>
         <div class="text-center mb-6">
             <div class="flex justify-center mb-3">
                 <i data-lucide="bike" class="w-14 h-14 text-red-600"></i>
@@ -848,7 +848,7 @@
             </h1>
             <div class="flex items-center gap-2">
                 <span id="logged-in-user" class="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full font-medium"></span>
-                <span class="version-badge">v2.4</span>
+                <span class="version-badge">v2.5</span>
             </div>
         </div>
 
@@ -940,7 +940,7 @@
                 <button onclick="logout()" class="text-sm text-gray-500 hover:text-gray-800 flex items-center gap-1 transition">
                     <i data-lucide="log-out" class="w-4 h-4"></i> Log Out
                 </button>
-                <span class="version-badge">v2.4</span>
+                <span class="version-badge">v2.5</span>
             </div>
         </div>
 
@@ -1200,7 +1200,7 @@
 
         // ─── CONFIGURATION ───
         const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzarD-UASyG6cMD-O9Gt-DjIQ5MCVuXsZFVr092kfE4gzex_lyJqPhmLxN5dYxicDy8gQ/exec";
-        const APP_VERSION = "v2.4";
+        const APP_VERSION = "v2.5";
 
         // ─── State ───
         let currentUser = null;
@@ -1216,9 +1216,13 @@
         // ── Queue for optimistic submissions ──
         let pendingQueue = JSON.parse(localStorage.getItem('bikeQueue') || '[]');
         let syncIntervalId = null;
-        let isProcessing = false;   // prevent concurrent sync runs
+        let isProcessing = false; // prevent concurrent sync runs
         const MAX_BATCH_SIZE = 5;
         const QUEUE_WARNING_THRESHOLD = 25;
+
+        // ── Network backoff state ──
+        let syncFailCount = 0;
+        let nextAllowedSyncTime = 0;
 
         // ── DOM refs ──
         const queueIndicator = document.getElementById('queue-indicator');
@@ -1274,7 +1278,7 @@
         const statusDot = document.getElementById('status-dot');
         const refreshBtn = document.getElementById('refresh-stats-btn');
 
-        // ── Helper: format date (kept for dashboard, but admin reports use raw strings)
+        // ── Helper: format date (kept for dashboard, but admin reports use raw strings) ──
         function formatDateToDMY(date) {
             if (!date || isNaN(date.getTime())) return '';
             const d = String(date.getDate()).padStart(2, '0');
@@ -1574,15 +1578,20 @@
             }
         }
 
-        // ── API CALL with detailed logging ──
+        // ── API CALL with cache-busting timestamp for mobile networks ──
         async function apiCall(action, payload) {
             console.log(`📤 API Call: ${action}`, payload);
             try {
-                const response = await fetch(GAS_WEB_APP_URL, {
+                // Append a timestamp to force a fresh connection on 4G/5G
+                const url = new URL(GAS_WEB_APP_URL);
+                url.searchParams.set('nocache', Date.now());
+
+                const response = await fetch(url.toString(), {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify({ action, ...payload })
                 });
+
                 console.log(`📥 Response status: ${response.status}`);
                 if (!response.ok) {
                     const text = await response.text();
@@ -1595,8 +1604,9 @@
             } catch (e) {
                 console.error(`❌ API Call failed for ${action}:`, e);
                 let msg = 'Network error communicating with the database. ';
-                if (e.message.includes('Failed to fetch')) {
-                    msg += 'Check that the HTML is served via a web server (not file://) and that the GAS URL is correct.';
+                // Catch the instant network drop
+                if (e.message.includes('Failed to fetch') || e.message.includes('Load failed')) {
+                    msg += 'The mobile network dropped the connection. The system will retry automatically.';
                 } else {
                     msg += 'Details: ' + e.message;
                 }
@@ -1644,6 +1654,9 @@
                 queueCountLabel.textContent = '(0)';
                 syncNowBtn.classList.remove('visible');
                 syncNowBtn.disabled = true;
+                // Reset network health when queue is empty
+                syncFailCount = 0;
+                nextAllowedSyncTime = 0;
             }
 
             if (count > QUEUE_WARNING_THRESHOLD) {
@@ -1680,7 +1693,7 @@
             return removedCount;
         }
 
-        // ── Background sync with concurrency lock ──
+        // ── Background sync with concurrency lock and backoff ──
         function startSync() {
             if (syncIntervalId) return;
             syncIntervalId = setInterval(() => {
@@ -1701,6 +1714,10 @@
 
         async function processQueue() {
             if (isProcessing || pendingQueue.length === 0) return;
+
+            // Skip this cycle if we are in a network cooldown period
+            if (Date.now() < nextAllowedSyncTime) return;
+
             isProcessing = true;
             console.log(`🔄 Processing queue (${pendingQueue.length} items)...`);
             try {
@@ -1716,17 +1733,25 @@
                         timestamp: r.timestamp
                     }))
                 };
+
                 const res = await apiCall('saveDataBatch', payload);
+
                 if (res.success) {
                     console.log(`✅ Batch of ${batch.length} sent successfully.`);
                     removeFromQueue(indices, true);
+                    syncFailCount = 0; // Reset network health
+                    nextAllowedSyncTime = 0;
                 } else {
-                    console.warn('⚠️ Batch save failed:', res.message);
-                    showToast(`Sync failed: ${res.message || 'Unknown error'}`, 'error');
+                    throw new Error(res.message || 'Server rejected batch');
                 }
             } catch (e) {
+                syncFailCount++;
+                // Calculate cooldown: 2s, 4s, 8s... capped at 30 seconds.
+                const cooldownDelay = Math.min(2000 * Math.pow(2, syncFailCount), 30000);
+                nextAllowedSyncTime = Date.now() + cooldownDelay;
+
                 console.error('❌ Sync error:', e);
-                showToast(`Sync error: ${e.message}`, 'error');
+                showToast(`Network unstable. Retrying in ${Math.round(cooldownDelay/1000)}s...`, 'error');
             } finally {
                 isProcessing = false;
             }
@@ -1772,6 +1797,9 @@
                         if (res.success) {
                             removeFromQueue(indices, true);
                             processedCount += indices.length;
+                            // Reset backoff on success
+                            syncFailCount = 0;
+                            nextAllowedSyncTime = 0;
                         } else {
                             console.warn('Force sync batch failed:', res.message);
                             showToast(`Force sync failed: ${res.message}`, 'error');
@@ -2933,6 +2961,7 @@
         console.log('📌 Version: ' + APP_VERSION);
         console.log('📱 After QR scan, page scrolls smoothly to Submit button.');
         console.log('📅 Admin reports now display raw dates from backend (dd/mm/yyyy HH:mm:ss) without reformatting.');
+        console.log('📶 Mobile network fix: cache-busting timestamps and exponential backoff on 4G/5G.');
     </script>
 </body>
 </html>
