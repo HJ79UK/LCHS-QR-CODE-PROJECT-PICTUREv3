@@ -855,6 +855,52 @@
             margin-top: 1.5rem;
             text-align: center;
         }
+
+        /* ─── Dashboard Stat Cards ─── */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+        .stat-grid .stat-item {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 0.4rem 0.5rem;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            border: 1px solid #e5e7eb;
+            text-align: center;
+        }
+        .stat-grid .stat-item .number {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1f2937;
+            line-height: 1.2;
+        }
+        .stat-grid .stat-item .label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            color: #6b7280;
+            margin-top: 0.1rem;
+        }
+        @media (min-width: 480px) {
+            .stat-grid .stat-item .number { font-size: 1.8rem; }
+        }
+
+        /* ─── Coloured stat cards ─── */
+        .stat-grid .stat-item.today { background: #fee2e2; border-color: #fca5a5; }
+        .stat-grid .stat-item.today .number { color: #dc2626; }
+        .stat-grid .stat-item.yesterday { background: #fef3c7; border-color: #fcd34d; }
+        .stat-grid .stat-item.yesterday .number { color: #d97706; }
+        .stat-grid .stat-item.week { background: #dbeafe; border-color: #93c5fd; }
+        .stat-grid .stat-item.week .number { color: #2563eb; }
+        .stat-grid .stat-item.total { background: #dcfce7; border-color: #86efac; }
+        .stat-grid .stat-item.total .number { color: #16a34a; }
+
+        /* ─── Chart container header colours ─── */
+        .dashboard-chart-container.time-chart .chart-header h4 { color: #dc2626; }
+        .dashboard-chart-container.user-chart .chart-header h4 { color: #16a34a; }
     </style>
 </head>
 <body>
@@ -863,7 +909,7 @@
 
     <!-- ========== VIEW 1: LOGIN ========== -->
     <div id="view-login" class="w-full max-w-md card p-6 md:p-8">
-        <span class="version-badge login-version">v3.2</span>
+        <span class="version-badge login-version">v3.3</span>
         <div class="text-center mb-6">
             <div class="flex justify-center mb-3">
                 <i data-lucide="bike" class="w-14 h-14 text-red-600"></i>
@@ -918,7 +964,7 @@
             </h1>
             <div class="flex items-center gap-2">
                 <span id="logged-in-user" class="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full font-medium"></span>
-                <span class="version-badge">v3.2</span>
+                <span class="version-badge">v3.3</span>
             </div>
         </div>
 
@@ -998,9 +1044,9 @@
                 <button onclick="openDashboard()" class="btn-grey text-sm flex items-center gap-1">
                     <i data-lucide="bar-chart-2" class="w-4 h-4"></i> Dashboard
                 </button>
-                <button id="refresh-stats-btn" onclick="manualRefreshStats()" class="btn-grey text-sm flex items-center gap-1 refresh-btn" title="Refresh stats">
+                <button id="refresh-all-btn" onclick="refreshAll()" class="btn-grey text-sm flex items-center gap-1 refresh-btn" title="Refresh all data">
                     <i data-lucide="refresh-cw" class="w-4 h-4"></i>
-                    <span class="sr-only">Refresh</span>
+                    <span class="sr-only">Refresh all</span>
                 </button>
                 <span id="countdown-timer" class="countdown-timer">
                     <i data-lucide="clock" class="w-4 h-4"></i>
@@ -1010,7 +1056,7 @@
                 <button onclick="logout()" class="text-sm text-gray-500 hover:text-gray-800 flex items-center gap-1 transition">
                     <i data-lucide="log-out" class="w-4 h-4"></i> Log Out
                 </button>
-                <span class="version-badge">v3.2</span>
+                <span class="version-badge">v3.3</span>
             </div>
         </div>
 
@@ -1094,9 +1140,7 @@
             <div id="panel-users" class="p-4 max-h-64 overflow-y-auto scrollable">
                 <div class="flex justify-between items-center mb-3">
                     <span class="text-sm font-medium text-gray-600">Manage system users</span>
-                    <button onclick="loadUsers()" class="text-sm text-red-600 hover:underline flex items-center gap-1 transition">
-                        <i data-lucide="refresh-cw" class="w-4 h-4"></i> Refresh
-                    </button>
+                    <!-- Refresh button removed – use top right refresh all -->
                 </div>
                 <div id="user-list-container" class="space-y-2">
                     <p class="text-sm text-gray-500 text-center py-4">Loading…</p>
@@ -1105,9 +1149,7 @@
             <div id="panel-history" class="hidden p-4 max-h-64 overflow-y-auto scrollable">
                 <div class="flex justify-between items-center mb-3">
                     <span class="text-sm font-medium text-gray-600">Recent registrations</span>
-                    <button onclick="loadHistory()" class="text-sm text-red-600 hover:underline flex items-center gap-1 transition">
-                        <i data-lucide="refresh-cw" class="w-4 h-4"></i> Refresh
-                    </button>
+                    <!-- Refresh button removed – use top right refresh all -->
                 </div>
                 <div id="history-list-container" class="space-y-2">
                     <p class="text-sm text-gray-500 text-center py-4">Loading…</p>
@@ -1117,9 +1159,7 @@
                 <div class="flex justify-between items-center mb-3">
                     <span class="text-sm font-medium text-gray-600">All bike registrations</span>
                     <div class="flex flex-wrap items-center gap-2">
-                        <button onclick="loadRecords(1)" class="text-sm text-red-600 hover:underline flex items-center gap-1 transition">
-                            <i data-lucide="refresh-cw" class="w-4 h-4"></i> Refresh
-                        </button>
+                        <!-- Refresh button removed – use top right refresh all -->
                     </div>
                 </div>
                 <div class="search-box">
@@ -1234,20 +1274,42 @@
                     <p class="mt-1 text-sm">Loading data…</p>
                 </div>
                 <div id="dashboard-charts" class="hidden">
-                    <div class="dashboard-chart-container">
+                    <!-- ===== NEW 4 STAT CARDS with colours ===== -->
+                    <div class="stat-grid" id="stat-grid">
+                        <div class="stat-item today">
+                            <div class="number" id="stat-today">0</div>
+                            <div class="label">Today</div>
+                        </div>
+                        <div class="stat-item yesterday">
+                            <div class="number" id="stat-yesterday">0</div>
+                            <div class="label">Yesterday</div>
+                        </div>
+                        <div class="stat-item week">
+                            <div class="number" id="stat-week">0</div>
+                            <div class="label">This Week</div>
+                        </div>
+                        <div class="stat-item total">
+                            <div class="number" id="stat-total-dash">0</div>
+                            <div class="label">Total</div>
+                        </div>
+                    </div>
+
+                    <!-- ===== LINE CHART ===== -->
+                    <div class="dashboard-chart-container time-chart">
                         <div class="chart-header">
-                            <h4>📊 Bikes over time</h4>
+                            <h4>📈 Registrations over time</h4>
                             <select id="period-select-time" onchange="updateDashboard()">
-                                <option value="today">Today</option>
-                                <option value="yesterday">Yesterday</option>
-                                <option value="last7">Last 7 Days</option>
-                                <option value="month">Month</option>
+                                <option value="thisweek">This Week</option>
+                                <option value="lastweek">Last Week</option>
+                                <option value="month">Current Month</option>
                                 <option value="total" selected>Total</option>
                             </select>
                         </div>
                         <canvas id="chart-time"></canvas>
                     </div>
-                    <div class="dashboard-chart-container">
+
+                    <!-- ===== USER CHART ===== -->
+                    <div class="dashboard-chart-container user-chart">
                         <div class="chart-header">
                             <h4>👤 Bikes per user</h4>
                             <select id="period-select-user" onchange="updateDashboard()">
@@ -1270,7 +1332,7 @@
 
         // ─── CONFIGURATION ───
         const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzarD-UASyG6cMD-O9Gt-DjIQ5MCVuXsZFVr092kfE4gzex_lyJqPhmLxN5dYxicDy8gQ/exec";
-        const APP_VERSION = "v3.2";
+        const APP_VERSION = "v3.3";
 
         // ─── State ───
         let currentUser = null;
@@ -1355,7 +1417,7 @@
         let statsLoading = false;
         const timerText = document.getElementById('timer-text');
         const statusDot = document.getElementById('status-dot');
-        const refreshBtn = document.getElementById('refresh-stats-btn');
+        const refreshAllBtn = document.getElementById('refresh-all-btn');
 
         // ── Helper: format date ──
         function formatDateToDMY(date) {
@@ -1372,23 +1434,26 @@
             return `${d}/${m}/${y} ${h}:${min}:${sec}`;
         }
 
+        // ─── FIXED DATE PARSER – UK first ───
         function parseDateFromAnyString(dateStr) {
             if (!dateStr) return null;
             dateStr = dateStr.trim();
-            let d = new Date(dateStr);
-            if (!isNaN(d.getTime())) return d;
-            const dateTimeParts = dateStr.match(/(\d{1,2})[\/\- ](\d{1,2})[\/\- ](\d{2,4})(?:[ \t]+(\d{1,2}):(\d{1,2}):(\d{1,2}))?/);
+
+            // 1. Try custom UK format matcher FIRST (DD/MM/YYYY)
+            const dateTimeParts = dateStr.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})(?:[ \t]+(\d{1,2}):(\d{1,2}):(\d{1,2}))?/);
             if (dateTimeParts) {
                 let day = parseInt(dateTimeParts[1], 10);
-                let month = parseInt(dateTimeParts[2], 10) - 1;
+                let month = parseInt(dateTimeParts[2], 10) - 1; // JS months are 0‑11
                 let year = parseInt(dateTimeParts[3], 10);
                 if (year < 100) year += 2000;
                 let hours = dateTimeParts[4] ? parseInt(dateTimeParts[4], 10) : 0;
                 let minutes = dateTimeParts[5] ? parseInt(dateTimeParts[5], 10) : 0;
                 let seconds = dateTimeParts[6] ? parseInt(dateTimeParts[6], 10) : 0;
-                d = new Date(year, month, day, hours, minutes, seconds);
+                let d = new Date(year, month, day, hours, minutes, seconds);
                 if (!isNaN(d.getTime())) return d;
             }
+
+            // 2. Try month‑name format (e.g. "08 Jul 2026")
             const monthNames = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
             const words = dateStr.match(/(\d{1,2})\s+([a-zA-Z]{3,})\s+(\d{2,4})(?:[ \t]+(\d{1,2}):(\d{1,2}):(\d{1,2}))?/);
             if (words) {
@@ -1401,10 +1466,15 @@
                     let hours = words[4] ? parseInt(words[4], 10) : 0;
                     let minutes = words[5] ? parseInt(words[5], 10) : 0;
                     let seconds = words[6] ? parseInt(words[6], 10) : 0;
-                    d = new Date(year, monthIndex, day, hours, minutes, seconds);
+                    let d = new Date(year, monthIndex, day, hours, minutes, seconds);
                     if (!isNaN(d.getTime())) return d;
                 }
             }
+
+            // 3. Fallback to native JS parsing ONLY if custom matchers fail
+            let dNative = new Date(dateStr);
+            if (!isNaN(dNative.getTime())) return dNative;
+
             return null;
         }
 
@@ -1920,7 +1990,6 @@
 
         // ── TEST BACKEND CONNECTION ──
         async function testBackend() {
-            // Show result in the existing result div
             testResultDiv.classList.remove('hidden');
             testResultDiv.innerHTML = '🔄 Testing connection...';
             testResultDiv.className = 'mt-3 text-xs text-blue-600 text-center';
@@ -1948,7 +2017,6 @@
             document.getElementById('login-form').reset();
             testResultDiv.classList.add('hidden');
             testResultDiv.innerHTML = '';
-            // Hide progress bar and test button
             loginProgressContainer.classList.remove('active');
             loginProgressBar.style.width = '0%';
             loginProgressPercent.textContent = '0%';
@@ -2079,17 +2147,14 @@
                 return;
             }
 
-            // Hide test button if visible
             testConnBtn.classList.remove('visible');
 
-            // Show progress bar
             loginProgressContainer.classList.add('active');
             updateLoginProgress(0, 'Connecting...', 'Initializing...');
             toggleSpinner('login', true);
             document.getElementById('login-btn').disabled = true;
 
             try {
-                // Step 1: Connecting (0-20%)
                 await new Promise(r => setTimeout(r, 200));
                 updateLoginProgress(15, 'Connecting...', 'Establishing connection to server...');
 
@@ -2101,12 +2166,10 @@
                 currentUser = user;
                 currentUserRole = res.role || 'user';
 
-                // Step 2: Fetch master list (40-70%)
                 updateLoginProgress(55, 'Fetching master list...', 'Loading bike number database...');
                 await fetchMasterList();
                 updateLoginProgress(70, 'Master list loaded.', `${masterListCache.length} bike numbers found.`);
 
-                // Step 3: Loading user data (70-90%)
                 updateLoginProgress(80, 'Loading user data...', 'Preparing your workspace...');
                 await new Promise(r => setTimeout(r, 300));
 
@@ -2116,20 +2179,15 @@
                     updateLoginProgress(88, 'Setting up...', 'Preparing registration form...');
                 }
 
-                // Step 4: Finalize (90-100%)
                 updateLoginProgress(95, 'Almost ready...', 'Finalizing...');
                 await new Promise(r => setTimeout(r, 200));
 
-                // Switch view
                 if (currentUserRole === 'admin') {
                     switchView('view-admin');
                     showToast('Admin welcome, ' + user + '!', 'success');
                     startRefreshCycle();
                     updateLoginProgress(98, 'Loading admin data...', 'Please wait...');
-                    loadStats();
-                    loadUsers();
-                    loadHistory();
-                    loadRecords(1);
+                    refreshAll(); // loads stats, users, history, records
                     setTimeout(() => {
                         updateLoginProgress(100, 'Welcome!', 'Login complete.');
                         setTimeout(() => {
@@ -2153,12 +2211,10 @@
             } catch (err) {
                 const errorMsg = err.message || 'Invalid credentials.';
                 showToast(errorMsg, 'error');
-                // If the error indicates a network issue, show the test button
                 if (errorMsg.toLowerCase().includes('network') ||
                     errorMsg.toLowerCase().includes('failed to fetch') ||
                     errorMsg.toLowerCase().includes('load failed')) {
                     testConnBtn.classList.add('visible');
-                    // Also show a hint in the status
                     loginProgressStatus.textContent = 'Connection issue. Use the test button below.';
                     loginProgressStatus.style.color = '#dc2626';
                 } else {
@@ -2195,7 +2251,6 @@
             }
             switchView('view-login');
             showToast('Logged out.', 'info');
-            // Reset login progress and hide test button
             loginProgressContainer.classList.remove('active');
             loginProgressBar.style.width = '0%';
             loginProgressPercent.textContent = '0%';
@@ -2671,8 +2726,8 @@
             } else {
                 statusDot.className = 'stat-dot ready';
             }
-            if (refreshBtn) {
-                refreshBtn.classList.toggle('spinning', loading);
+            if (refreshAllBtn) {
+                refreshAllBtn.classList.toggle('spinning', loading);
             }
         }
 
@@ -2738,7 +2793,7 @@
                     countdownSeconds = 0;
                     updateTimerDisplay();
                     if (!statsLoading) {
-                        loadStats();
+                        refreshAll();
                     }
                     countdownSeconds = 900;
                 } else {
@@ -2747,13 +2802,19 @@
             }, 1000);
         }
 
-        function manualRefreshStats() {
-            if (statsLoading) return;
-            loadStats();
-            showToast('Refreshing stats…', 'info');
+        // ── Global refresh all function ──
+        async function refreshAll() {
+            if (statsLoading) return; // avoid multiple concurrent refreshes
+            showToast('Refreshing all data...', 'info');
+            await loadStats();
+            await loadUsers();
+            await loadHistory();
+            await loadRecords(1);
+            // If dashboard is open, we could update it, but it's not open typically; user can reopen.
+            showToast('All data refreshed.', 'success');
         }
 
-        // ── Date range helper (for CSV export) ──
+        // ── Date range helper (for CSV export and dashboard) ──
         function getPeriodRange(period) {
             const now = new Date();
             const start = new Date(now);
@@ -2774,6 +2835,26 @@
                     start.setHours(0, 0, 0, 0);
                     end.setHours(23, 59, 59, 999);
                     break;
+                case 'thisweek': {
+                    const day = start.getDay(); // 0=Sun,1=Mon...
+                    const diff = (day === 0 ? 6 : day - 1); // days since Monday
+                    start.setDate(start.getDate() - diff);
+                    start.setHours(0, 0, 0, 0);
+                    end = new Date(start);
+                    end.setDate(end.getDate() + 6);
+                    end.setHours(23, 59, 59, 999);
+                    break;
+                }
+                case 'lastweek': {
+                    const day = start.getDay();
+                    const diff = (day === 0 ? 6 : day - 1) + 7;
+                    start.setDate(start.getDate() - diff);
+                    start.setHours(0, 0, 0, 0);
+                    end = new Date(start);
+                    end.setDate(end.getDate() + 6);
+                    end.setHours(23, 59, 59, 999);
+                    break;
+                }
                 case 'month':
                     start.setDate(1);
                     start.setHours(0, 0, 0, 0);
@@ -2920,6 +3001,42 @@
             });
         }
 
+        // ── Compute dashboard stat cards ──
+        function computeStats(data) {
+            const now = new Date();
+            const todayStart = new Date(now);
+            todayStart.setHours(0, 0, 0, 0);
+            const todayEnd = new Date(now);
+            todayEnd.setHours(23, 59, 59, 999);
+
+            const yesterdayStart = new Date(now);
+            yesterdayStart.setDate(yesterdayStart.getDate() - 1);
+            yesterdayStart.setHours(0, 0, 0, 0);
+            const yesterdayEnd = new Date(now);
+            yesterdayEnd.setDate(yesterdayEnd.getDate() - 1);
+            yesterdayEnd.setHours(23, 59, 59, 999);
+
+            const day = now.getDay(); // 0=Sun
+            const diffToMon = (day === 0 ? 6 : day - 1);
+            const weekStart = new Date(now);
+            weekStart.setDate(weekStart.getDate() - diffToMon);
+            weekStart.setHours(0, 0, 0, 0);
+            const weekEnd = new Date(weekStart);
+            weekEnd.setDate(weekEnd.getDate() + 6);
+            weekEnd.setHours(23, 59, 59, 999);
+
+            let todayCount = 0, yesterdayCount = 0, weekCount = 0, totalCount = data.length;
+
+            data.forEach(row => {
+                const date = new Date(row.date);
+                if (date >= todayStart && date <= todayEnd) todayCount++;
+                if (date >= yesterdayStart && date <= yesterdayEnd) yesterdayCount++;
+                if (date >= weekStart && date <= weekEnd) weekCount++;
+            });
+
+            return { todayCount, yesterdayCount, weekCount, totalCount };
+        }
+
         async function openDashboard() {
             showModal('dashboard-modal');
             document.getElementById('dashboard-loading').classList.remove('hidden');
@@ -2958,6 +3075,14 @@
                     }
                 }
                 dashboardData = dashboardRows;
+
+                // Update stat cards
+                const stats = computeStats(dashboardData);
+                document.getElementById('stat-today').textContent = stats.todayCount;
+                document.getElementById('stat-yesterday').textContent = stats.yesterdayCount;
+                document.getElementById('stat-week').textContent = stats.weekCount;
+                document.getElementById('stat-total-dash').textContent = stats.totalCount;
+
                 document.getElementById('dashboard-loading').classList.add('hidden');
                 document.getElementById('dashboard-charts').classList.remove('hidden');
                 lucide.createIcons();
@@ -2985,23 +3110,23 @@
             const periodTime = document.getElementById('period-select-time').value;
             const periodUser = document.getElementById('period-select-user').value;
 
+            // For time chart: use data filtered by periodTime
             const filteredTime = filterDataByPeriod(dashboardData, periodTime);
-            const filteredUser = filterDataByPeriod(dashboardData, periodUser);
-
             const timeData = aggregateByDay(filteredTime);
             const ctx1 = document.getElementById('chart-time').getContext('2d');
             if (chartTimeInstance) chartTimeInstance.destroy();
             chartTimeInstance = new Chart(ctx1, {
-                type: 'bar',
+                type: 'line',
                 data: {
                     labels: timeData.labels,
                     datasets: [{
-                        label: 'Bikes added',
+                        label: 'Registrations',
                         data: timeData.values,
-                        backgroundColor: 'rgba(220, 38, 38, 0.7)',
                         borderColor: 'rgba(220, 38, 38, 1)',
-                        borderWidth: 1,
-                        borderRadius: 4
+                        backgroundColor: 'rgba(220, 38, 38, 0.1)',
+                        fill: true,
+                        tension: 0.2,
+                        pointRadius: 2
                     }]
                 },
                 options: {
@@ -3030,6 +3155,8 @@
                 }
             });
 
+            // For user chart: use data filtered by periodUser
+            const filteredUser = filterDataByPeriod(dashboardData, periodUser);
             const userData = aggregateByUser(filteredUser);
             const ctx2 = document.getElementById('chart-user').getContext('2d');
             if (chartUserInstance) chartUserInstance.destroy();
@@ -3124,6 +3251,7 @@
         console.log('📶 Mobile optimised: small payloads, one record at a time.');
         console.log('📊 Login progress bar now appears directly under the Login button.');
         console.log('🔌 "Test Backend Connection" button appears only on network login failures.');
+        console.log('🔄 Global refresh button now refreshes stats, users, history, and records in one go.');
     </script>
 </body>
 </html>
