@@ -901,6 +901,277 @@
         /* ─── Chart container header colours ─── */
         .dashboard-chart-container.time-chart .chart-header h4 { color: #dc2626; }
         .dashboard-chart-container.user-chart .chart-header h4 { color: #16a34a; }
+
+        /* ─── Duplicate table – tighter spacing ─── */
+        .dup-table {
+            font-size: 0.7rem;
+        }
+        .dup-table th {
+            padding: 0.2rem 0.3rem !important;
+            font-size: 0.65rem;
+        }
+        .dup-table td {
+            padding: 0.15rem 0.3rem !important;
+            white-space: nowrap;
+        }
+        .dup-table td .lucide {
+            width: 0.9rem;
+            height: 0.9rem;
+        }
+        .dup-table .btn-delete {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.1rem 0.2rem;
+            color: #dc2626;
+            transition: color 0.2s, transform 0.1s;
+            display: inline-flex;
+            align-items: center;
+        }
+        .dup-table .btn-delete:hover {
+            color: #991b1b;
+            transform: scale(1.1);
+        }
+        .dup-table .btn-delete:active {
+            transform: scale(0.9);
+        }
+        .dup-table .btn-delete:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* ─── Red batch delete button with counter ─── */
+        .batch-delete-wrap {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .batch-delete-btn-red {
+            background: #dc2626;
+            color: #fff;
+            border: none;
+            padding: 0.3rem 0.8rem;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: background 0.2s, opacity 0.2s, transform 0.1s;
+            box-shadow: 0 1px 3px rgba(220, 38, 38, 0.3);
+        }
+        .batch-delete-btn-red:hover:not(:disabled) {
+            background: #b91c1c;
+            transform: scale(1.02);
+        }
+        .batch-delete-btn-red:active:not(:disabled) {
+            transform: scale(0.97);
+        }
+        .batch-delete-btn-red:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        .batch-delete-btn-red .lucide {
+            width: 0.9rem;
+            height: 0.9rem;
+        }
+        .batch-delete-btn-red .count-badge {
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 9999px;
+            padding: 0.05rem 0.5rem;
+            font-size: 0.6rem;
+            font-weight: 700;
+            min-width: 1.2rem;
+            text-align: center;
+        }
+
+        /* ─── Checkbox column styles ─── */
+        .dup-table .col-checkbox {
+            text-align: center;
+            width: 2.2rem;
+            min-width: 2.2rem;
+        }
+        .dup-table .col-checkbox input[type="checkbox"] {
+            width: 0.9rem;
+            height: 0.9rem;
+            cursor: pointer;
+            accent-color: #dc2626;
+        }
+        .dup-table .col-checkbox .select-all-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ─── Delete Confirmation Modal ─── */
+        #delete-confirm-modal .modal-card {
+            max-width: 480px;
+        }
+        #delete-confirm-modal .modal-card .icon-wrapper {
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: 9999px;
+            background: #fee2e2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem auto;
+        }
+        #delete-confirm-modal .modal-card .icon-wrapper .lucide {
+            width: 1.75rem;
+            height: 1.75rem;
+            color: #dc2626;
+        }
+        #delete-confirm-modal .modal-card .btn-red {
+            flex: 1;
+        }
+        #delete-confirm-modal .modal-card .btn-grey {
+            flex: 1;
+        }
+        #delete-confirm-modal .selected-list {
+            max-height: 200px;
+            overflow-y: auto;
+            text-align: left;
+            background: #f9fafb;
+            border-radius: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            margin: 0.75rem 0;
+            border: 1px solid #e5e7eb;
+            font-size: 0.8rem;
+        }
+        #delete-confirm-modal .selected-list .list-item {
+            padding: 0.2rem 0;
+            border-bottom: 1px solid #f3f4f6;
+            display: flex;
+            justify-content: space-between;
+            font-family: monospace;
+        }
+        #delete-confirm-modal .selected-list .list-item:last-child {
+            border-bottom: none;
+        }
+        #delete-confirm-modal .selected-list .list-item .bike {
+            color: #dc2626;
+            font-weight: 600;
+        }
+        #delete-confirm-modal .selected-list .list-item .time {
+            color: #6b7280;
+            font-size: 0.7rem;
+        }
+        @media (max-width: 480px) {
+            #delete-confirm-modal .modal-card .btn-red,
+            #delete-confirm-modal .modal-card .btn-grey {
+                font-size: 0.85rem;
+                padding: 0.6rem 0.8rem;
+            }
+        }
+
+        /* ─── Table header with batch delete ─── */
+        .dup-table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .dup-table-header .record-count {
+            font-size: 0.7rem;
+            color: #6b7280;
+        }
+        .dup-table-header .batch-delete-wrap {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* ─── Inactivity Timer ─── */
+        .inactivity-timer {
+            font-size: 0.7rem;
+            color: #6b7280;
+            background: #f3f4f6;
+            padding: 0.2rem 0.6rem;
+            border-radius: 9999px;
+            border: 1px solid #e5e7eb;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        .inactivity-timer.warning {
+            color: #dc2626;
+            border-color: #dc2626;
+            background: #fee2e2;
+            animation: pulse-timer 1s infinite;
+        }
+        @keyframes pulse-timer {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* ─── Inactivity Warning Modal ─── (fixed size) */
+        #inactivity-warning-modal .modal-card {
+            max-width: 420px;
+            border-top-color: #f59e0b;
+        }
+        #inactivity-warning-modal .modal-card .icon-wrapper {
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: 9999px;
+            background: #fef3c7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem auto;
+        }
+        #inactivity-warning-modal .modal-card .icon-wrapper .lucide {
+            width: 1.75rem;
+            height: 1.75rem;
+            color: #d97706;
+        }
+        #inactivity-warning-modal .modal-card .countdown-display {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #dc2626;
+            margin: 0.25rem 0;
+            /* Fixed width to prevent size change */
+            min-width: 3.5rem;
+            display: inline-block;
+            font-variant-numeric: tabular-nums;
+            transition: none; /* prevent any layout shifting */
+        }
+        #inactivity-warning-modal .modal-card .countdown-display.flashing {
+            animation: flash-countdown 0.5s ease-in-out infinite;
+            color: #dc2626;
+        }
+        /* Removed scale transform to keep modal size static */
+        @keyframes flash-countdown {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.3;
+            }
+        }
+        #inactivity-warning-modal .modal-card .btn-green {
+            flex: 1;
+        }
+        #inactivity-warning-modal .modal-card .btn-red {
+            flex: 1;
+        }
+        @media (max-width: 480px) {
+            #inactivity-warning-modal .modal-card .btn-green,
+            #inactivity-warning-modal .modal-card .btn-red {
+                font-size: 0.85rem;
+                padding: 0.6rem 0.8rem;
+            }
+            #inactivity-warning-modal .modal-card .countdown-display {
+                font-size: 1.25rem;
+                min-width: 2.5rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -909,7 +1180,7 @@
 
     <!-- ========== VIEW 1: LOGIN ========== -->
     <div id="view-login" class="w-full max-w-md card p-6 md:p-8">
-        <span class="version-badge login-version">v3.3</span>
+        <span class="version-badge login-version">v3.18</span>
         <div class="text-center mb-6">
             <div class="flex justify-center mb-3">
                 <i data-lucide="bike" class="w-14 h-14 text-red-600"></i>
@@ -946,7 +1217,7 @@
                 <div id="login-progress-status" class="login-progress-status">Initializing...</div>
             </div>
 
-            <!-- ─── Test Connection Button (hidden by default) ─── -->
+            <!-- ─── Test Connection Button ─── -->
             <div id="test-connection-btn">
                 <button type="button" onclick="testBackend()" class="btn-grey text-sm" style="border:1px dashed #dc2626; width:100%;">
                     <i data-lucide="wifi" class="w-4 h-4"></i> Test Backend Connection
@@ -964,7 +1235,12 @@
             </h1>
             <div class="flex items-center gap-2">
                 <span id="logged-in-user" class="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full font-medium"></span>
-                <span class="version-badge">v3.3</span>
+                <!-- Inactivity Timer -->
+                <span id="inactivity-timer" class="inactivity-timer">
+                    <i data-lucide="clock" class="w-3 h-3"></i>
+                    <span id="timer-display">10:00</span>
+                </span>
+                <span class="version-badge">v3.18</span>
             </div>
         </div>
 
@@ -1056,12 +1332,13 @@
                 <button onclick="logout()" class="text-sm text-gray-500 hover:text-gray-800 flex items-center gap-1 transition">
                     <i data-lucide="log-out" class="w-4 h-4"></i> Log Out
                 </button>
-                <span class="version-badge">v3.3</span>
+                <span class="version-badge">v3.18</span>
             </div>
         </div>
 
-        <!-- Stats cards with loaders -->
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-5">
+        <!-- Stats cards with loaders – 4 CARDS -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+            <!-- Total Registrations (red) -->
             <div class="stat-card bg-red-50 p-3 rounded-xl text-center border border-red-100 relative">
                 <div id="stat-total-loader" class="stat-loader active">
                     <i data-lucide="loader-2" class="w-6 h-6 animate-spin text-red-600"></i>
@@ -1069,6 +1346,8 @@
                 <div id="stat-total" class="text-2xl font-bold text-red-700 stat-value">0</div>
                 <div class="stat-label">Registrations</div>
             </div>
+
+            <!-- Total Users (green) -->
             <div class="stat-card bg-green-50 p-3 rounded-xl text-center border border-green-100 relative">
                 <div id="stat-users-loader" class="stat-loader active">
                     <i data-lucide="loader-2" class="w-6 h-6 animate-spin text-green-600"></i>
@@ -1076,12 +1355,23 @@
                 <div id="stat-users" class="text-2xl font-bold text-green-700 stat-value">0</div>
                 <div class="stat-label">Total Users</div>
             </div>
+
+            <!-- QR Scans (purple) -->
             <div class="stat-card bg-purple-50 p-3 rounded-xl text-center border border-purple-100 relative">
                 <div id="stat-photos-loader" class="stat-loader active">
                     <i data-lucide="loader-2" class="w-6 h-6 animate-spin text-purple-600"></i>
                 </div>
                 <div id="stat-photos" class="text-2xl font-bold text-purple-700 stat-value">0</div>
                 <div class="stat-label">QR Scans</div>
+            </div>
+
+            <!-- Duplicates Bikes Scans (yellow) -->
+            <div class="stat-card bg-yellow-50 p-3 rounded-xl text-center border border-yellow-100 relative">
+                <div id="stat-duplicates-loader" class="stat-loader active">
+                    <i data-lucide="loader-2" class="w-6 h-6 animate-spin text-yellow-600"></i>
+                </div>
+                <div id="stat-duplicates" class="text-2xl font-bold text-yellow-700 stat-value">0</div>
+                <div class="stat-label">Duplicates Bikes Scans</div>
             </div>
         </div>
 
@@ -1125,42 +1415,49 @@
                 </div>
             </div>
         </div>
+
+        <!-- ===== TABBED INTERFACE ===== -->
         <div class="border border-gray-200 rounded-xl overflow-hidden flex-1">
-            <div class="flex border-b border-gray-200 bg-gray-50">
-                <button onclick="switchAdminTab('users')" id="tab-users" class="flex-1 py-3 px-4 text-sm font-medium text-red-600 border-b-2 border-red-600 transition">
+            <div class="flex border-b border-gray-200 bg-gray-50 overflow-x-auto">
+                <button onclick="switchAdminTab('users')" id="tab-users" class="flex-1 py-3 px-4 text-sm font-medium text-red-600 border-b-2 border-red-600 transition whitespace-nowrap">
                     <i data-lucide="users" class="w-4 h-4 inline mr-1"></i> Users
                 </button>
-                <button onclick="switchAdminTab('history')" id="tab-history" class="flex-1 py-3 px-4 text-sm font-medium text-gray-500 border-b-2 border-transparent hover:text-gray-700 transition">
+                <button onclick="switchAdminTab('history')" id="tab-history" class="flex-1 py-3 px-4 text-sm font-medium text-gray-500 border-b-2 border-transparent hover:text-gray-700 transition whitespace-nowrap">
                     <i data-lucide="history" class="w-4 h-4 inline mr-1"></i> History
                 </button>
-                <button onclick="switchAdminTab('records')" id="tab-records" class="flex-1 py-3 px-4 text-sm font-medium text-gray-500 border-b-2 border-transparent hover:text-gray-700 transition">
+                <button onclick="switchAdminTab('records')" id="tab-records" class="flex-1 py-3 px-4 text-sm font-medium text-gray-500 border-b-2 border-transparent hover:text-gray-700 transition whitespace-nowrap">
                     <i data-lucide="list" class="w-4 h-4 inline mr-1"></i> All Records
                 </button>
+                <button onclick="switchAdminTab('duplicates')" id="tab-duplicates" class="flex-1 py-3 px-4 text-sm font-medium text-gray-500 border-b-2 border-transparent hover:text-yellow-600 transition whitespace-nowrap">
+                    <i data-lucide="alert-triangle" class="w-4 h-4 inline mr-1"></i> Duplicates
+                    <span id="dup-tab-badge" class="text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-full ml-1">0</span>
+                </button>
             </div>
+
+            <!-- Users Panel -->
             <div id="panel-users" class="p-4 max-h-64 overflow-y-auto scrollable">
                 <div class="flex justify-between items-center mb-3">
                     <span class="text-sm font-medium text-gray-600">Manage system users</span>
-                    <!-- Refresh button removed – use top right refresh all -->
                 </div>
                 <div id="user-list-container" class="space-y-2">
                     <p class="text-sm text-gray-500 text-center py-4">Loading…</p>
                 </div>
             </div>
+
+            <!-- History Panel -->
             <div id="panel-history" class="hidden p-4 max-h-64 overflow-y-auto scrollable">
                 <div class="flex justify-between items-center mb-3">
                     <span class="text-sm font-medium text-gray-600">Recent registrations</span>
-                    <!-- Refresh button removed – use top right refresh all -->
                 </div>
                 <div id="history-list-container" class="space-y-2">
                     <p class="text-sm text-gray-500 text-center py-4">Loading…</p>
                 </div>
             </div>
+
+            <!-- All Records Panel -->
             <div id="panel-records" class="hidden p-4 max-h-96 overflow-y-auto scrollable">
                 <div class="flex justify-between items-center mb-3">
                     <span class="text-sm font-medium text-gray-600">All bike registrations</span>
-                    <div class="flex flex-wrap items-center gap-2">
-                        <!-- Refresh button removed – use top right refresh all -->
-                    </div>
                 </div>
                 <div class="search-box">
                     <input type="text" id="search-bike-input" placeholder="Search by Bike Number" class="input-field" />
@@ -1176,10 +1473,29 @@
                     <button onclick="nextPage()" id="next-btn" class="btn-grey btn-sm" disabled>Next</button>
                 </div>
             </div>
+
+            <!-- Duplicates Panel -->
+            <div id="panel-duplicates" class="hidden p-4 max-h-[70vh] overflow-y-auto scrollable">
+                <div class="flex justify-between items-center mb-3">
+                    <span class="text-sm font-medium text-yellow-600 flex items-center gap-2">
+                        <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+                        Potential Duplicate Bikes
+                        <span id="dup-panel-badge" class="text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-full ml-1">0</span>
+                    </span>
+                    <span class="text-xs text-gray-400 flex items-center gap-2">
+                        <i data-lucide="check-square" class="w-3 h-3"></i> Select records
+                    </span>
+                </div>
+                <div id="duplicate-container" class="overflow-x-auto">
+                    <p class="text-sm text-gray-500 text-center py-4">Loading duplicate records…</p>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- ========== MODALS ========== -->
+
+    <!-- ─── Alert Modal ─── -->
     <div id="alert-modal" class="hidden-view fixed inset-0 modal-overlay z-[60]">
         <div class="modal-card max-w-sm p-6 text-center border-t-4 border-red-500">
             <div class="mx-auto flex items-center justify-center h-14 w-14 rounded-full bg-red-100 mb-4">
@@ -1201,6 +1517,44 @@
         </div>
     </div>
 
+    <!-- ─── DELETE CONFIRMATION MODAL ─── -->
+    <div id="delete-confirm-modal" class="hidden-view fixed inset-0 modal-overlay z-[100]">
+        <div class="modal-card max-w-lg p-6 text-center border-t-4 border-red-500">
+            <div class="icon-wrapper">
+                <i data-lucide="alert-triangle"></i>
+            </div>
+            <h3 class="text-lg font-bold mb-1 text-gray-900" id="delete-confirm-title">Confirm Deletion</h3>
+            <p class="text-sm text-gray-600 mb-2" id="delete-confirm-subtitle"></p>
+            <div id="delete-confirm-list-container" class="selected-list hidden">
+                <div id="delete-confirm-list"></div>
+            </div>
+            <p class="text-xs text-red-500 mb-4" id="delete-confirm-warning">⚠️ This action cannot be undone!</p>
+            <div class="flex gap-3">
+                <button onclick="cancelDelete()" class="flex-1 btn-grey">Cancel</button>
+                <button onclick="confirmDelete()" id="delete-confirm-btn" class="flex-1 btn-red">Delete All</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── INACTIVITY WARNING MODAL ─── (fixed size) -->
+    <div id="inactivity-warning-modal" class="hidden-view fixed inset-0 modal-overlay z-[110]">
+        <div class="modal-card max-w-sm p-6 text-center border-t-4 border-yellow-500">
+            <div class="icon-wrapper">
+                <i data-lucide="clock"></i>
+            </div>
+            <h3 class="text-lg font-bold mb-2 text-gray-900">Session Expiring Soon</h3>
+            <p class="text-sm text-gray-600 mb-1">Your session will expire in</p>
+            <div class="countdown-display" id="inactivity-countdown">60</div>
+            <p class="text-sm text-gray-600 mb-4">seconds due to inactivity.</p>
+            <p class="text-xs text-gray-500 mb-4">Click "Stay Logged In" to continue working.</p>
+            <div class="flex gap-3">
+                <button onclick="stayLoggedIn()" class="flex-1 btn-green">Stay Logged In</button>
+                <button onclick="logoutInactivity()" class="flex-1 btn-red">Log Out Now</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- QR Scanner Modal -->
     <div id="qr-scanner-modal" class="hidden-view fixed inset-0 modal-overlay z-50">
         <div class="modal-card max-w-md p-5">
             <div class="flex justify-between items-center mb-4">
@@ -1226,7 +1580,7 @@
         </div>
     </div>
 
-    <!-- ─── Camera Modal ─── -->
+    <!-- Camera Modal -->
     <div id="camera-modal" class="hidden-view fixed inset-0 modal-overlay z-50">
         <div class="modal-card p-4">
             <h3 class="text-lg font-bold mb-3 text-gray-800">Take Photo</h3>
@@ -1240,7 +1594,7 @@
         </div>
     </div>
 
-    <!-- ─── Photo Viewer Modal ─── -->
+    <!-- Photo Viewer Modal -->
     <div id="photo-modal" class="hidden-view fixed inset-0 modal-overlay z-[70]">
         <div class="modal-card p-4" id="photo-modal-card">
             <div class="flex justify-between items-center mb-3">
@@ -1259,7 +1613,7 @@
         </div>
     </div>
 
-    <!-- ─── Dashboard Modal ─── -->
+    <!-- Dashboard Modal -->
     <div id="dashboard-modal" class="hidden-view fixed inset-0 modal-overlay z-[80]">
         <div class="modal-card p-3 md:p-4" id="dashboard-modal-card">
             <div class="flex justify-between items-center mb-2 md:mb-3">
@@ -1274,7 +1628,6 @@
                     <p class="mt-1 text-sm">Loading data…</p>
                 </div>
                 <div id="dashboard-charts" class="hidden">
-                    <!-- ===== NEW 4 STAT CARDS with colours ===== -->
                     <div class="stat-grid" id="stat-grid">
                         <div class="stat-item today">
                             <div class="number" id="stat-today">0</div>
@@ -1293,8 +1646,6 @@
                             <div class="label">Total</div>
                         </div>
                     </div>
-
-                    <!-- ===== LINE CHART ===== -->
                     <div class="dashboard-chart-container time-chart">
                         <div class="chart-header">
                             <h4>📈 Registrations over time</h4>
@@ -1307,8 +1658,6 @@
                         </div>
                         <canvas id="chart-time"></canvas>
                     </div>
-
-                    <!-- ===== USER CHART ===== -->
                     <div class="dashboard-chart-container user-chart">
                         <div class="chart-header">
                             <h4>👤 Bikes per user</h4>
@@ -1331,8 +1680,8 @@
         console.log('🚲 QR Code Bike Registration System starting...');
 
         // ─── CONFIGURATION ───
-        const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzarD-UASyG6cMD-O9Gt-DjIQ5MCVuXsZFVr092kfE4gzex_lyJqPhmLxN5dYxicDy8gQ/exec";
-        const APP_VERSION = "v3.3";
+        const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx4yhoiYRNqT6f0lVArx_WDvKoQhhGptshF8Ex57WpJyu49PDPP3-x1J4tPfjbVekE/exec";
+        const APP_VERSION = "v3.18";
 
         // ─── State ───
         let currentUser = null;
@@ -1342,21 +1691,16 @@
         let isScanning = false;
         const barcodeInput = document.getElementById('barcode-value');
 
-        // ── Master list cache ──
         let masterListCache = [];
-
-        // ── Queue for optimistic submissions ──
         let pendingQueue = JSON.parse(localStorage.getItem('bikeQueue') || '[]');
         let syncIntervalId = null;
-        let isProcessing = false; // prevent concurrent sync runs
+        let isProcessing = false;
         const QUEUE_WARNING_THRESHOLD = 25;
 
-        // ── Network backoff state ──
         let syncFailCount = 0;
         let nextAllowedSyncTime = 0;
         let networkToastShown = false;
 
-        // ── DOM refs ──
         const queueIndicator = document.getElementById('queue-indicator');
         const queueIconsContainer = document.getElementById('queue-icons');
         const queueCountLabel = document.getElementById('queue-count-label');
@@ -1364,7 +1708,6 @@
         const syncNowBtn = document.getElementById('sync-now-btn');
         const submitBtn = document.getElementById('save-button');
 
-        // ── Login progress refs ──
         const loginProgressContainer = document.getElementById('login-progress-container');
         const loginProgressBar = document.getElementById('login-progress-bar');
         const loginProgressLabel = document.getElementById('login-progress-label');
@@ -1373,7 +1716,6 @@
         const testConnBtn = document.getElementById('test-connection-btn');
         const testResultDiv = document.getElementById('test-result');
 
-        // ── State for bike validation ──
         let bikeNumberValid = false;
         let bikeNumberChecking = false;
         let bikeCheckTimeout = null;
@@ -1381,37 +1723,29 @@
         let lastInvalidShown = null;
         let isInvalidBikePopup = false;
 
-        // ── Photo state ──
         let bikePhotoBase64 = null;
         let hasPhoto = false;
-
-        // ── Camera state ──
         let cameraStream = null;
-
-        // ── Password eye toggle ──
         let passwordVisible = false;
 
-        // ── Records state ──
         let currentPage = 1;
         const pageLimit = 50;
         let totalRecords = 0;
         let currentRows = [];
         let isSearchMode = false;
         let photoStore = [];
+        let dupPhotoStore = [];
 
-        // ── Photo zoom state ──
         let photoZoomed = false;
         let originalModalWidth = 0;
         let originalModalHeight = 0;
         let naturalImgWidth = 0;
         let naturalImgHeight = 0;
 
-        // ── Dashboard state ──
         let chartTimeInstance = null;
         let chartUserInstance = null;
         let dashboardData = [];
 
-        // ── Stats refresh state ──
         let refreshInterval = null;
         let countdownSeconds = 900;
         let statsLoading = false;
@@ -1419,7 +1753,20 @@
         const statusDot = document.getElementById('status-dot');
         const refreshAllBtn = document.getElementById('refresh-all-btn');
 
-        // ── Helper: format date ──
+        // ─── Delete confirmation state ───
+        let pendingDelete = null;
+
+        // ─── Selection state ───
+        let selectedRows = new Set();
+
+        // ─── Inactivity Timer State ───
+        let inactivityRemaining = 600; // 10 minutes in seconds
+        let inactivityInterval = null;
+        let inactivityWarningShown = false;
+        let inactivityTimeoutId = null;
+        let inactivityStarted = false;
+
+        // ── Helper functions ──
         function formatDateToDMY(date) {
             if (!date || isNaN(date.getTime())) return '';
             const d = String(date.getDate()).padStart(2, '0');
@@ -1434,16 +1781,13 @@
             return `${d}/${m}/${y} ${h}:${min}:${sec}`;
         }
 
-        // ─── FIXED DATE PARSER – UK first ───
         function parseDateFromAnyString(dateStr) {
             if (!dateStr) return null;
             dateStr = dateStr.trim();
-
-            // 1. Try custom UK format matcher FIRST (DD/MM/YYYY)
             const dateTimeParts = dateStr.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})(?:[ \t]+(\d{1,2}):(\d{1,2}):(\d{1,2}))?/);
             if (dateTimeParts) {
                 let day = parseInt(dateTimeParts[1], 10);
-                let month = parseInt(dateTimeParts[2], 10) - 1; // JS months are 0‑11
+                let month = parseInt(dateTimeParts[2], 10) - 1;
                 let year = parseInt(dateTimeParts[3], 10);
                 if (year < 100) year += 2000;
                 let hours = dateTimeParts[4] ? parseInt(dateTimeParts[4], 10) : 0;
@@ -1452,13 +1796,11 @@
                 let d = new Date(year, month, day, hours, minutes, seconds);
                 if (!isNaN(d.getTime())) return d;
             }
-
-            // 2. Try month‑name format (e.g. "08 Jul 2026")
-            const monthNames = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+            const monthNames = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
             const words = dateStr.match(/(\d{1,2})\s+([a-zA-Z]{3,})\s+(\d{2,4})(?:[ \t]+(\d{1,2}):(\d{1,2}):(\d{1,2}))?/);
             if (words) {
                 let day = parseInt(words[1], 10);
-                let monthStr = words[2].toLowerCase().substring(0,3);
+                let monthStr = words[2].toLowerCase().substring(0, 3);
                 let monthIndex = monthNames.indexOf(monthStr);
                 if (monthIndex !== -1) {
                     let year = parseInt(words[3], 10);
@@ -1470,15 +1812,11 @@
                     if (!isNaN(d.getTime())) return d;
                 }
             }
-
-            // 3. Fallback to native JS parsing ONLY if custom matchers fail
             let dNative = new Date(dateStr);
             if (!isNaN(dNative.getTime())) return dNative;
-
             return null;
         }
 
-        // ── Toggle password visibility ──
         function togglePasswordVisibility() {
             const passwordInput = document.getElementById('new-password');
             const eyeIcon = document.getElementById('eye-icon');
@@ -1494,7 +1832,6 @@
             lucide.createIcons();
         }
 
-        // ── DOM references ──
         const bikeInput = document.getElementById('bike-number');
         const feedback = document.getElementById('bike-number-feedback');
         const saveBtn = document.getElementById('save-button');
@@ -1529,19 +1866,13 @@
         }
 
         function updatePhotoButton() {
-            if (hasPhoto) {
-                takePhotoText.textContent = 'Retake Photo';
-            } else {
-                takePhotoText.textContent = 'Take Photo';
-            }
+            takePhotoText.textContent = hasPhoto ? 'Retake Photo' : 'Take Photo';
             lucide.createIcons();
         }
 
         // ── Camera functions ──
         async function openCamera() {
-            if (hasPhoto) {
-                removeBikePhoto();
-            }
+            if (hasPhoto) removeBikePhoto();
             try {
                 const video = document.getElementById('camera-video');
                 const stream = await navigator.mediaDevices.getUserMedia({
@@ -1563,9 +1894,7 @@
             }
             document.getElementById('camera-video').srcObject = null;
             closeModal('camera-modal');
-            if (!hasPhoto) {
-                updatePhotoButton();
-            }
+            if (!hasPhoto) updatePhotoButton();
         }
 
         function capturePhoto() {
@@ -1605,45 +1934,58 @@
             updateSaveButton();
         }
 
-        // ── Photo viewer ──
+        // ── Photo viewers ──
         function viewPhoto(index) {
             const photo = photoStore[index];
             if (photo && photo.length > 10) {
-                const img = document.getElementById('photo-modal-img');
-                const card = document.getElementById('photo-modal-card');
-                const btn = document.getElementById('zoom-btn');
-                img.src = photo;
-                photoZoomed = false;
-                btn.textContent = 'Zoom +';
-                card.style.width = '';
-                card.style.height = '';
-                card.style.maxWidth = '';
-                card.style.maxHeight = '';
-                img.style.width = '';
-                img.style.height = '';
-                img.style.maxWidth = '';
-                img.style.maxHeight = '';
-                showModal('photo-modal');
-                setTimeout(() => {
-                    const rect = card.getBoundingClientRect();
-                    originalModalWidth = rect.width;
-                    originalModalHeight = rect.height;
-                    img.onload = function() {
-                        naturalImgWidth = img.naturalWidth;
-                        naturalImgHeight = img.naturalHeight;
-                        img.style.width = 'auto';
-                        img.style.height = 'auto';
-                        img.style.maxWidth = '100%';
-                        img.style.maxHeight = '70vh';
-                    };
-                    if (img.complete) {
-                        naturalImgWidth = img.naturalWidth;
-                        naturalImgHeight = img.naturalHeight;
-                    }
-                }, 100);
+                showPhotoInModal(photo);
             } else {
                 showToast('No photo available for this record.', 'warning');
             }
+        }
+
+        function viewDupPhoto(index) {
+            const photo = dupPhotoStore[index];
+            if (photo && photo.length > 10) {
+                showPhotoInModal(photo);
+            } else {
+                showToast('No photo available for this record.', 'warning');
+            }
+        }
+
+        function showPhotoInModal(photoData) {
+            const img = document.getElementById('photo-modal-img');
+            const card = document.getElementById('photo-modal-card');
+            const btn = document.getElementById('zoom-btn');
+            img.src = photoData;
+            photoZoomed = false;
+            btn.textContent = 'Zoom +';
+            card.style.width = '';
+            card.style.height = '';
+            card.style.maxWidth = '';
+            card.style.maxHeight = '';
+            img.style.width = '';
+            img.style.height = '';
+            img.style.maxWidth = '';
+            img.style.maxHeight = '';
+            showModal('photo-modal');
+            setTimeout(() => {
+                const rect = card.getBoundingClientRect();
+                originalModalWidth = rect.width;
+                originalModalHeight = rect.height;
+                img.onload = function() {
+                    naturalImgWidth = img.naturalWidth;
+                    naturalImgHeight = img.naturalHeight;
+                    img.style.width = 'auto';
+                    img.style.height = 'auto';
+                    img.style.maxWidth = '100%';
+                    img.style.maxHeight = '70vh';
+                };
+                if (img.complete) {
+                    naturalImgWidth = img.naturalWidth;
+                    naturalImgHeight = img.naturalHeight;
+                }
+            }, 100);
         }
 
         function closePhotoModal() {
@@ -1735,7 +2077,6 @@
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify({ action, ...payload })
                 });
-
                 console.log(`📥 Response status: ${response.status}`);
                 if (!response.ok) {
                     const text = await response.text();
@@ -1797,18 +2138,15 @@
                 queueCountLabel.textContent = '(0)';
                 syncNowBtn.classList.remove('visible');
                 syncNowBtn.disabled = true;
-                // Reset network health when queue is empty
                 syncFailCount = 0;
                 nextAllowedSyncTime = 0;
                 networkToastShown = false;
             }
-
             if (count > QUEUE_WARNING_THRESHOLD) {
                 queueWarning.classList.add('show');
             } else {
                 queueWarning.classList.remove('show');
             }
-
             localStorage.setItem('bikeQueue', JSON.stringify(pendingQueue));
         }
 
@@ -1833,13 +2171,10 @@
             return false;
         }
 
-        // ── Background sync – one record at a time ──
         function startSync() {
             if (syncIntervalId) return;
             syncIntervalId = setInterval(() => {
-                if (!isProcessing) {
-                    processQueue();
-                }
+                if (!isProcessing) processQueue();
             }, 3000);
             console.log('⏳ Sync interval started (3s).');
         }
@@ -1895,13 +2230,11 @@
                 console.error('❌ Sync error:', e);
                 if (!networkToastShown) {
                     networkToastShown = true;
-                    showToast(`Network unstable. Will retry automatically.`, 'warning');
+                    showToast('Network unstable. Will retry automatically.', 'warning');
                 }
             } finally {
                 isProcessing = false;
-                if (pendingQueue.length === 0) {
-                    stopSyncIfIdle();
-                }
+                if (pendingQueue.length === 0) stopSyncIfIdle();
             }
         }
 
@@ -1923,9 +2256,7 @@
             let processedCount = 0;
             try {
                 while (pendingQueue.length > 0) {
-                    while (isProcessing) {
-                        await new Promise(r => setTimeout(r, 100));
-                    }
+                    while (isProcessing) await new Promise(r => setTimeout(r, 100));
                     isProcessing = true;
                     try {
                         const record = pendingQueue[0];
@@ -1964,9 +2295,7 @@
                     await new Promise(r => setTimeout(r, 800));
                 }
             } finally {
-                if (pendingQueue.length > 0) {
-                    startSync();
-                }
+                if (pendingQueue.length > 0) startSync();
                 if (pendingQueue.length === 0) {
                     showToast(`Force synced ${processedCount} record(s) to DB.`, 'success');
                 } else {
@@ -1988,7 +2317,7 @@
             }
         }
 
-        // ── TEST BACKEND CONNECTION ──
+        // ── TEST BACKEND ──
         async function testBackend() {
             testResultDiv.classList.remove('hidden');
             testResultDiv.innerHTML = '🔄 Testing connection...';
@@ -1996,7 +2325,7 @@
             try {
                 const res = await apiCall('getStats', {});
                 if (res.success) {
-                    testResultDiv.innerHTML = `✅ Backend reachable.`;
+                    testResultDiv.innerHTML = '✅ Backend reachable.';
                     testResultDiv.className = 'mt-3 text-xs text-green-600 text-center';
                     showToast('Backend connection OK.', 'success');
                 } else {
@@ -2012,7 +2341,6 @@
             }
         }
 
-        // ── Clear login form ──
         function clearLoginForm() {
             document.getElementById('login-form').reset();
             testResultDiv.classList.add('hidden');
@@ -2059,6 +2387,13 @@
                 updateSaveButton();
                 updatePhotoButton();
                 updateQueueUI();
+                // Start inactivity timer if user
+                if (currentUserRole === 'user' && !inactivityStarted) {
+                    startInactivityTimer();
+                }
+            } else if (viewId === 'view-login' || viewId === 'view-admin') {
+                // Stop inactivity timer when leaving data view
+                stopInactivityTimer();
             }
             setTimeout(lucide.createIcons, 50);
         }
@@ -2090,7 +2425,6 @@
             }
         }
 
-        // ── Login progress updater ──
         function updateLoginProgress(percent, label, status) {
             loginProgressBar.style.width = percent + '%';
             loginProgressPercent.textContent = percent + '%';
@@ -2104,28 +2438,28 @@
             var panels = {
                 users: document.getElementById('panel-users'),
                 history: document.getElementById('panel-history'),
-                records: document.getElementById('panel-records')
+                records: document.getElementById('panel-records'),
+                duplicates: document.getElementById('panel-duplicates')
             };
             var tabs = {
                 users: document.getElementById('tab-users'),
                 history: document.getElementById('tab-history'),
-                records: document.getElementById('tab-records')
+                records: document.getElementById('tab-records'),
+                duplicates: document.getElementById('tab-duplicates')
             };
             for (var key in panels) {
                 if (panels[key]) {
-                    if (key === tab) {
-                        panels[key].classList.remove('hidden');
-                    } else {
-                        panels[key].classList.add('hidden');
-                    }
+                    panels[key].classList.toggle('hidden', key !== tab);
                 }
             }
-            var tabKeys = ['users', 'history', 'records'];
+            var tabKeys = ['users', 'history', 'records', 'duplicates'];
             for (var i = 0; i < tabKeys.length; i++) {
                 var t = tabs[tabKeys[i]];
                 if (t) {
                     if (tabKeys[i] === tab) {
                         t.className = 'flex-1 py-3 px-4 text-sm font-medium text-red-600 border-b-2 border-red-600 transition';
+                    } else if (tabKeys[i] === 'duplicates') {
+                        t.className = 'flex-1 py-3 px-4 text-sm font-medium text-gray-500 border-b-2 border-transparent hover:text-yellow-600 transition';
                     } else {
                         t.className = 'flex-1 py-3 px-4 text-sm font-medium text-gray-500 border-b-2 border-transparent hover:text-gray-700 transition';
                     }
@@ -2134,6 +2468,7 @@
             if (tab === 'history') loadHistory();
             if (tab === 'records') loadRecords(1);
             if (tab === 'users') loadUsers();
+            if (tab === 'duplicates') loadDuplicateTable();
             lucide.createIcons();
         }
 
@@ -2148,7 +2483,6 @@
             }
 
             testConnBtn.classList.remove('visible');
-
             loginProgressContainer.classList.add('active');
             updateLoginProgress(0, 'Connecting...', 'Initializing...');
             toggleSpinner('login', true);
@@ -2187,7 +2521,7 @@
                     showToast('Admin welcome, ' + user + '!', 'success');
                     startRefreshCycle();
                     updateLoginProgress(98, 'Loading admin data...', 'Please wait...');
-                    refreshAll(); // loads stats, users, history, records
+                    refreshAll();
                     setTimeout(() => {
                         updateLoginProgress(100, 'Welcome!', 'Login complete.');
                         setTimeout(() => {
@@ -2202,6 +2536,7 @@
                     setTimeout(() => {
                         loginProgressContainer.classList.remove('active');
                     }, 600);
+                    // Start inactivity timer (already started in switchView)
                 }
 
                 document.getElementById('login-form').reset();
@@ -2232,7 +2567,13 @@
             }
         }
 
+        // ── LOGOUT (overridden to stop timer) ──
         function logout() {
+            // Stop inactivity timer
+            stopInactivityTimer();
+            // Close any open modals
+            closeModal('inactivity-warning-modal');
+            // Clear other states
             currentUser = null;
             currentUserRole = null;
             if (refreshInterval) {
@@ -2260,6 +2601,193 @@
             testConnBtn.classList.remove('visible');
             testResultDiv.classList.add('hidden');
             testResultDiv.innerHTML = '';
+        }
+
+        // ── INACTIVITY TIMER FUNCTIONS ── (static modal size)
+
+        function startInactivityTimer() {
+            if (inactivityStarted) return;
+            if (currentUserRole !== 'user') return; // Only for regular users
+
+            inactivityStarted = true;
+            inactivityRemaining = 600; // 10 minutes in seconds
+            inactivityWarningShown = false;
+            updateTimerDisplay();
+
+            // Clear any existing interval
+            if (inactivityInterval) clearInterval(inactivityInterval);
+            if (inactivityTimeoutId) clearTimeout(inactivityTimeoutId);
+
+            // Start the countdown – update EVERY SECOND
+            inactivityInterval = setInterval(() => {
+                inactivityRemaining--;
+                // Update both the header timer and the modal countdown
+                updateTimerDisplay();
+
+                // Directly update the modal countdown element (ensures it changes)
+                const modalCountdown = document.getElementById('inactivity-countdown');
+                if (modalCountdown) {
+                    modalCountdown.textContent = inactivityRemaining > 0 ? inactivityRemaining : 0;
+                    // Flashing class for last 10 seconds (only opacity change, no scale)
+                    if (inactivityRemaining <= 10 && inactivityRemaining > 0) {
+                        modalCountdown.classList.add('flashing');
+                    } else {
+                        modalCountdown.classList.remove('flashing');
+                    }
+                }
+
+                // Show warning at 60 seconds if not already shown
+                if (inactivityRemaining <= 60 && !inactivityWarningShown) {
+                    showInactivityWarning();
+                }
+
+                // Expired?
+                if (inactivityRemaining <= 0) {
+                    clearInterval(inactivityInterval);
+                    inactivityInterval = null;
+                    logoutInactivity();
+                }
+            }, 1000);
+
+            // Attach activity listeners to reset timer
+            attachActivityListeners();
+        }
+
+        function stopInactivityTimer() {
+            if (inactivityInterval) {
+                clearInterval(inactivityInterval);
+                inactivityInterval = null;
+            }
+            if (inactivityTimeoutId) {
+                clearTimeout(inactivityTimeoutId);
+                inactivityTimeoutId = null;
+            }
+            inactivityStarted = false;
+            inactivityWarningShown = false;
+            // Remove activity listeners
+            removeActivityListeners();
+            // Reset display
+            document.getElementById('timer-display').textContent = '10:00';
+            document.getElementById('inactivity-timer').classList.remove('warning');
+        }
+
+        function resetInactivityTimer() {
+            if (!inactivityStarted) return;
+            inactivityRemaining = 600; // Reset to 10 minutes
+            inactivityWarningShown = false;
+            updateTimerDisplay();
+            // Hide warning modal if open
+            closeModal('inactivity-warning-modal');
+            document.getElementById('inactivity-timer').classList.remove('warning');
+            // Clear any pending warning timeout
+            if (inactivityTimeoutId) {
+                clearTimeout(inactivityTimeoutId);
+                inactivityTimeoutId = null;
+            }
+            // Reset the modal countdown text and flashing class
+            const modalCountdown = document.getElementById('inactivity-countdown');
+            if (modalCountdown) {
+                modalCountdown.textContent = '60'; // reset to initial display
+                modalCountdown.classList.remove('flashing');
+            }
+        }
+
+        function updateTimerDisplay() {
+            const mins = Math.floor(inactivityRemaining / 60);
+            const secs = inactivityRemaining % 60;
+            const display = document.getElementById('timer-display');
+            if (display) {
+                display.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+            }
+            const timerEl = document.getElementById('inactivity-timer');
+            if (timerEl) {
+                if (inactivityRemaining <= 60) {
+                    timerEl.classList.add('warning');
+                } else {
+                    timerEl.classList.remove('warning');
+                }
+            }
+        }
+
+        function showInactivityWarning() {
+            if (inactivityWarningShown) return;
+            inactivityWarningShown = true;
+            // Set initial countdown text
+            const modalCountdown = document.getElementById('inactivity-countdown');
+            if (modalCountdown) {
+                modalCountdown.textContent = inactivityRemaining > 0 ? inactivityRemaining : 0;
+                modalCountdown.classList.remove('flashing');
+            }
+            showModal('inactivity-warning-modal');
+        }
+
+        function stayLoggedIn() {
+            resetInactivityTimer();
+            closeModal('inactivity-warning-modal');
+            showToast('Session extended.', 'success');
+        }
+
+        async function logoutInactivity() {
+            // Flush queue and logout
+            if (inactivityInterval) {
+                clearInterval(inactivityInterval);
+                inactivityInterval = null;
+            }
+            if (inactivityTimeoutId) {
+                clearTimeout(inactivityTimeoutId);
+                inactivityTimeoutId = null;
+            }
+            closeModal('inactivity-warning-modal');
+
+            // Check if there are pending records in the queue
+            if (pendingQueue.length > 0) {
+                showToast('Flushing pending data before logout...', 'info');
+                try {
+                    await forceSync();
+                    if (pendingQueue.length > 0) {
+                        showToast(`⚠️ ${pendingQueue.length} records could not be synced. They will remain in queue.`, 'warning');
+                    } else {
+                        showToast('✅ All pending data synced successfully.', 'success');
+                    }
+                } catch (e) {
+                    console.error('Error flushing queue:', e);
+                    showToast('⚠️ Error flushing data. Some records may be lost.', 'error');
+                }
+            }
+
+            logout();
+        }
+
+        // ── ACTIVITY LISTENERS ──
+
+        let activityListenersAttached = false;
+
+        function attachActivityListeners() {
+            if (activityListenersAttached) return;
+            const events = ['mousemove', 'keydown', 'click', 'touchstart', 'scroll'];
+            const handler = function(e) {
+                if (document.getElementById('view-data').classList.contains('hidden-view') === false &&
+                    currentUserRole === 'user') {
+                    resetInactivityTimer();
+                }
+            };
+            window._inactivityHandler = handler;
+            events.forEach(evt => {
+                document.addEventListener(evt, handler);
+            });
+            activityListenersAttached = true;
+        }
+
+        function removeActivityListeners() {
+            if (!activityListenersAttached) return;
+            const events = ['mousemove', 'keydown', 'click', 'touchstart', 'scroll'];
+            if (window._inactivityHandler) {
+                events.forEach(evt => {
+                    document.removeEventListener(evt, window._inactivityHandler);
+                });
+                delete window._inactivityHandler;
+            }
+            activityListenersAttached = false;
         }
 
         // ── BIKE NUMBER VALIDATION ──
@@ -2320,7 +2848,6 @@
         document.addEventListener('DOMContentLoaded', function() {
             updateSaveButton();
             updatePhotoButton();
-
             syncNowBtn.addEventListener('click', forceSync);
 
             bikeInput.addEventListener('input', function() {
@@ -2351,7 +2878,7 @@
             });
         });
 
-        // ── QR SCANNER SUCCESS (with auto-scroll) ──
+        // ── QR SCANNER ──
         function onQrCodeSuccess(decodedText) {
             barcodeInput.value = decodedText;
             showToast('QR Code scanned successfully!', 'success');
@@ -2362,7 +2889,6 @@
             scrollToSubmit();
         }
 
-        // ── QR SCANNER (starts scanner) ──
         async function startQrScanner() {
             if (isScanning) { showToast('Scanner already active.', 'info'); return; }
             if (typeof Html5Qrcode === 'undefined') { showToast('QR scanner library failed to load. Please refresh.', 'error'); return; }
@@ -2534,7 +3060,6 @@
             }
         }
 
-        // ── loadHistory ──
         async function loadHistory() {
             var container = document.getElementById('history-list-container');
             container.innerHTML = '<p class="text-sm text-gray-500 text-center py-4"><i data-lucide="loader-2" class="w-5 h-5 animate-spin mx-auto"></i></p>';
@@ -2716,10 +3241,10 @@
         // ── STATS ──
         function setStatsLoading(loading) {
             statsLoading = loading;
-            const loaderIds = ['stat-total-loader', 'stat-users-loader', 'stat-photos-loader'];
+            const loaderIds = ['stat-total-loader', 'stat-users-loader', 'stat-photos-loader', 'stat-duplicates-loader'];
             loaderIds.forEach(id => {
                 const el = document.getElementById(id);
-                el.classList.toggle('active', loading);
+                if (el) el.classList.toggle('active', loading);
             });
             if (loading) {
                 statusDot.className = 'stat-dot loading';
@@ -2764,6 +3289,16 @@
                 if (userCount !== oldUsers) flashValue('stat-users', 'flash-red');
                 if (total !== oldPhotos) flashValue('stat-photos', 'flash-purple');
 
+                const dupRes = await apiCall('getDuplicateCount', {});
+                if (dupRes.success) {
+                    const dupCount = dupRes.duplicateCount || 0;
+                    const oldDup = parseInt(document.getElementById('stat-duplicates').textContent) || 0;
+                    document.getElementById('stat-duplicates').textContent = dupCount;
+                    if (dupCount !== oldDup) flashValue('stat-duplicates', 'flash');
+                } else {
+                    console.warn('Failed to fetch duplicate count:', dupRes.message);
+                }
+
                 countdownSeconds = 900;
                 updateTimerDisplay();
                 statusDot.className = 'stat-dot ready';
@@ -2775,7 +3310,6 @@
             }
         }
 
-        // ── Timer and refresh cycle ──
         function updateTimerDisplay() {
             if (!timerText) return;
             const mins = Math.floor(countdownSeconds / 60);
@@ -2792,9 +3326,7 @@
                 if (countdownSeconds <= 0) {
                     countdownSeconds = 0;
                     updateTimerDisplay();
-                    if (!statsLoading) {
-                        refreshAll();
-                    }
+                    if (!statsLoading) refreshAll();
                     countdownSeconds = 900;
                 } else {
                     updateTimerDisplay();
@@ -2802,19 +3334,26 @@
             }, 1000);
         }
 
-        // ── Global refresh all function ──
+        // ── Global refresh all ──
         async function refreshAll() {
-            if (statsLoading) return; // avoid multiple concurrent refreshes
+            if (statsLoading) return;
             showToast('Refreshing all data...', 'info');
             await loadStats();
             await loadUsers();
             await loadHistory();
             await loadRecords(1);
-            // If dashboard is open, we could update it, but it's not open typically; user can reopen.
+
+            if (adminTab === 'duplicates') {
+                await loadDuplicateTable();
+                const dupBadge = document.getElementById('dup-tab-badge');
+                const dupCount = document.querySelectorAll('#duplicate-container .records-table tbody tr')?.length || 0;
+                dupBadge.textContent = dupCount;
+            }
+
             showToast('All data refreshed.', 'success');
         }
 
-        // ── Date range helper (for CSV export and dashboard) ──
+        // ── Date range helper ──
         function getPeriodRange(period) {
             const now = new Date();
             const start = new Date(now);
@@ -2836,8 +3375,8 @@
                     end.setHours(23, 59, 59, 999);
                     break;
                 case 'thisweek': {
-                    const day = start.getDay(); // 0=Sun,1=Mon...
-                    const diff = (day === 0 ? 6 : day - 1); // days since Monday
+                    const day = start.getDay();
+                    const diff = (day === 0 ? 6 : day - 1);
                     start.setDate(start.getDate() - diff);
                     start.setHours(0, 0, 0, 0);
                     end = new Date(start);
@@ -2880,14 +3419,11 @@
                     showToast(res.message || 'User saved.', 'success');
                     document.getElementById('new-username').value = '';
                     document.getElementById('new-password').value = '';
-                    if (passwordVisible) {
-                        togglePasswordVisibility();
-                    }
+                    if (passwordVisible) togglePasswordVisibility();
                     loadUsers();
                     toggleSpinner('admin-add', false, 'Save User');
                 } else if (actionType === 'downloadCSV') {
                     showModal('csv-progress-modal');
-
                     const range = document.getElementById('csv-range-select').value;
                     const res = await apiCall('getCSV', {});
                     if (!res.success) throw new Error(res.message);
@@ -2927,13 +3463,7 @@
                         fields: keepIndices.map(i => header[i] || ''),
                         data: newRows
                     });
-                    const rangeLabels = {
-                        today: 'Today',
-                        yesterday: 'Yesterday',
-                        last7: 'Last 7 Days',
-                        month: 'Current Month',
-                        total: 'Total'
-                    };
+                    const rangeLabels = { today: 'Today', yesterday: 'Yesterday', last7: 'Last 7 Days', month: 'Current Month', total: 'Total' };
                     const label = rangeLabels[range] || range;
                     closeModal('csv-progress-modal');
                     downloadFile('bike_registrations_' + label.toLowerCase().replace(/\s/g, '_'), finalCsv.trim());
@@ -2972,10 +3502,7 @@
                 map[key] = (map[key] || 0) + 1;
             });
             const keys = Object.keys(map).sort();
-            return {
-                labels: keys.map(k => k.substring(5)),
-                values: keys.map(k => map[k])
-            };
+            return { labels: keys.map(k => k.substring(5)), values: keys.map(k => map[k]) };
         }
 
         function aggregateByUser(data) {
@@ -2985,10 +3512,7 @@
                 map[user] = (map[user] || 0) + 1;
             });
             const sorted = Object.entries(map).sort((a, b) => b[1] - a[1]);
-            return {
-                labels: sorted.map(item => item[0]),
-                values: sorted.map(item => item[1])
-            };
+            return { labels: sorted.map(item => item[0]), values: sorted.map(item => item[1]) };
         }
 
         function filterDataByPeriod(data, period) {
@@ -3001,7 +3525,6 @@
             });
         }
 
-        // ── Compute dashboard stat cards ──
         function computeStats(data) {
             const now = new Date();
             const todayStart = new Date(now);
@@ -3016,7 +3539,7 @@
             yesterdayEnd.setDate(yesterdayEnd.getDate() - 1);
             yesterdayEnd.setHours(23, 59, 59, 999);
 
-            const day = now.getDay(); // 0=Sun
+            const day = now.getDay();
             const diffToMon = (day === 0 ? 6 : day - 1);
             const weekStart = new Date(now);
             weekStart.setDate(weekStart.getDate() - diffToMon);
@@ -3025,7 +3548,10 @@
             weekEnd.setDate(weekEnd.getDate() + 6);
             weekEnd.setHours(23, 59, 59, 999);
 
-            let todayCount = 0, yesterdayCount = 0, weekCount = 0, totalCount = data.length;
+            let todayCount = 0,
+                yesterdayCount = 0,
+                weekCount = 0,
+                totalCount = data.length;
 
             data.forEach(row => {
                 const date = new Date(row.date);
@@ -3076,7 +3602,6 @@
                 }
                 dashboardData = dashboardRows;
 
-                // Update stat cards
                 const stats = computeStats(dashboardData);
                 document.getElementById('stat-today').textContent = stats.todayCount;
                 document.getElementById('stat-yesterday').textContent = stats.yesterdayCount;
@@ -3110,7 +3635,6 @@
             const periodTime = document.getElementById('period-select-time').value;
             const periodUser = document.getElementById('period-select-user').value;
 
-            // For time chart: use data filtered by periodTime
             const filteredTime = filterDataByPeriod(dashboardData, periodTime);
             const timeData = aggregateByDay(filteredTime);
             const ctx1 = document.getElementById('chart-time').getContext('2d');
@@ -3132,30 +3656,14 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: true,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return context.parsed.y + ' bike(s)';
-                                }
-                            }
-                        }
-                    },
+                    plugins: { legend: { display: false } },
                     scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: { stepSize: 1 },
-                            title: { display: true, text: 'Count' }
-                        },
-                        x: {
-                            title: { display: true, text: 'Day' }
-                        }
+                        y: { beginAtZero: true, ticks: { stepSize: 1 }, title: { display: true, text: 'Count' } },
+                        x: { title: { display: true, text: 'Day' } }
                     }
                 }
             });
 
-            // For user chart: use data filtered by periodUser
             const filteredUser = filterDataByPeriod(dashboardData, periodUser);
             const userData = aggregateByUser(filteredUser);
             const ctx2 = document.getElementById('chart-user').getContext('2d');
@@ -3176,28 +3684,380 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: true,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return context.parsed.y + ' bike(s)';
-                                }
-                            }
-                        }
-                    },
+                    plugins: { legend: { display: false } },
                     scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: { stepSize: 1 },
-                            title: { display: true, text: 'Count' }
-                        },
-                        x: {
-                            title: { display: true, text: 'User' }
-                        }
+                        y: { beginAtZero: true, ticks: { stepSize: 1 }, title: { display: true, text: 'Count' } },
+                        x: { title: { display: true, text: 'User' } }
                     }
                 }
             });
+        }
+
+        // ─── DELETE FUNCTIONS ───
+
+        function showSingleDeleteConfirm(rowNumber, bikeNumber) {
+            pendingDelete = { type: 'single', rowNumber: rowNumber, bikeNumber: bikeNumber };
+            showDeleteModal(`Delete Record for Bike ${bikeNumber}?`, `You are about to delete the duplicate record for bike <strong>${bikeNumber}</strong> (row ${rowNumber}).`, null, 'Delete Record');
+        }
+
+        function showBatchDeleteConfirm(selectedRecords) {
+            if (!selectedRecords || selectedRecords.length === 0) return;
+
+            let listHtml = '';
+            selectedRecords.forEach(rec => {
+                listHtml += `<div class="list-item">
+                    <span class="bike">${rec.bikeNumber}</span>
+                    <span class="time">${rec.timestamp || 'Unknown date'}</span>
+                </div>`;
+            });
+
+            pendingDelete = { type: 'batch', records: selectedRecords };
+            showDeleteModal(
+                `Delete ${selectedRecords.length} Records?`,
+                `You are about to delete <strong>${selectedRecords.length}</strong> duplicate records.`,
+                listHtml,
+                `Delete ${selectedRecords.length} Records`
+            );
+        }
+
+        function showDeleteModal(title, subtitle, listHtml, buttonText) {
+            document.getElementById('delete-confirm-title').textContent = title;
+            document.getElementById('delete-confirm-subtitle').innerHTML = subtitle;
+
+            const listContainer = document.getElementById('delete-confirm-list-container');
+            const listEl = document.getElementById('delete-confirm-list');
+
+            if (listHtml) {
+                listEl.innerHTML = listHtml;
+                listContainer.classList.remove('hidden');
+            } else {
+                listContainer.classList.add('hidden');
+                listEl.innerHTML = '';
+            }
+
+            document.getElementById('delete-confirm-btn').textContent = buttonText || 'Delete All';
+            showModal('delete-confirm-modal');
+        }
+
+        function cancelDelete() {
+            pendingDelete = null;
+            closeModal('delete-confirm-modal');
+            const btn = document.querySelector(`.btn-delete[data-row="${pendingDelete?.rowNumber || ''}"]`);
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<i data-lucide="trash-2" class="w-3 h-3"></i>';
+                lucide.createIcons();
+            }
+            clearSelection();
+        }
+
+        async function confirmDelete() {
+            if (!pendingDelete) return;
+
+            const deleteBtn = document.getElementById('delete-confirm-btn');
+            deleteBtn.disabled = true;
+            deleteBtn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Deleting...';
+
+            try {
+                if (pendingDelete.type === 'single') {
+                    const { rowNumber, bikeNumber } = pendingDelete;
+                    const res = await apiCall('deleteRecord', { rowNumber: rowNumber });
+                    if (res.success) {
+                        showToast(`✅ Record for bike ${bikeNumber} deleted successfully.`, 'success');
+                    } else {
+                        showToast(`❌ Failed to delete record: ${res.message}`, 'error');
+                    }
+                } else if (pendingDelete.type === 'batch') {
+                    const records = pendingDelete.records;
+                    let deleted = 0;
+                    let failed = 0;
+
+                    for (const rec of records) {
+                        try {
+                            const res = await apiCall('deleteRecord', { rowNumber: rec.rowNumber });
+                            if (res.success) {
+                                deleted++;
+                            } else {
+                                failed++;
+                                console.warn(`Failed to delete row ${rec.rowNumber}: ${res.message}`);
+                            }
+                        } catch (e) {
+                            failed++;
+                            console.error(`Error deleting row ${rec.rowNumber}:`, e);
+                        }
+                    }
+
+                    if (deleted > 0 && failed === 0) {
+                        showToast(`✅ Successfully deleted ${deleted} duplicate records.`, 'success');
+                    } else if (deleted > 0 && failed > 0) {
+                        showToast(`⚠️ Deleted ${deleted} records, ${failed} failed.`, 'warning');
+                    } else {
+                        showToast(`❌ Failed to delete ${failed} records.`, 'error');
+                    }
+                }
+
+                await loadDuplicateTable();
+                await loadStats();
+
+                const dupCount = document.querySelectorAll('#duplicate-container .records-table tbody tr')?.length || 0;
+                document.getElementById('dup-tab-badge').textContent = dupCount;
+
+            } catch (e) {
+                console.error('Delete error:', e);
+                showToast(`❌ Error during deletion: ${e.message}`, 'error');
+            } finally {
+                deleteBtn.disabled = false;
+                deleteBtn.textContent = 'Delete All';
+                pendingDelete = null;
+                closeModal('delete-confirm-modal');
+                clearSelection();
+            }
+        }
+
+        // ─── SELECTION FUNCTIONS ───
+
+        function toggleSelectAll() {
+            const selectAllCheckbox = document.getElementById('select-all-checkbox');
+            if (!selectAllCheckbox) return;
+
+            const checkboxes = document.querySelectorAll('#duplicate-container .dup-row-checkbox');
+            const isChecked = selectAllCheckbox.checked;
+
+            checkboxes.forEach(cb => {
+                cb.checked = isChecked;
+                const rowNum = parseInt(cb.dataset.row);
+                if (isChecked) {
+                    selectedRows.add(rowNum);
+                } else {
+                    selectedRows.delete(rowNum);
+                }
+            });
+
+            updateBatchDeleteButton();
+        }
+
+        function toggleRowCheckbox(rowNumber) {
+            const cb = document.querySelector(`.dup-row-checkbox[data-row="${rowNumber}"]`);
+            if (!cb) return;
+
+            if (cb.checked) {
+                selectedRows.add(rowNumber);
+            } else {
+                selectedRows.delete(rowNumber);
+            }
+
+            const checkboxes = document.querySelectorAll('#duplicate-container .dup-row-checkbox');
+            const selectAllCb = document.getElementById('select-all-checkbox');
+            if (selectAllCb) {
+                const allChecked = checkboxes.length > 0 && Array.from(checkboxes).every(c => c.checked);
+                selectAllCb.checked = allChecked;
+            }
+
+            updateBatchDeleteButton();
+        }
+
+        function updateBatchDeleteButton() {
+            const btn = document.getElementById('batch-delete-btn');
+            const count = selectedRows.size;
+
+            if (btn) {
+                if (count > 0) {
+                    btn.disabled = false;
+                    btn.innerHTML = `<i data-lucide="trash-2"></i> Delete <span class="count-badge">${count}</span>`;
+                    btn.classList.remove('opacity-50', 'cursor-not-allowed');
+                } else {
+                    btn.disabled = true;
+                    btn.innerHTML = `<i data-lucide="trash-2"></i> Delete <span class="count-badge">0</span>`;
+                    btn.classList.add('opacity-50', 'cursor-not-allowed');
+                }
+                lucide.createIcons();
+            }
+        }
+
+        function clearSelection() {
+            selectedRows.clear();
+            const checkboxes = document.querySelectorAll('#duplicate-container .dup-row-checkbox');
+            checkboxes.forEach(cb => cb.checked = false);
+            const selectAllCb = document.getElementById('select-all-checkbox');
+            if (selectAllCb) selectAllCb.checked = false;
+            updateBatchDeleteButton();
+        }
+
+        function getSelectedRecords() {
+            const selected = [];
+            const rows = document.querySelectorAll('#duplicate-container .dup-row-checkbox');
+            rows.forEach(cb => {
+                if (cb.checked) {
+                    const rowNumber = parseInt(cb.dataset.row);
+                    const bikeNumber = cb.dataset.bike || '';
+                    const timestamp = cb.dataset.timestamp || '';
+                    selected.push({ rowNumber, bikeNumber, timestamp });
+                }
+            });
+            return selected;
+        }
+
+        function handleBatchDelete() {
+            const selected = getSelectedRecords();
+            if (selected.length === 0) {
+                showToast('Please select at least one record to delete.', 'warning');
+                return;
+            }
+            showBatchDeleteConfirm(selected);
+        }
+
+        // ─── LOAD DUPLICATE TABLE ───
+
+        async function loadDuplicateTable() {
+            const container = document.getElementById('duplicate-container');
+            container.innerHTML = '<p class="text-sm text-gray-500 text-center py-4"><i data-lucide="loader-2" class="w-5 h-5 animate-spin mx-auto"></i></p>';
+            lucide.createIcons();
+
+            selectedRows.clear();
+
+            try {
+                const res = await apiCall('getRecords', { page: 1, limit: 1000, includeRowNumbers: true });
+                if (!res.success) throw new Error(res.message);
+
+                const allRows = res.rows || [];
+                if (allRows.length === 0) {
+                    container.innerHTML = '<p class="text-sm text-gray-500 text-center py-4">No registration data available.</p>';
+                    document.getElementById('dup-panel-badge').textContent = '0';
+                    document.getElementById('dup-tab-badge').textContent = '0';
+                    updateBatchDeleteButton();
+                    return;
+                }
+
+                const records = [];
+                allRows.forEach(item => {
+                    const row = item.data;
+                    const rowNumber = item.rowNumber;
+                    if (row.length < 5) return;
+                    const timestamp = row[0] || '';
+                    const user = row[1] || '';
+                    const bikeNumber = row[2] || '';
+                    const barcode = row[3] || '';
+                    const duplicateFlag = row[4] || '';
+                    const photo = row[5] || '';
+
+                    let dateObj = parseDateFromAnyString(timestamp);
+                    if (!dateObj) dateObj = new Date(timestamp);
+                    const timestampRaw = dateObj.getTime();
+
+                    records.push({
+                        timestamp: timestamp,
+                        timestampRaw: timestampRaw,
+                        user: user,
+                        bikeNumber: bikeNumber,
+                        barcode: barcode,
+                        duplicateFlag: duplicateFlag,
+                        photo: photo,
+                        rowNumber: rowNumber
+                    });
+                });
+
+                const groups = {};
+                records.forEach(rec => {
+                    const key = rec.bikeNumber;
+                    if (!groups[key]) groups[key] = [];
+                    groups[key].push(rec);
+                });
+
+                const duplicateGroups = [];
+                for (const [bike, recs] of Object.entries(groups)) {
+                    if (recs.length > 1) {
+                        recs.sort((a, b) => a.timestampRaw - b.timestampRaw);
+                        duplicateGroups.push({ bikeNumber: bike, records: recs });
+                    }
+                }
+
+                duplicateGroups.sort((a, b) => a.bikeNumber.localeCompare(b.bikeNumber));
+
+                if (duplicateGroups.length === 0) {
+                    container.innerHTML = '<p class="text-sm text-gray-500 text-center py-4">✅ No duplicate registrations found.</p>';
+                    document.getElementById('dup-panel-badge').textContent = '0';
+                    document.getElementById('dup-tab-badge').textContent = '0';
+                    updateBatchDeleteButton();
+                    return;
+                }
+
+                const totalDupRecords = duplicateGroups.reduce((sum, g) => sum + g.records.length, 0);
+
+                let html = `<div class="dup-table-header">
+                    <div class="record-count">Showing ${totalDupRecords} duplicate records</div>
+                    <div class="batch-delete-wrap">
+                        <button id="batch-delete-btn" class="batch-delete-btn-red" onclick="handleBatchDelete()" disabled>
+                            <i data-lucide="trash-2"></i> Delete <span class="count-badge">0</span>
+                        </button>
+                    </div>
+                </div>`;
+
+                html += `<table class="records-table dup-table"><thead><tr>`;
+                html += `<th>Bike #</th><th>Timestamp</th><th>User</th><th>QR/Barcode</th><th>Photo</th><th>Delete</th>`;
+                html += `<th class="col-checkbox"><div class="select-all-wrap"><input type="checkbox" id="select-all-checkbox" onchange="toggleSelectAll()" title="Select All" /></div></th>`;
+                html += `</tr></thead><tbody>`;
+
+                dupPhotoStore = [];
+
+                duplicateGroups.forEach(group => {
+                    const first = group.records[0];
+                    const firstTimestamp = first.timestampRaw;
+                    const firstUser = first.user;
+
+                    group.records.forEach((rec, idx) => {
+                        const isFirst = (idx === 0);
+                        const bikeIcon = `<i data-lucide="check-circle" class="w-3 h-3 text-green-500 inline"></i>`;
+
+                        let timestampIcon = isFirst ?
+                            `<i data-lucide="check-circle" class="w-3 h-3 text-green-500 inline"></i>` :
+                            (rec.timestampRaw === firstTimestamp ?
+                                `<i data-lucide="check-circle" class="w-3 h-3 text-green-500 inline"></i>` :
+                                `<i data-lucide="x-circle" class="w-3 h-3 text-red-500 inline"></i>`);
+
+                        let userIcon = isFirst ?
+                            `<i data-lucide="check-circle" class="w-3 h-3 text-green-500 inline"></i>` :
+                            (rec.user === firstUser ?
+                                `<i data-lucide="check-circle" class="w-3 h-3 text-green-500 inline"></i>` :
+                                `<i data-lucide="x-circle" class="w-3 h-3 text-red-500 inline"></i>`);
+
+                        let photoCell = '—';
+                        if (rec.photo && rec.photo.length > 10) {
+                            const idxPhoto = dupPhotoStore.length;
+                            dupPhotoStore.push(rec.photo);
+                            photoCell = `<button class="photo-view-btn" data-index="${idxPhoto}" onclick="viewDupPhoto(this.dataset.index)" title="View photo"><i data-lucide="camera" class="w-3 h-3 text-blue-600 hover:text-blue-800 cursor-pointer"></i></button>`;
+                        }
+
+                        const deleteBtn = `<button class="btn-delete" data-row="${rec.rowNumber}" onclick="showSingleDeleteConfirm(${rec.rowNumber}, '${rec.bikeNumber}')" title="Delete this record"><i data-lucide="trash-2" class="w-3 h-3"></i></button>`;
+
+                        const rowClass = rec.duplicateFlag.includes('WARNING') ? 'duplicate-warning' : '';
+                        const bgClass = isFirst ? 'bg-green-50' : '';
+
+                        html += `<tr class="${rowClass} ${bgClass}">`;
+                        html += `<td>${rec.bikeNumber} ${bikeIcon}</td>`;
+                        html += `<td>${rec.timestamp} ${timestampIcon}</td>`;
+                        html += `<td>${rec.user} ${userIcon}</td>`;
+                        html += `<td class="max-w-[60px] truncate">${rec.barcode}</td>`;
+                        html += `<td>${photoCell}</td>`;
+                        html += `<td>${deleteBtn}</td>`;
+                        html += `<td class="col-checkbox"><input type="checkbox" class="dup-row-checkbox" data-row="${rec.rowNumber}" data-bike="${rec.bikeNumber}" data-timestamp="${rec.timestamp}" onchange="toggleRowCheckbox(${rec.rowNumber})" /></td>`;
+                        html += `</tr>`;
+                    });
+                });
+
+                html += '</tbody></table>';
+                container.innerHTML = html;
+                lucide.createIcons();
+
+                document.getElementById('dup-panel-badge').textContent = totalDupRecords;
+                document.getElementById('dup-tab-badge').textContent = totalDupRecords;
+
+                clearSelection();
+
+            } catch (e) {
+                console.error('loadDuplicateTable error:', e);
+                container.innerHTML = '<p class="text-sm text-red-500 text-center py-4">❌ Failed to load duplicate records.</p>';
+                showToast('Failed to load duplicate table.', 'error');
+            }
         }
 
         // ── KEYBOARD SHORTCUTS ──
@@ -3209,13 +4069,16 @@
             if (e.key === 'Escape') {
                 var modals = document.querySelectorAll('.modal-overlay:not(.hidden-view)');
                 for (var i = 0; i < modals.length; i++) {
-                    if (modals[i].id === 'qr-scanner-modal') { stopQrScanner(); }
-                    else if (modals[i].id === 'camera-modal') { closeCamera(); }
-                    else if (modals[i].id === 'photo-modal') { closePhotoModal(); }
-                    else if (modals[i].id === 'dashboard-modal') { closeDashboard(); }
-                    else if (modals[i].id === 'alert-modal') { closeAlertModal(); }
-                    else if (modals[i].id === 'csv-progress-modal') { closeModal('csv-progress-modal'); }
-                    else { closeModal(modals[i].id); }
+                    var id = modals[i].id;
+                    if (id === 'qr-scanner-modal') { stopQrScanner(); }
+                    else if (id === 'camera-modal') { closeCamera(); }
+                    else if (id === 'photo-modal') { closePhotoModal(); }
+                    else if (id === 'dashboard-modal') { closeDashboard(); }
+                    else if (id === 'alert-modal') { closeAlertModal(); }
+                    else if (id === 'csv-progress-modal') { closeModal('csv-progress-modal'); }
+                    else if (id === 'delete-confirm-modal') { cancelDelete(); }
+                    else if (id === 'inactivity-warning-modal') { stayLoggedIn(); }
+                    else { closeModal(id); }
                 }
             }
         });
@@ -3233,25 +4096,9 @@
 
         console.log(`✅ QR Code Bike Registration System ready (${APP_VERSION}).`);
         console.log('📊 GAS URL: ' + GAS_WEB_APP_URL);
-        console.log('📸 Photo: WebP format, 200px, quality 0.7.');
-        console.log('🚲 Master list cached, validation instant.');
-        console.log('⏳ Individual record sync every 3s (one at a time).');
-        console.log('📦 Batch sending removed – each record sent individually.');
-        console.log('📊 Stats: using getLastRow() for speed.');
-        console.log('📁 CSV: Papa Parse, removes photo column.');
-        console.log('🖼️ Photo zoom 150% with instant resize.');
-        console.log('🔔 Sync toast shows only once when queue is fully cleared.');
-        console.log('⚠️ Queue warning appears when > 25 pending records.');
-        console.log('🔄 "Sync Now" button appears only when queue >= 25 (0.8s delay between sends).');
-        console.log('👁️ Visibility change listener triggers sync when tab becomes visible.');
-        console.log('🔒 Processing lock prevents overlapping syncs.');
         console.log('📌 Version: ' + APP_VERSION);
-        console.log('📱 After QR scan, page scrolls smoothly to Submit button.');
-        console.log('📅 Admin reports display raw dates from backend (dd/mm/yyyy HH:mm:ss).');
-        console.log('📶 Mobile optimised: small payloads, one record at a time.');
-        console.log('📊 Login progress bar now appears directly under the Login button.');
-        console.log('🔌 "Test Backend Connection" button appears only on network login failures.');
-        console.log('🔄 Global refresh button now refreshes stats, users, history, and records in one go.');
+        console.log('⏰ Inactivity timer: 10 minutes for regular users, auto-flush queue on logout.');
+        console.log('⌛ Modal countdown now updates live and stays the same size.');
     </script>
 </body>
 </html>
