@@ -577,6 +577,14 @@
             position: relative;
             overflow: hidden;
             transition: transform 0.2s ease;
+            cursor: default;
+        }
+        .stat-card.clickable {
+            cursor: pointer;
+        }
+        .stat-card.clickable:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
         }
         .stat-card .stat-loader {
             position: absolute;
@@ -905,14 +913,42 @@
         /* ─── Duplicate table – tighter spacing ─── */
         .dup-table {
             font-size: 0.7rem;
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            min-width: 600px;
         }
         .dup-table th {
-            padding: 0.2rem 0.3rem !important;
+            padding: 0.3rem 0.4rem !important;
             font-size: 0.65rem;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.15s;
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            background: #f9fafb !important;
+            border-bottom: 2px solid #d1d5db;
+            white-space: nowrap;
+        }
+        .dup-table th:hover {
+            background: #e5e7eb !important;
+        }
+        .dup-table th .sort-indicator {
+            display: inline-block;
+            margin-left: 0.2rem;
+            font-size: 0.6rem;
+            opacity: 0.5;
+            transition: opacity 0.2s;
+        }
+        .dup-table th.sort-active .sort-indicator {
+            opacity: 1;
+            font-weight: 700;
         }
         .dup-table td {
             padding: 0.15rem 0.3rem !important;
             white-space: nowrap;
+            background: #fff;
         }
         .dup-table td .lucide {
             width: 0.9rem;
@@ -936,8 +972,77 @@
             transform: scale(0.9);
         }
         .dup-table .btn-delete:disabled {
-            opacity: 0.4;
+            opacity: 0.3;
             cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        /* ─── Deleted row styling – darker & thicker ─── */
+        .dup-table tr.deleted {
+            opacity: 0.75;
+            background-color: #d1d5db !important;
+        }
+        .dup-table tr.deleted td {
+            text-decoration: line-through;
+            text-decoration-thickness: 3px;
+            text-decoration-color: #4b5563;
+            color: #4b5563;
+            opacity: 0.85;
+        }
+        .dup-table tr.deleted .btn-delete {
+            opacity: 0.3;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        .dup-table tr.deleted .dup-row-checkbox {
+            opacity: 0.3;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        .dup-table tr.deleted .photo-view-btn {
+            opacity: 0.4;
+            pointer-events: none;
+        }
+        .dup-table tr.deleted td .lucide {
+            opacity: 0.4;
+        }
+
+        /* ─── STICKY HEADERS for duplicate table ─── */
+        #panel-duplicates {
+            overflow-y: auto;
+            max-height: 70vh;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        #duplicate-container {
+            overflow-x: auto;
+            flex: 1;
+            min-height: 0;
+            position: relative;
+        }
+        #duplicate-container .dup-table-wrap {
+            display: inline-block;
+            min-width: 100%;
+        }
+        .dup-table thead {
+            position: sticky;
+            top: 0;
+            z-index: 30;
+        }
+        .dup-table thead th {
+            background: #f9fafb !important;
+            position: sticky;
+            top: 0;
+            z-index: 31;
+            border-bottom: 2px solid #d1d5db;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+        .dup-table thead th.sortable {
+            cursor: pointer;
+        }
+        .dup-table thead th.sortable:hover {
+            background: #e5e7eb !important;
         }
 
         /* ─── Red batch delete button with counter ─── */
@@ -985,6 +1090,31 @@
             font-weight: 700;
             min-width: 1.2rem;
             text-align: center;
+        }
+        .batch-delete-btn-grey {
+            background: #f3f4f6;
+            color: #4b5563;
+            border: 1px solid #e5e7eb;
+            padding: 0.3rem 0.8rem;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: background 0.2s, opacity 0.2s;
+        }
+        .batch-delete-btn-grey:hover:not(:disabled) {
+            background: #e5e7eb;
+        }
+        .batch-delete-btn-grey:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .batch-delete-btn-grey .lucide {
+            width: 0.9rem;
+            height: 0.9rem;
         }
 
         /* ─── Checkbox column styles ─── */
@@ -1067,7 +1197,7 @@
             }
         }
 
-        /* ─── Table header with batch delete ─── */
+        /* ─── Table header with batch delete and refresh ─── */
         .dup-table-header {
             display: flex;
             justify-content: space-between;
@@ -1075,15 +1205,17 @@
             flex-wrap: wrap;
             gap: 0.5rem;
             margin-bottom: 0.5rem;
+            flex-shrink: 0;
         }
         .dup-table-header .record-count {
             font-size: 0.7rem;
             color: #6b7280;
         }
-        .dup-table-header .batch-delete-wrap {
+        .dup-table-header .actions {
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            flex-wrap: wrap;
         }
 
         /* ─── Inactivity Timer ─── */
@@ -1111,7 +1243,7 @@
             50% { opacity: 0.5; }
         }
 
-        /* ─── Inactivity Warning Modal ─── (fixed size) */
+        /* ─── Inactivity Warning Modal ─── */
         #inactivity-warning-modal .modal-card {
             max-width: 420px;
             border-top-color: #f59e0b;
@@ -1136,7 +1268,6 @@
             font-weight: 700;
             color: #dc2626;
             margin: 0.25rem 0;
-            /* Fixed width to prevent size change */
             min-width: 3.5rem;
             display: inline-block;
             font-variant-numeric: tabular-nums;
@@ -1167,6 +1298,146 @@
                 min-width: 2.5rem;
             }
         }
+
+        /* ─── User List Modal with sticky header ─── */
+        #user-list-modal .modal-card {
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            max-height: 90vh;
+        }
+        #user-list-modal .modal-header {
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 20;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        #user-list-modal .modal-header .title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        #user-list-modal .modal-header .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            line-height: 1.8rem;
+            color: #6b7280;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        #user-list-modal .modal-header .close-btn:hover {
+            color: #1f2937;
+        }
+        #user-list-modal .modal-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+        #user-list-modal .modal-body .user-list-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.6rem 0.8rem;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        #user-list-modal .modal-body .user-list-item:last-child {
+            border-bottom: none;
+        }
+        #user-list-modal .modal-body .user-list-item .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+        #user-list-modal .modal-body .user-list-item .user-info .username {
+            font-weight: 600;
+            color: #1f2937;
+        }
+        #user-list-modal .modal-body .user-list-item .user-info .role {
+            font-size: 0.7rem;
+            color: #6b7280;
+        }
+        #user-list-modal .modal-body .user-list-item .btn-delete-user {
+            background: none;
+            border: none;
+            color: #dc2626;
+            cursor: pointer;
+            padding: 0.2rem 0.4rem;
+            transition: color 0.2s, transform 0.1s;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.8rem;
+        }
+        #user-list-modal .modal-body .user-list-item .btn-delete-user:hover {
+            color: #991b1b;
+            transform: scale(1.05);
+        }
+        #user-list-modal .modal-body .user-list-item .btn-delete-user:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        #user-list-modal .modal-body .loading-spinner {
+            text-align: center;
+            padding: 2rem 0;
+        }
+        #user-list-modal .modal-body .loading-spinner .lucide {
+            width: 2rem;
+            height: 2rem;
+            color: #16a34a;
+            animation: spin 1s linear infinite;
+        }
+        #user-list-modal .modal-body .no-users {
+            text-align: center;
+            color: #6b7280;
+            padding: 1rem 0;
+        }
+        @media (max-width: 480px) {
+            #user-list-modal .modal-card {
+                max-width: 95vw;
+            }
+        }
+
+        /* ─── Dashboard modal refresh button ─── */
+        #dashboard-modal .modal-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        #dashboard-modal .refresh-dashboard-btn {
+            background: none;
+            border: none;
+            color: #6b7280;
+            cursor: pointer;
+            padding: 0.25rem;
+            transition: color 0.2s, transform 0.2s;
+            display: flex;
+            align-items: center;
+        }
+        #dashboard-modal .refresh-dashboard-btn:hover {
+            color: #1f2937;
+            transform: rotate(45deg);
+        }
+        #dashboard-modal .refresh-dashboard-btn.spinning .lucide {
+            animation: spin 1s linear infinite;
+        }
+
+        /* ─── Ensure duplicate panel is hidden by default ─── */
+        #panel-duplicates.hidden {
+            display: none !important;
+        }
+        #panel-records:not(.hidden) {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -1175,7 +1446,7 @@
 
     <!-- ========== VIEW 1: LOGIN ========== -->
     <div id="view-login" class="w-full max-w-md card p-6 md:p-8">
-        <span class="version-badge login-version">v3.19</span>
+        <span class="version-badge login-version">v3.27</span>
         <div class="text-center mb-6">
             <div class="flex justify-center mb-3">
                 <i data-lucide="bike" class="w-14 h-14 text-red-600"></i>
@@ -1230,12 +1501,11 @@
             </h1>
             <div class="flex items-center gap-2">
                 <span id="logged-in-user" class="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full font-medium"></span>
-                <!-- Inactivity Timer -->
                 <span id="inactivity-timer" class="inactivity-timer">
                     <i data-lucide="clock" class="w-3 h-3"></i>
                     <span id="timer-display">10:00</span>
                 </span>
-                <span class="version-badge">v3.19</span>
+                <span class="version-badge">v3.27</span>
             </div>
         </div>
 
@@ -1327,13 +1597,12 @@
                 <button onclick="logout()" class="text-sm text-gray-500 hover:text-gray-800 flex items-center gap-1 transition">
                     <i data-lucide="log-out" class="w-4 h-4"></i> Log Out
                 </button>
-                <span class="version-badge">v3.19</span>
+                <span class="version-badge">v3.27</span>
             </div>
         </div>
 
         <!-- Stats cards with loaders – 4 CARDS -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
-            <!-- Total Registrations (red) -->
             <div class="stat-card bg-red-50 p-3 rounded-xl text-center border border-red-100 relative">
                 <div id="stat-total-loader" class="stat-loader active">
                     <i data-lucide="loader-2" class="w-6 h-6 animate-spin text-red-600"></i>
@@ -1341,17 +1610,14 @@
                 <div id="stat-total" class="text-2xl font-bold text-red-700 stat-value">0</div>
                 <div class="stat-label">Registrations</div>
             </div>
-
-            <!-- Total Users (green) -->
-            <div class="stat-card bg-green-50 p-3 rounded-xl text-center border border-green-100 relative">
+            <!-- Green tile – clickable -->
+            <div class="stat-card bg-green-50 p-3 rounded-xl text-center border border-green-100 relative clickable" onclick="openUserListModal()" title="Click to manage users">
                 <div id="stat-users-loader" class="stat-loader active">
                     <i data-lucide="loader-2" class="w-6 h-6 animate-spin text-green-600"></i>
                 </div>
                 <div id="stat-users" class="text-2xl font-bold text-green-700 stat-value">0</div>
                 <div class="stat-label">Total Users</div>
             </div>
-
-            <!-- QR Scans (purple) -->
             <div class="stat-card bg-purple-50 p-3 rounded-xl text-center border border-purple-100 relative">
                 <div id="stat-photos-loader" class="stat-loader active">
                     <i data-lucide="loader-2" class="w-6 h-6 animate-spin text-purple-600"></i>
@@ -1359,8 +1625,6 @@
                 <div id="stat-photos" class="text-2xl font-bold text-purple-700 stat-value">0</div>
                 <div class="stat-label">QR Scans</div>
             </div>
-
-            <!-- Duplicates Bikes Scans (yellow) -->
             <div class="stat-card bg-yellow-50 p-3 rounded-xl text-center border border-yellow-100 relative">
                 <div id="stat-duplicates-loader" class="stat-loader active">
                     <i data-lucide="loader-2" class="w-6 h-6 animate-spin text-yellow-600"></i>
@@ -1411,16 +1675,10 @@
             </div>
         </div>
 
-        <!-- ===== TABBED INTERFACE ===== -->
-        <div class="border border-gray-200 rounded-xl overflow-hidden flex-1">
-            <div class="flex border-b border-gray-200 bg-gray-50 overflow-x-auto">
-                <button onclick="switchAdminTab('users')" id="tab-users" class="flex-1 py-3 px-4 text-sm font-medium text-red-600 border-b-2 border-red-600 transition whitespace-nowrap">
-                    <i data-lucide="users" class="w-4 h-4 inline mr-1"></i> Users
-                </button>
-                <button onclick="switchAdminTab('history')" id="tab-history" class="flex-1 py-3 px-4 text-sm font-medium text-gray-500 border-b-2 border-transparent hover:text-gray-700 transition whitespace-nowrap">
-                    <i data-lucide="history" class="w-4 h-4 inline mr-1"></i> History
-                </button>
-                <button onclick="switchAdminTab('records')" id="tab-records" class="flex-1 py-3 px-4 text-sm font-medium text-gray-500 border-b-2 border-transparent hover:text-gray-700 transition whitespace-nowrap">
+        <!-- ===== TABBED INTERFACE (only Records and Duplicates) ===== -->
+        <div class="border border-gray-200 rounded-xl overflow-hidden flex-1 flex flex-col min-h-0">
+            <div class="flex border-b border-gray-200 bg-gray-50 overflow-x-auto flex-shrink-0">
+                <button onclick="switchAdminTab('records')" id="tab-records" class="flex-1 py-3 px-4 text-sm font-medium text-red-600 border-b-2 border-red-600 transition whitespace-nowrap">
                     <i data-lucide="list" class="w-4 h-4 inline mr-1"></i> All Records
                 </button>
                 <button onclick="switchAdminTab('duplicates')" id="tab-duplicates" class="flex-1 py-3 px-4 text-sm font-medium text-gray-500 border-b-2 border-transparent hover:text-yellow-600 transition whitespace-nowrap">
@@ -1429,28 +1687,8 @@
                 </button>
             </div>
 
-            <!-- Users Panel -->
-            <div id="panel-users" class="p-4 max-h-64 overflow-y-auto scrollable">
-                <div class="flex justify-between items-center mb-3">
-                    <span class="text-sm font-medium text-gray-600">Manage system users</span>
-                </div>
-                <div id="user-list-container" class="space-y-2">
-                    <p class="text-sm text-gray-500 text-center py-4">Loading…</p>
-                </div>
-            </div>
-
-            <!-- History Panel -->
-            <div id="panel-history" class="hidden p-4 max-h-64 overflow-y-auto scrollable">
-                <div class="flex justify-between items-center mb-3">
-                    <span class="text-sm font-medium text-gray-600">Recent registrations</span>
-                </div>
-                <div id="history-list-container" class="space-y-2">
-                    <p class="text-sm text-gray-500 text-center py-4">Loading…</p>
-                </div>
-            </div>
-
-            <!-- All Records Panel -->
-            <div id="panel-records" class="hidden p-4 max-h-96 overflow-y-auto scrollable">
+            <!-- Records Panel -->
+            <div id="panel-records" class="p-4 overflow-y-auto scrollable" style="max-height: 400px;">
                 <div class="flex justify-between items-center mb-3">
                     <span class="text-sm font-medium text-gray-600">All bike registrations</span>
                 </div>
@@ -1469,20 +1707,20 @@
                 </div>
             </div>
 
-            <!-- Duplicates Panel -->
-            <div id="panel-duplicates" class="hidden p-4 max-h-[70vh] overflow-y-auto scrollable">
-                <div class="flex justify-between items-center mb-3">
+            <!-- Duplicates Panel – strictly hidden when not on duplicates tab -->
+            <div id="panel-duplicates" class="hidden p-4 flex-1 min-h-0 overflow-y-auto scrollable">
+                <div class="flex justify-between items-center mb-3 flex-shrink-0">
                     <span class="text-sm font-medium text-yellow-600 flex items-center gap-2">
                         <i data-lucide="alert-triangle" class="w-4 h-4"></i>
                         Potential Duplicate Bikes
                         <span id="dup-panel-badge" class="text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-full ml-1">0</span>
                     </span>
                     <span class="text-xs text-gray-400 flex items-center gap-2">
-                        <i data-lucide="check-square" class="w-3 h-3"></i> Select up to 5 records
+                        <i data-lucide="check-square" class="w-3 h-3"></i> Select up to 10 records
                     </span>
                 </div>
-                <div id="duplicate-container" class="overflow-x-auto">
-                    <p class="text-sm text-gray-500 text-center py-4">Loading duplicate records…</p>
+                <div id="duplicate-container" class="overflow-x-auto flex-1 min-h-0">
+                    <p class="text-sm text-gray-500 text-center py-4">Click the tab to load duplicates.</p>
                 </div>
             </div>
         </div>
@@ -1549,6 +1787,28 @@
         </div>
     </div>
 
+    <!-- ─── USER LIST MODAL (with sticky header) ─── -->
+    <div id="user-list-modal" class="hidden-view fixed inset-0 modal-overlay z-[120]">
+        <div class="modal-card border-t-4 border-green-500">
+            <!-- Sticky header -->
+            <div class="modal-header">
+                <div class="title">
+                    <i data-lucide="users" class="w-5 h-5 text-green-600"></i> Manage Users
+                </div>
+                <button onclick="closeUserListModal()" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body" id="user-list-modal-body">
+                <div class="loading-spinner" id="user-list-loading">
+                    <i data-lucide="loader-2" class="animate-spin mx-auto"></i>
+                    <p class="text-sm text-gray-500 mt-2">Loading users…</p>
+                </div>
+                <div id="user-list-container-modal" class="hidden">
+                    <!-- users will be rendered here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- QR Scanner Modal -->
     <div id="qr-scanner-modal" class="hidden-view fixed inset-0 modal-overlay z-50">
         <div class="modal-card max-w-md p-5">
@@ -1608,14 +1868,19 @@
         </div>
     </div>
 
-    <!-- Dashboard Modal -->
+    <!-- Dashboard Modal – with manual refresh button -->
     <div id="dashboard-modal" class="hidden-view fixed inset-0 modal-overlay z-[80]">
         <div class="modal-card p-3 md:p-4" id="dashboard-modal-card">
             <div class="flex justify-between items-center mb-2 md:mb-3">
                 <h2 class="text-base md:text-lg font-bold text-gray-800 flex items-center gap-2">
                     <i data-lucide="bar-chart-2" class="w-5 h-5 text-red-600"></i> Progress Dashboard
                 </h2>
-                <button onclick="closeDashboard()" class="text-gray-500 hover:text-gray-800 text-2xl leading-none close-btn">&times;</button>
+                <div class="modal-header-actions">
+                    <button class="refresh-dashboard-btn" onclick="refreshDashboard()" title="Refresh dashboard data">
+                        <i data-lucide="refresh-cw" class="w-5 h-5"></i>
+                    </button>
+                    <button onclick="closeDashboard()" class="text-gray-500 hover:text-gray-800 text-2xl leading-none close-btn">&times;</button>
+                </div>
             </div>
             <div id="dashboard-content">
                 <div class="dashboard-loading" id="dashboard-loading">
@@ -1672,17 +1937,16 @@
     </div>
 
     <script>
-        console.log('🚲 QR Code Bike Registration System starting...');
+        console.log('🚲 QR Code Bike Registration System starting... (v3.27)');
 
         // ─── CONFIGURATION ───
-        // Updated URL v3.19
         const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzCpyoHw7x20SXFJbXRJASeMrthPcoMOUGkUGfEk4eeKbvHyoDLWw0S31KwYarutjxX7w/exec";
-        const APP_VERSION = "v3.19";
+        const APP_VERSION = "v3.27";
 
         // ─── State ───
         let currentUser = null;
         let currentUserRole = null;
-        let adminTab = 'users';
+        let adminTab = 'records'; // default to 'records'
         let qrScannerInstance = null;
         let isScanning = false;
         const barcodeInput = document.getElementById('barcode-value');
@@ -1754,10 +2018,17 @@
 
         // ─── Selection state ───
         let selectedRows = new Set();
-        const MAX_SELECTION = 5; // limit to 5 records
+        const MAX_SELECTION = 10;
+
+        // ─── Deleted rows ───
+        let deletedRows = new Set();
+
+        // ─── Sorting state ───
+        let sortField = null;
+        let sortDirection = 'asc';
 
         // ─── Inactivity Timer State ───
-        let inactivityRemaining = 600; // 10 minutes in seconds
+        let inactivityRemaining = 600;
         let inactivityInterval = null;
         let inactivityWarningShown = false;
         let inactivityTimeoutId = null;
@@ -2384,12 +2655,10 @@
                 updateSaveButton();
                 updatePhotoButton();
                 updateQueueUI();
-                // Start inactivity timer if user
                 if (currentUserRole === 'user' && !inactivityStarted) {
                     startInactivityTimer();
                 }
             } else if (viewId === 'view-login' || viewId === 'view-admin') {
-                // Stop inactivity timer when leaving data view
                 stopInactivityTimer();
             }
             setTimeout(lucide.createIcons, 50);
@@ -2429,27 +2698,33 @@
             if (status) loginProgressStatus.textContent = status;
         }
 
-        // ── ADMIN TAB SWITCHING ──
+        // ── ADMIN TAB SWITCHING (fixed visibility) ──
         function switchAdminTab(tab) {
             adminTab = tab;
             var panels = {
-                users: document.getElementById('panel-users'),
-                history: document.getElementById('panel-history'),
                 records: document.getElementById('panel-records'),
                 duplicates: document.getElementById('panel-duplicates')
             };
             var tabs = {
-                users: document.getElementById('tab-users'),
-                history: document.getElementById('tab-history'),
                 records: document.getElementById('tab-records'),
                 duplicates: document.getElementById('tab-duplicates')
             };
+
+            // Toggle visibility using both class and display for safety
             for (var key in panels) {
                 if (panels[key]) {
-                    panels[key].classList.toggle('hidden', key !== tab);
+                    if (key === tab) {
+                        panels[key].classList.remove('hidden');
+                        panels[key].style.display = ''; // remove inline display if any
+                    } else {
+                        panels[key].classList.add('hidden');
+                        panels[key].style.display = 'none';
+                    }
                 }
             }
-            var tabKeys = ['users', 'history', 'records', 'duplicates'];
+
+            // Update tab styles
+            var tabKeys = ['records', 'duplicates'];
             for (var i = 0; i < tabKeys.length; i++) {
                 var t = tabs[tabKeys[i]];
                 if (t) {
@@ -2462,10 +2737,19 @@
                     }
                 }
             }
-            if (tab === 'history') loadHistory();
-            if (tab === 'records') loadRecords(1);
-            if (tab === 'users') loadUsers();
-            if (tab === 'duplicates') loadDuplicateTable();
+
+            // Load content based on tab
+            if (tab === 'records') {
+                loadRecords(1);
+                // Ensure duplicates container is cleared and hidden
+                document.getElementById('duplicate-container').innerHTML = '<p class="text-sm text-gray-500 text-center py-4">Click the tab to load duplicates.</p>';
+            }
+            if (tab === 'duplicates') {
+                // Reset sorting when switching to duplicates tab
+                sortField = null;
+                sortDirection = 'asc';
+                loadDuplicateTable();
+            }
             lucide.createIcons();
         }
 
@@ -2505,7 +2789,7 @@
                 await new Promise(r => setTimeout(r, 300));
 
                 if (currentUserRole === 'admin') {
-                    updateLoginProgress(85, 'Loading admin data...', 'Fetching users, history and records...');
+                    updateLoginProgress(85, 'Loading admin data...', 'Fetching records...');
                 } else {
                     updateLoginProgress(88, 'Setting up...', 'Preparing registration form...');
                 }
@@ -2518,7 +2802,13 @@
                     showToast('Admin welcome, ' + user + '!', 'success');
                     startRefreshCycle();
                     updateLoginProgress(98, 'Loading admin data...', 'Please wait...');
-                    refreshAll();
+                    // Initial load: stats and records only
+                    await loadStats();
+                    // Ensure default tab is records and panels are correct
+                    switchAdminTab('records');
+                    // Update duplicate badge from stats
+                    const dupCount = parseInt(document.getElementById('stat-duplicates').textContent) || 0;
+                    document.getElementById('dup-tab-badge').textContent = dupCount;
                     setTimeout(() => {
                         updateLoginProgress(100, 'Welcome!', 'Login complete.');
                         setTimeout(() => {
@@ -2533,7 +2823,6 @@
                     setTimeout(() => {
                         loginProgressContainer.classList.remove('active');
                     }, 600);
-                    // Start inactivity timer (already started in switchView)
                 }
 
                 document.getElementById('login-form').reset();
@@ -2564,13 +2853,11 @@
             }
         }
 
-        // ── LOGOUT (overridden to stop timer) ──
+        // ── LOGOUT ──
         function logout() {
-            // Stop inactivity timer
             stopInactivityTimer();
-            // Close any open modals
             closeModal('inactivity-warning-modal');
-            // Clear other states
+            closeModal('user-list-modal');
             currentUser = null;
             currentUserRole = null;
             if (refreshInterval) {
@@ -2993,92 +3280,74 @@
 
         // ── ADMIN FUNCTIONS ──
 
-        async function loadUsers() {
-            var container = document.getElementById('user-list-container');
-            container.innerHTML = '<p class="text-sm text-gray-500 text-center py-4"><i data-lucide="loader-2" class="w-5 h-5 animate-spin mx-auto"></i></p>';
-            lucide.createIcons();
+        // ── USER LIST MODAL (on-demand) ──
+        async function openUserListModal() {
+            showModal('user-list-modal');
+            const loading = document.getElementById('user-list-loading');
+            const container = document.getElementById('user-list-container-modal');
+            // Reset content
+            loading.classList.remove('hidden');
+            container.classList.add('hidden');
+            container.innerHTML = '';
+
             try {
-                var res = await apiCall('getUsers', {});
+                const res = await apiCall('getUsers', {});
                 if (!res.success) throw new Error(res.message);
-                container.innerHTML = '';
-                if (!res.users || res.users.length === 0) {
-                    container.innerHTML = '<p class="text-sm text-gray-500 text-center py-4">No users found.</p>';
-                    return;
-                }
-                for (var i = 0; i < res.users.length; i++) {
-                    var u = res.users[i];
-                    var isAdmin = u.role && u.role.toLowerCase() === 'admin';
-                    container.innerHTML += '<div class="flex items-center justify-between p-3 bg-white rounded-xl border border-gray-200 shadow-sm">' +
-                        '<div class="flex flex-col">' +
-                        '<span class="font-medium text-gray-800">' + u.username + '</span>' +
-                        '<span class="text-xs text-gray-500">Password: ' + (u.password || 'Not set') + '</span>' +
-                        '<span class="text-xs text-gray-400">' + u.role + '</span>' +
-                        '</div>' +
-                        '<div class="flex items-center gap-1.5">' +
-                        (isAdmin ? '<span class="text-xs text-gray-400 italic px-2">protected</span>' :
-                            '<button onclick="deleteUserAction(\'' + u.username + '\')" class="p-2 rounded-xl text-xs font-medium bg-red-50 text-red-600 hover:bg-red-100 transition" title="Delete"><i data-lucide="trash-2" class="w-4 h-4"></i></button>'
-                            ) +
-                        '</div></div>';
-                }
+                loading.classList.add('hidden');
+                container.classList.remove('hidden');
+                renderUserListModal(res.users || []);
                 lucide.createIcons();
             } catch (err) {
-                container.innerHTML = '<p class="text-sm text-red-500 text-center py-4">Failed to load users.</p>';
+                loading.classList.add('hidden');
+                container.classList.remove('hidden');
+                container.innerHTML = `<p class="text-sm text-red-500 text-center py-4">Failed to load users: ${err.message}</p>`;
                 showToast('Failed to fetch users.', 'error');
             }
         }
 
-        async function deleteUserAction(username) {
-            if (!confirm('Are you sure you want to delete user \'' + username + '\'?')) return;
+        function renderUserListModal(users) {
+            const container = document.getElementById('user-list-container-modal');
+            if (!users || users.length === 0) {
+                container.innerHTML = '<p class="text-sm text-gray-500 text-center py-4">No users found.</p>';
+                return;
+            }
+            let html = '';
+            for (var i = 0; i < users.length; i++) {
+                var u = users[i];
+                var isAdmin = u.role && u.role.toLowerCase() === 'admin';
+                html += `<div class="user-list-item">
+                    <div class="user-info">
+                        <span class="username">${u.username}</span>
+                        <span class="role">${u.role}</span>
+                    </div>
+                    ${isAdmin ? '<span class="text-xs text-gray-400 italic">protected</span>' :
+                        `<button class="btn-delete-user" onclick="deleteUserFromModal('${u.username}')" title="Delete user">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i> Delete
+                        </button>`
+                    }
+                </div>`;
+            }
+            container.innerHTML = html;
+            lucide.createIcons();
+        }
+
+        async function deleteUserFromModal(username) {
+            if (!confirm(`Are you sure you want to delete user '${username}'?`)) return;
             try {
-                var res = await apiCall('deleteUser', { username: username });
+                const res = await apiCall('deleteUser', { username: username });
                 if (!res.success) throw new Error(res.message);
-                showToast('User \'' + username + '\' deleted.', 'info');
-                loadUsers();
+                showToast(`User '${username}' deleted.`, 'info');
+                // Update modal list
+                await openUserListModal(); // re-fetch and re-render
+                // Update the stat tile
+                await loadStats();
             } catch (err) {
                 showToast(err.message || 'Deletion failed.', 'error');
             }
         }
 
-        async function loadHistory() {
-            var container = document.getElementById('history-list-container');
-            container.innerHTML = '<p class="text-sm text-gray-500 text-center py-4"><i data-lucide="loader-2" class="w-5 h-5 animate-spin mx-auto"></i></p>';
-            lucide.createIcons();
-            try {
-                var res = await apiCall('getCSV', {});
-                if (res.success) {
-                    const csvData = res.csvData;
-                    const parseResult = Papa.parse(csvData, {
-                        header: false,
-                        skipEmptyLines: true,
-                        trimHeaders: false
-                    });
-                    const rows = parseResult.data;
-                    if (rows.length > 1) {
-                        const dataRows = rows.slice(1).filter(row => row.length >= 4);
-                        dataRows.reverse();
-                        const maxDisplay = Math.min(dataRows.length, 10);
-                        container.innerHTML = '';
-                        for (let i = 0; i < maxDisplay; i++) {
-                            const cols = dataRows[i];
-                            let dateDisplay = cols[0] || '';
-                            const duplicateNote = cols[4] ? '⚠️' : '✓';
-                            container.innerHTML += '<div class="flex items-center justify-between p-3 bg-white rounded-xl border border-gray-200 shadow-sm text-sm">' +
-                                '<div><span class="font-mono font-medium text-gray-800">' + (cols[2] || '') +
-                                '</span><span class="text-gray-500 ml-2 text-xs truncate max-w-[80px] inline-block">' +
-                                (cols[3] || '') +
-                                '</span><div class="text-xs text-gray-400 mt-0.5">' + dateDisplay + ' · ' + (cols[1] || '') + '</div></div>' +
-                                '<div class="text-xs text-gray-400">' + duplicateNote + '</div></div>';
-                        }
-                        if (dataRows.length > 10) {
-                            container.innerHTML += '<p class="text-xs text-gray-400 text-center py-2">... and ' + (dataRows.length - 10) + ' more. See "All Records" tab.</p>';
-                        }
-                    } else {
-                        container.innerHTML = '<p class="text-sm text-gray-500 text-center py-4">No registrations yet.</p>';
-                    }
-                }
-            } catch (e) {
-                container.innerHTML = '<p class="text-sm text-red-500 text-center py-4">Failed to load history.</p>';
-            }
+        function closeUserListModal() {
+            closeModal('user-list-modal');
         }
 
         // ── ALL RECORDS ──
@@ -3305,7 +3574,9 @@
                 if (countdownSeconds <= 0) {
                     countdownSeconds = 0;
                     updateTimerDisplay();
-                    if (!statsLoading) refreshAll();
+                    if (!statsLoading) {
+                        refreshAll(false);
+                    }
                     countdownSeconds = 900;
                 } else {
                     updateTimerDisplay();
@@ -3313,23 +3584,91 @@
             }, 1000);
         }
 
-        // ── Global refresh all ──
-        async function refreshAll() {
+        // ── Global refresh all (no users/history) ──
+        async function refreshAll(includeDuplicates = true) {
             if (statsLoading) return;
             showToast('Refreshing all data...', 'info');
             await loadStats();
-            await loadUsers();
-            await loadHistory();
             await loadRecords(1);
 
-            if (adminTab === 'duplicates') {
+            if (includeDuplicates && adminTab === 'duplicates') {
+                sortField = null;
+                sortDirection = 'asc';
                 await loadDuplicateTable();
-                const dupBadge = document.getElementById('dup-tab-badge');
-                const dupCount = document.querySelectorAll('#duplicate-container .records-table tbody tr')?.length || 0;
-                dupBadge.textContent = dupCount;
+            } else if (includeDuplicates) {
+                const dupCount = parseInt(document.getElementById('stat-duplicates').textContent) || 0;
+                document.getElementById('dup-tab-badge').textContent = dupCount;
             }
 
             showToast('All data refreshed.', 'success');
+        }
+
+        // ── Dashboard manual refresh ──
+        async function refreshDashboard() {
+            const btn = document.querySelector('#dashboard-modal .refresh-dashboard-btn');
+            if (btn) {
+                btn.classList.add('spinning');
+                btn.disabled = true;
+            }
+            showToast('Refreshing dashboard...', 'info');
+            try {
+                // Re-run the same logic as openDashboard
+                await loadDashboardData();
+                showToast('Dashboard updated.', 'success');
+            } catch (e) {
+                console.error('Dashboard refresh error:', e);
+                showToast('Failed to refresh dashboard.', 'error');
+            } finally {
+                if (btn) {
+                    btn.classList.remove('spinning');
+                    btn.disabled = false;
+                }
+            }
+        }
+
+        async function loadDashboardData() {
+            // This is the data loading part extracted from openDashboard
+            const res = await apiCall('getCSV', {});
+            if (!res.success) throw new Error(res.message);
+            const csvData = res.csvData;
+            const parseResult = Papa.parse(csvData, {
+                header: false,
+                skipEmptyLines: true,
+                trimHeaders: false
+            });
+            const rows = parseResult.data;
+            if (rows.length <= 1) {
+                document.getElementById('dashboard-loading').innerHTML = '<p class="text-gray-500">No data available.</p>';
+                return;
+            }
+            const dataRows = rows.slice(1);
+            const dashboardRows = [];
+            for (let i = 0; i < dataRows.length; i++) {
+                const cols = dataRows[i];
+                if (cols.length >= 2) {
+                    const dateStr = cols[0] || '';
+                    const user = cols[1] || 'unknown';
+                    const dateObj = parseDateFromAnyString(dateStr);
+                    if (dateObj) {
+                        dashboardRows.push({ date: dateObj.toISOString(), user: user });
+                    } else {
+                        const d = new Date(dateStr);
+                        if (!isNaN(d.getTime())) {
+                            dashboardRows.push({ date: d.toISOString(), user: user });
+                        }
+                    }
+                }
+            }
+            dashboardData = dashboardRows;
+
+            const stats = computeStats(dashboardData);
+            document.getElementById('stat-today').textContent = stats.todayCount;
+            document.getElementById('stat-yesterday').textContent = stats.yesterdayCount;
+            document.getElementById('stat-week').textContent = stats.weekCount;
+            document.getElementById('stat-total-dash').textContent = stats.totalCount;
+
+            // Update charts
+            updateDashboard();
         }
 
         // ── Date range helper ──
@@ -3399,7 +3738,8 @@
                     document.getElementById('new-username').value = '';
                     document.getElementById('new-password').value = '';
                     if (passwordVisible) togglePasswordVisibility();
-                    loadUsers();
+                    // Update the stat tile (user count)
+                    await loadStats();
                     toggleSpinner('admin-add', false, 'Save User');
                 } else if (actionType === 'downloadCSV') {
                     showModal('csv-progress-modal');
@@ -3548,49 +3888,10 @@
             document.getElementById('dashboard-charts').classList.add('hidden');
 
             try {
-                const res = await apiCall('getCSV', {});
-                if (!res.success) throw new Error(res.message);
-                const csvData = res.csvData;
-                const parseResult = Papa.parse(csvData, {
-                    header: false,
-                    skipEmptyLines: true,
-                    trimHeaders: false
-                });
-                const rows = parseResult.data;
-                if (rows.length <= 1) {
-                    document.getElementById('dashboard-loading').innerHTML = '<p class="text-gray-500">No data available.</p>';
-                    return;
-                }
-                const dataRows = rows.slice(1);
-                const dashboardRows = [];
-                for (let i = 0; i < dataRows.length; i++) {
-                    const cols = dataRows[i];
-                    if (cols.length >= 2) {
-                        const dateStr = cols[0] || '';
-                        const user = cols[1] || 'unknown';
-                        const dateObj = parseDateFromAnyString(dateStr);
-                        if (dateObj) {
-                            dashboardRows.push({ date: dateObj.toISOString(), user: user });
-                        } else {
-                            const d = new Date(dateStr);
-                            if (!isNaN(d.getTime())) {
-                                dashboardRows.push({ date: d.toISOString(), user: user });
-                            }
-                        }
-                    }
-                }
-                dashboardData = dashboardRows;
-
-                const stats = computeStats(dashboardData);
-                document.getElementById('stat-today').textContent = stats.todayCount;
-                document.getElementById('stat-yesterday').textContent = stats.yesterdayCount;
-                document.getElementById('stat-week').textContent = stats.weekCount;
-                document.getElementById('stat-total-dash').textContent = stats.totalCount;
-
+                await loadDashboardData();
                 document.getElementById('dashboard-loading').classList.add('hidden');
                 document.getElementById('dashboard-charts').classList.remove('hidden');
                 lucide.createIcons();
-                updateDashboard();
             } catch (e) {
                 console.error('Dashboard error:', e);
                 document.getElementById('dashboard-loading').innerHTML = '<p class="text-red-500">Failed to load dashboard data.</p>';
@@ -3721,12 +4022,6 @@
         function cancelDelete() {
             pendingDelete = null;
             closeModal('delete-confirm-modal');
-            const btn = document.querySelector(`.btn-delete[data-row="${pendingDelete?.rowNumber || ''}"]`);
-            if (btn) {
-                btn.disabled = false;
-                btn.innerHTML = '<i data-lucide="trash-2" class="w-3 h-3"></i>';
-                lucide.createIcons();
-            }
             clearSelection();
         }
 
@@ -3738,11 +4033,13 @@
             deleteBtn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Deleting...';
 
             try {
+                let deletedIds = [];
                 if (pendingDelete.type === 'single') {
                     const { rowNumber, bikeNumber } = pendingDelete;
                     const res = await apiCall('deleteRecord', { rowNumber: rowNumber });
                     if (res.success) {
                         showToast(`✅ Record for bike ${bikeNumber} deleted successfully.`, 'success');
+                        deletedIds.push(rowNumber);
                     } else {
                         showToast(`❌ Failed to delete record: ${res.message}`, 'error');
                     }
@@ -3756,6 +4053,7 @@
                             const res = await apiCall('deleteRecord', { rowNumber: rec.rowNumber });
                             if (res.success) {
                                 deleted++;
+                                deletedIds.push(rec.rowNumber);
                             } else {
                                 failed++;
                                 console.warn(`Failed to delete row ${rec.rowNumber}: ${res.message}`);
@@ -3775,11 +4073,36 @@
                     }
                 }
 
-                await loadDuplicateTable();
-                await loadStats();
-
-                const dupCount = document.querySelectorAll('#duplicate-container .records-table tbody tr')?.length || 0;
-                document.getElementById('dup-tab-badge').textContent = dupCount;
+                if (deletedIds.length > 0) {
+                    deletedIds.forEach(rowNum => {
+                        deletedRows.add(rowNum);
+                    });
+                    const rows = document.querySelectorAll('#duplicate-container .dup-table tbody tr');
+                    rows.forEach(tr => {
+                        const checkbox = tr.querySelector('.dup-row-checkbox');
+                        if (checkbox) {
+                            const rowNum = parseInt(checkbox.dataset.row);
+                            if (deletedRows.has(rowNum)) {
+                                tr.classList.add('deleted');
+                                checkbox.disabled = true;
+                                checkbox.checked = false;
+                                const delBtn = tr.querySelector('.btn-delete');
+                                if (delBtn) {
+                                    delBtn.disabled = true;
+                                    delBtn.title = 'Already deleted';
+                                }
+                                selectedRows.delete(rowNum);
+                            }
+                        }
+                    });
+                    updateBatchDeleteButton();
+                    const totalRows = document.querySelectorAll('#duplicate-container .dup-table tbody tr').length;
+                    const remaining = totalRows - deletedRows.size;
+                    document.getElementById('dup-panel-badge').textContent = remaining;
+                    document.getElementById('dup-tab-badge').textContent = remaining;
+                    clearSelection();
+                    showToast(`Remaining duplicate records: ${remaining}`, 'info');
+                }
 
             } catch (e) {
                 console.error('Delete error:', e);
@@ -3790,53 +4113,41 @@
                 pendingDelete = null;
                 closeModal('delete-confirm-modal');
                 clearSelection();
+                updateBatchDeleteButton();
             }
         }
 
-        // ─── SELECTION FUNCTIONS (with 5‑item limit) ───
+        // ─── SELECTION FUNCTIONS ───
 
         function toggleSelectAll() {
             const selectAllCheckbox = document.getElementById('select-all-checkbox');
             if (!selectAllCheckbox) return;
 
-            const checkboxes = document.querySelectorAll('#duplicate-container .dup-row-checkbox');
+            const checkboxes = document.querySelectorAll('#duplicate-container .dup-row-checkbox:not(:disabled)');
             const isChecked = selectAllCheckbox.checked;
 
-            // If checked, we need to limit to MAX_SELECTION
             if (isChecked) {
-                // Count currently selected
-                let count = 0;
-                checkboxes.forEach(cb => {
-                    if (cb.checked) count++;
-                });
-                // If we already have some selected, we need to avoid exceeding MAX_SELECTION
-                // We'll only select up to MAX_SELECTION total
-                let selectedCount = selectedRows.size;
-                let toSelect = MAX_SELECTION - selectedCount;
+                let toSelect = MAX_SELECTION - selectedRows.size;
                 if (toSelect <= 0) {
-                    // Already at max, uncheck the select-all
                     selectAllCheckbox.checked = false;
                     showToast(`Maximum ${MAX_SELECTION} records can be selected.`, 'warning');
                     return;
                 }
-                // Select the first 'toSelect' unchecked checkboxes
                 let added = 0;
                 checkboxes.forEach(cb => {
                     if (added >= toSelect) return;
                     const rowNum = parseInt(cb.dataset.row);
-                    if (!cb.checked && !selectedRows.has(rowNum)) {
+                    if (!cb.checked && !selectedRows.has(rowNum) && !deletedRows.has(rowNum)) {
                         cb.checked = true;
                         selectedRows.add(rowNum);
                         added++;
                     }
                 });
-                // If we couldn't add any, uncheck select-all
                 if (added === 0) {
                     selectAllCheckbox.checked = false;
                     showToast(`Maximum ${MAX_SELECTION} records can be selected.`, 'warning');
                 }
             } else {
-                // Uncheck all
                 checkboxes.forEach(cb => {
                     cb.checked = false;
                     const rowNum = parseInt(cb.dataset.row);
@@ -3844,7 +4155,6 @@
                 });
             }
 
-            // Ensure select-all reflects state
             const allChecked = checkboxes.length > 0 && Array.from(checkboxes).every(c => c.checked);
             selectAllCheckbox.checked = allChecked;
             updateBatchDeleteButton();
@@ -3853,11 +4163,10 @@
         function toggleRowCheckbox(rowNumber) {
             const cb = document.querySelector(`.dup-row-checkbox[data-row="${rowNumber}"]`);
             if (!cb) return;
+            if (cb.disabled) return;
 
             if (cb.checked) {
-                // Check if we have reached the limit
                 if (selectedRows.size >= MAX_SELECTION) {
-                    // Uncheck it and notify
                     cb.checked = false;
                     showToast(`Maximum ${MAX_SELECTION} records can be selected.`, 'warning');
                     return;
@@ -3867,8 +4176,7 @@
                 selectedRows.delete(rowNumber);
             }
 
-            // Update select-all checkbox state
-            const checkboxes = document.querySelectorAll('#duplicate-container .dup-row-checkbox');
+            const checkboxes = document.querySelectorAll('#duplicate-container .dup-row-checkbox:not(:disabled)');
             const selectAllCb = document.getElementById('select-all-checkbox');
             if (selectAllCb) {
                 const allChecked = checkboxes.length > 0 && Array.from(checkboxes).every(c => c.checked);
@@ -3898,7 +4206,7 @@
 
         function clearSelection() {
             selectedRows.clear();
-            const checkboxes = document.querySelectorAll('#duplicate-container .dup-row-checkbox');
+            const checkboxes = document.querySelectorAll('#duplicate-container .dup-row-checkbox:not(:disabled)');
             checkboxes.forEach(cb => cb.checked = false);
             const selectAllCb = document.getElementById('select-all-checkbox');
             if (selectAllCb) selectAllCb.checked = false;
@@ -3907,14 +4215,12 @@
 
         function getSelectedRecords() {
             const selected = [];
-            const rows = document.querySelectorAll('#duplicate-container .dup-row-checkbox');
+            const rows = document.querySelectorAll('#duplicate-container .dup-row-checkbox:checked');
             rows.forEach(cb => {
-                if (cb.checked) {
-                    const rowNumber = parseInt(cb.dataset.row);
-                    const bikeNumber = cb.dataset.bike || '';
-                    const timestamp = cb.dataset.timestamp || '';
-                    selected.push({ rowNumber, bikeNumber, timestamp });
-                }
+                const rowNumber = parseInt(cb.dataset.row);
+                const bikeNumber = cb.dataset.bike || '';
+                const timestamp = cb.dataset.timestamp || '';
+                selected.push({ rowNumber, bikeNumber, timestamp });
             });
             return selected;
         }
@@ -3932,68 +4238,206 @@
             showBatchDeleteConfirm(selected);
         }
 
-        // ─── LOAD DUPLICATE TABLE ─── (FIXED: now uses getCSV to get ALL records)
+        // ─── Refresh Duplicates ───
+        async function refreshDuplicates() {
+            deletedRows.clear();
+            clearSelection();
+            sortField = null;
+            sortDirection = 'asc';
+            await loadDuplicateTable();
+            showToast('Duplicate list refreshed.', 'success');
+        }
 
+        // ─── SORTING ───
+        function sortDuplicateData(data, field, direction) {
+            const sorted = [...data];
+            sorted.sort((a, b) => {
+                let valA, valB;
+                switch (field) {
+                    case 'bikeNumber':
+                        valA = a.bikeNumber;
+                        valB = b.bikeNumber;
+                        break;
+                    case 'user':
+                        valA = (a.user || '').toLowerCase();
+                        valB = (b.user || '').toLowerCase();
+                        break;
+                    case 'timestamp':
+                        valA = a.timestampRaw || 0;
+                        valB = b.timestampRaw || 0;
+                        break;
+                    default:
+                        return 0;
+                }
+                if (typeof valA === 'string' && typeof valB === 'string') {
+                    return direction === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+                }
+                if (valA < valB) return direction === 'asc' ? -1 : 1;
+                if (valA > valB) return direction === 'asc' ? 1 : -1;
+                return 0;
+            });
+            return sorted;
+        }
+
+        function handleSort(field) {
+            if (sortField === field) {
+                sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                sortField = field;
+                sortDirection = 'asc';
+            }
+            applySortAndRender();
+        }
+
+        function applySortAndRender() {
+            if (!window._dupGroups) return;
+
+            let allRecords = [];
+            window._dupGroups.forEach(group => {
+                group.records.forEach(rec => {
+                    allRecords.push(rec);
+                });
+            });
+
+            if (sortField) {
+                allRecords = sortDuplicateData(allRecords, sortField, sortDirection);
+            }
+
+            const groups = {};
+            allRecords.forEach(rec => {
+                const key = rec.bikeNumber;
+                if (!groups[key]) groups[key] = [];
+                groups[key].push(rec);
+            });
+
+            const duplicateGroups = [];
+            for (const [bike, recs] of Object.entries(groups)) {
+                if (recs.length > 1) {
+                    recs.sort((a, b) => a.timestampRaw - b.timestampRaw);
+                    duplicateGroups.push({ bikeNumber: bike, records: recs });
+                }
+            }
+
+            renderDuplicateTable(duplicateGroups);
+        }
+
+        // ─── RENDER DUPLICATE TABLE ───
+        function renderDuplicateTable(duplicateGroups) {
+            const container = document.getElementById('duplicate-container');
+
+            if (!duplicateGroups || duplicateGroups.length === 0) {
+                container.innerHTML = '<p class="text-sm text-gray-500 text-center py-4">✅ No duplicate registrations found.</p>';
+                document.getElementById('dup-panel-badge').textContent = '0';
+                document.getElementById('dup-tab-badge').textContent = '0';
+                updateBatchDeleteButton();
+                return;
+            }
+
+            const totalDupRecords = duplicateGroups.reduce((sum, g) => sum + g.records.length, 0);
+            window._dupGroups = duplicateGroups;
+
+            const sortIndicator = (field) => {
+                if (sortField === field) {
+                    return sortDirection === 'asc' ? '▲' : '▼';
+                }
+                return '';
+            };
+
+            let html = `<div class="dup-table-header">
+                <div class="record-count">Showing ${totalDupRecords} duplicate records</div>
+                <div class="actions">
+                    <button id="batch-delete-btn" class="batch-delete-btn-red" onclick="handleBatchDelete()" disabled>
+                        <i data-lucide="trash-2"></i> Delete <span class="count-badge">0</span>
+                    </button>
+                    <button onclick="refreshDuplicates()" class="batch-delete-btn-grey" title="Refresh duplicates list">
+                        <i data-lucide="refresh-cw"></i> Refresh
+                    </button>
+                </div>
+            </div>`;
+
+            html += `<div class="dup-table-wrap" style="min-width:100%;">`;
+            html += `<table class="records-table dup-table"><thead>`;
+            html += `<tr>`;
+            html += `<th class="sortable ${sortField === 'bikeNumber' ? 'sort-active' : ''}" onclick="handleSort('bikeNumber')">Bike # <span class="sort-indicator">${sortIndicator('bikeNumber')}</span></th>`;
+            html += `<th class="sortable ${sortField === 'timestamp' ? 'sort-active' : ''}" onclick="handleSort('timestamp')">Timestamp <span class="sort-indicator">${sortIndicator('timestamp')}</span></th>`;
+            html += `<th class="sortable ${sortField === 'user' ? 'sort-active' : ''}" onclick="handleSort('user')">User <span class="sort-indicator">${sortIndicator('user')}</span></th>`;
+            html += `<th>QR/Barcode</th><th>Photo</th><th>Delete</th>`;
+            html += `<th class="col-checkbox"><div class="select-all-wrap"><input type="checkbox" id="select-all-checkbox" onchange="toggleSelectAll()" title="Select All" /></div></th>`;
+            html += `</tr></thead><tbody>`;
+
+            dupPhotoStore = [];
+
+            duplicateGroups.forEach(group => {
+                const first = group.records[0];
+                const firstTimestamp = first.timestampRaw;
+                const firstUser = first.user;
+
+                group.records.forEach((rec, idx) => {
+                    const isFirst = (idx === 0);
+                    const bikeIcon = `<i data-lucide="check-circle" class="w-3 h-3 text-green-500 inline"></i>`;
+
+                    let timestampIcon = isFirst ?
+                        `<i data-lucide="check-circle" class="w-3 h-3 text-green-500 inline"></i>` :
+                        (rec.timestampRaw === firstTimestamp ?
+                            `<i data-lucide="check-circle" class="w-3 h-3 text-green-500 inline"></i>` :
+                            `<i data-lucide="x-circle" class="w-3 h-3 text-red-500 inline"></i>`);
+
+                    let userIcon = isFirst ?
+                        `<i data-lucide="check-circle" class="w-3 h-3 text-green-500 inline"></i>` :
+                        (rec.user === firstUser ?
+                            `<i data-lucide="check-circle" class="w-3 h-3 text-green-500 inline"></i>` :
+                            `<i data-lucide="x-circle" class="w-3 h-3 text-red-500 inline"></i>`);
+
+                    let photoCell = '—';
+                    if (rec.photo && rec.photo.length > 10) {
+                        const idxPhoto = dupPhotoStore.length;
+                        dupPhotoStore.push(rec.photo);
+                        photoCell = `<button class="photo-view-btn" data-index="${idxPhoto}" onclick="viewDupPhoto(this.dataset.index)" title="View photo"><i data-lucide="camera" class="w-3 h-3 text-blue-600 hover:text-blue-800 cursor-pointer"></i></button>`;
+                    }
+
+                    const isDeleted = deletedRows.has(rec.rowNumber);
+                    const deleteBtn = isDeleted ?
+                        `<button class="btn-delete" disabled title="Already deleted"><i data-lucide="trash-2" class="w-3 h-3"></i></button>` :
+                        `<button class="btn-delete" data-row="${rec.rowNumber}" onclick="showSingleDeleteConfirm(${rec.rowNumber}, '${rec.bikeNumber}')" title="Delete this record"><i data-lucide="trash-2" class="w-3 h-3"></i></button>`;
+
+                    const rowClass = rec.duplicateFlag && rec.duplicateFlag.includes('WARNING') ? 'duplicate-warning' : '';
+                    const bgClass = isFirst ? 'bg-green-50' : '';
+                    const deletedClass = isDeleted ? 'deleted' : '';
+
+                    html += `<tr class="${rowClass} ${bgClass} ${deletedClass}" data-row="${rec.rowNumber}">`;
+                    html += `<td>${rec.bikeNumber} ${bikeIcon}</td>`;
+                    html += `<td>${rec.timestamp} ${timestampIcon}</td>`;
+                    html += `<td>${rec.user} ${userIcon}</td>`;
+                    html += `<td class="max-w-[60px] truncate">${rec.barcode}</td>`;
+                    html += `<td>${photoCell}</td>`;
+                    html += `<td>${deleteBtn}</td>`;
+                    html += `<td class="col-checkbox"><input type="checkbox" class="dup-row-checkbox" data-row="${rec.rowNumber}" data-bike="${rec.bikeNumber}" data-timestamp="${rec.timestamp}" ${isDeleted ? 'disabled' : ''} onchange="toggleRowCheckbox(${rec.rowNumber})" /></td>`;
+                    html += `</tr>`;
+                });
+            });
+
+            html += '</tbody></table>';
+            html += '</div>';
+            container.innerHTML = html;
+            lucide.createIcons();
+
+            document.getElementById('dup-panel-badge').textContent = totalDupRecords;
+            document.getElementById('dup-tab-badge').textContent = totalDupRecords;
+
+            clearSelection();
+            updateBatchDeleteButton();
+        }
+
+        // ─── LOAD DUPLICATE TABLE ───
         async function loadDuplicateTable() {
             const container = document.getElementById('duplicate-container');
             container.innerHTML = '<p class="text-sm text-gray-500 text-center py-4"><i data-lucide="loader-2" class="w-5 h-5 animate-spin mx-auto"></i></p>';
             lucide.createIcons();
 
-            selectedRows.clear();
+            deletedRows.clear();
+            clearSelection();
 
             try {
-                // Fetch ALL records using getCSV (unlimited)
-                const res = await apiCall('getCSV', {});
-                if (!res.success) throw new Error(res.message);
-
-                const csvData = res.csvData;
-                const parseResult = Papa.parse(csvData, {
-                    header: false,
-                    skipEmptyLines: true,
-                    trimHeaders: false
-                });
-                const rows = parseResult.data;
-                if (rows.length <= 1) {
-                    container.innerHTML = '<p class="text-sm text-gray-500 text-center py-4">No registration data available.</p>';
-                    document.getElementById('dup-panel-badge').textContent = '0';
-                    document.getElementById('dup-tab-badge').textContent = '0';
-                    updateBatchDeleteButton();
-                    return;
-                }
-
-                // Build records from CSV rows (skip header)
-                const records = [];
-                // We need row numbers for deletion. Since CSV doesn't have row numbers,
-                // we'll have to get them from a separate call to getRecords with includeRowNumbers.
-                // To avoid two calls, we can get row numbers from getRecords with a large limit.
-                // But we already have row numbers from getRecords in previous versions.
-                // Let's use getRecords with a large limit to get row numbers, but we need ALL rows.
-                // Since getRecords has a limit, we'll fetch in pages or use a huge limit.
-                // However, GAS has a limit on how many rows you can fetch in one go (maybe 1000).
-                // Instead, we'll use getCSV for data and then get row numbers separately using getRecords with a large limit.
-                // But we also need to know which row corresponds to which record.
-                // We can match by timestamp + bikeNumber + user maybe, but that's unreliable.
-                // Better: modify GAS to include row numbers in getCSV? But we don't have control over GAS code.
-                // Alternative: use getRecords with a very large limit and includeRowNumbers, but limit might be 1000.
-                // For now, we'll use getRecords with limit 1000, but we have more than 1000 rows.
-                // The user reported that only 8 duplicates appeared because only the first 1000 rows were processed.
-                // To fix, we need to fetch ALL rows. We can do pagination in the frontend, but simpler: 
-                // we can use getCSV which returns all rows, and we can also get row numbers by making another call to getRecords with a large limit and combine them by matching the data.
-                // But to keep it simple and robust, we'll fetch all rows using getCSV and then we'll need to know row numbers for deletion. 
-                // We can still use getRecords with a huge limit (like 10000) if we assume max rows < 10000.
-                // Let's change the backend to allow larger limits or we can implement pagination.
-                // However, we're only updating the frontend for now, we can't change GAS.
-                // So we'll fetch all records via CSV, and for deletion we'll use the row number from another call.
-                // But we can't match row numbers without a unique identifier.
-                // We'll use the approach: fetch all records using getCSV, then for each record, find its row number by matching with the data from getRecords (with a large limit).
-                // But that's messy.
-                // Instead, we'll modify the frontend to use getRecords with pagination to get all records.
-                // We'll fetch page by page until we have all records.
-                // This is more reliable and keeps row numbers intact.
-
-                // Let's implement a function to fetch all records with row numbers using pagination.
-                // We'll set a large page size (e.g., 500) and loop until no more rows.
-                // We'll limit to a maximum of 10000 rows to avoid infinite loops.
                 const MAX_ROWS = 10000;
                 const PAGE_SIZE = 500;
                 let allRows = [];
@@ -4006,7 +4450,6 @@
                     const rows = pageRes.rows || [];
                     if (rows.length === 0) break;
                     allRows = allRows.concat(rows);
-                    // If we got fewer than PAGE_SIZE, we're done
                     if (rows.length < PAGE_SIZE) break;
                     page++;
                 }
@@ -4019,7 +4462,6 @@
                     return;
                 }
 
-                // Now we have all rows with row numbers
                 const recordsWithRow = allRows.map(item => {
                     const row = item.data;
                     const rowNumber = item.rowNumber;
@@ -4047,7 +4489,6 @@
                     };
                 }).filter(rec => rec !== null);
 
-                // Group by bike number
                 const groups = {};
                 recordsWithRow.forEach(rec => {
                     const key = rec.bikeNumber;
@@ -4073,79 +4514,31 @@
                     return;
                 }
 
-                const totalDupRecords = duplicateGroups.reduce((sum, g) => sum + g.records.length, 0);
-
-                // Build table
-                let html = `<div class="dup-table-header">
-                    <div class="record-count">Showing ${totalDupRecords} duplicate records</div>
-                    <div class="batch-delete-wrap">
-                        <button id="batch-delete-btn" class="batch-delete-btn-red" onclick="handleBatchDelete()" disabled>
-                            <i data-lucide="trash-2"></i> Delete <span class="count-badge">0</span>
-                        </button>
-                    </div>
-                </div>`;
-
-                html += `<table class="records-table dup-table"><thead><tr>`;
-                html += `<th>Bike #</th><th>Timestamp</th><th>User</th><th>QR/Barcode</th><th>Photo</th><th>Delete</th>`;
-                html += `<th class="col-checkbox"><div class="select-all-wrap"><input type="checkbox" id="select-all-checkbox" onchange="toggleSelectAll()" title="Select All" /></div></th>`;
-                html += `</tr></thead><tbody>`;
-
-                dupPhotoStore = [];
-
-                duplicateGroups.forEach(group => {
-                    const first = group.records[0];
-                    const firstTimestamp = first.timestampRaw;
-                    const firstUser = first.user;
-
-                    group.records.forEach((rec, idx) => {
-                        const isFirst = (idx === 0);
-                        const bikeIcon = `<i data-lucide="check-circle" class="w-3 h-3 text-green-500 inline"></i>`;
-
-                        let timestampIcon = isFirst ?
-                            `<i data-lucide="check-circle" class="w-3 h-3 text-green-500 inline"></i>` :
-                            (rec.timestampRaw === firstTimestamp ?
-                                `<i data-lucide="check-circle" class="w-3 h-3 text-green-500 inline"></i>` :
-                                `<i data-lucide="x-circle" class="w-3 h-3 text-red-500 inline"></i>`);
-
-                        let userIcon = isFirst ?
-                            `<i data-lucide="check-circle" class="w-3 h-3 text-green-500 inline"></i>` :
-                            (rec.user === firstUser ?
-                                `<i data-lucide="check-circle" class="w-3 h-3 text-green-500 inline"></i>` :
-                                `<i data-lucide="x-circle" class="w-3 h-3 text-red-500 inline"></i>`);
-
-                        let photoCell = '—';
-                        if (rec.photo && rec.photo.length > 10) {
-                            const idxPhoto = dupPhotoStore.length;
-                            dupPhotoStore.push(rec.photo);
-                            photoCell = `<button class="photo-view-btn" data-index="${idxPhoto}" onclick="viewDupPhoto(this.dataset.index)" title="View photo"><i data-lucide="camera" class="w-3 h-3 text-blue-600 hover:text-blue-800 cursor-pointer"></i></button>`;
-                        }
-
-                        const deleteBtn = `<button class="btn-delete" data-row="${rec.rowNumber}" onclick="showSingleDeleteConfirm(${rec.rowNumber}, '${rec.bikeNumber}')" title="Delete this record"><i data-lucide="trash-2" class="w-3 h-3"></i></button>`;
-
-                        const rowClass = rec.duplicateFlag.includes('WARNING') ? 'duplicate-warning' : '';
-                        const bgClass = isFirst ? 'bg-green-50' : '';
-
-                        html += `<tr class="${rowClass} ${bgClass}">`;
-                        html += `<td>${rec.bikeNumber} ${bikeIcon}</td>`;
-                        html += `<td>${rec.timestamp} ${timestampIcon}</td>`;
-                        html += `<td>${rec.user} ${userIcon}</td>`;
-                        html += `<td class="max-w-[60px] truncate">${rec.barcode}</td>`;
-                        html += `<td>${photoCell}</td>`;
-                        html += `<td>${deleteBtn}</td>`;
-                        // Checkbox at the rightmost
-                        html += `<td class="col-checkbox"><input type="checkbox" class="dup-row-checkbox" data-row="${rec.rowNumber}" data-bike="${rec.bikeNumber}" data-timestamp="${rec.timestamp}" onchange="toggleRowCheckbox(${rec.rowNumber})" /></td>`;
-                        html += `</tr>`;
+                if (sortField) {
+                    let allRecords = [];
+                    duplicateGroups.forEach(group => {
+                        group.records.forEach(rec => {
+                            allRecords.push(rec);
+                        });
                     });
-                });
-
-                html += '</tbody></table>';
-                container.innerHTML = html;
-                lucide.createIcons();
-
-                document.getElementById('dup-panel-badge').textContent = totalDupRecords;
-                document.getElementById('dup-tab-badge').textContent = totalDupRecords;
-
-                clearSelection();
+                    const sorted = sortDuplicateData(allRecords, sortField, sortDirection);
+                    const sortedGroups = {};
+                    sorted.forEach(rec => {
+                        const key = rec.bikeNumber;
+                        if (!sortedGroups[key]) sortedGroups[key] = [];
+                        sortedGroups[key].push(rec);
+                    });
+                    const sortedDuplicateGroups = [];
+                    for (const [bike, recs] of Object.entries(sortedGroups)) {
+                        if (recs.length > 1) {
+                            recs.sort((a, b) => a.timestampRaw - b.timestampRaw);
+                            sortedDuplicateGroups.push({ bikeNumber: bike, records: recs });
+                        }
+                    }
+                    renderDuplicateTable(sortedDuplicateGroups);
+                } else {
+                    renderDuplicateTable(duplicateGroups);
+                }
 
             } catch (e) {
                 console.error('loadDuplicateTable error:', e);
@@ -4164,15 +4557,11 @@
                 var modals = document.querySelectorAll('.modal-overlay:not(.hidden-view)');
                 for (var i = 0; i < modals.length; i++) {
                     var id = modals[i].id;
-                    if (id === 'qr-scanner-modal') { stopQrScanner(); }
-                    else if (id === 'camera-modal') { closeCamera(); }
-                    else if (id === 'photo-modal') { closePhotoModal(); }
-                    else if (id === 'dashboard-modal') { closeDashboard(); }
-                    else if (id === 'alert-modal') { closeAlertModal(); }
-                    else if (id === 'csv-progress-modal') { closeModal('csv-progress-modal'); }
-                    else if (id === 'delete-confirm-modal') { cancelDelete(); }
-                    else if (id === 'inactivity-warning-modal') { stayLoggedIn(); }
-                    else { closeModal(id); }
+                    if (id === 'qr-scanner-modal') { stopQrScanner(); } else if (id === 'camera-modal') { closeCamera(); } else if (id ===
+                        'photo-modal') { closePhotoModal(); } else if (id === 'dashboard-modal') { closeDashboard(); } else if (id ===
+                        'alert-modal') { closeAlertModal(); } else if (id === 'csv-progress-modal') { closeModal('csv-progress-modal'); } else if (
+                        id === 'delete-confirm-modal') { cancelDelete(); } else if (id === 'inactivity-warning-modal') { stayLoggedIn(); } else if (
+                        id === 'user-list-modal') { closeUserListModal(); } else { closeModal(id); }
                 }
             }
         });
@@ -4191,8 +4580,9 @@
         console.log(`✅ QR Code Bike Registration System ready (${APP_VERSION}).`);
         console.log('📊 GAS URL: ' + GAS_WEB_APP_URL);
         console.log('📌 Version: ' + APP_VERSION);
-        console.log('📊 Duplicate list now fetches ALL records (pagination) – no more missing duplicates.');
-        console.log('🔒 Max 5 records can be selected for batch deletion.');
+        console.log('🔄 User modal header is now sticky, close button at top.');
+        console.log('📊 Dashboard has a manual refresh button (↻) next to close.');
+        console.log('📋 Duplicate panel visibility fixed – only shows on Duplicates tab.');
     </script>
 </body>
 </html>
