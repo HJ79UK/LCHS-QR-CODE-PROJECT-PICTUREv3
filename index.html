@@ -15,7 +15,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js">
     </script>
     <style>
-        /* ─── All base styles unchanged ─── */
+        /* (All styles unchanged – same as before) */
         * {
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
@@ -584,7 +584,7 @@
         }
         .stat-card.clickable:hover {
             transform: scale(1.02);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
         .stat-card .stat-loader {
             position: absolute;
@@ -724,10 +724,6 @@
             color: #dc2626;
             animation: spin 1s linear infinite;
         }
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
         #csv-progress-modal .modal-card p {
             margin-top: 1rem;
             font-weight: 500;
@@ -792,12 +788,12 @@
         }
         .version-badge {
             font-size: 0.7rem;
-            color: #9ca3af;
+            font-weight: bold !important;
+            color: #000 !important;
             background: #f3f4f6;
             padding: 0.15rem 0.5rem;
             border-radius: 9999px;
             border: 1px solid #e5e7eb;
-            font-weight: 500;
             letter-spacing: 0.025em;
         }
         .login-version {
@@ -809,7 +805,6 @@
             position: relative;
         }
 
-        /* ─── Login Progress Bar ─── */
         .login-progress-container {
             margin-top: 0.75rem;
             display: none;
@@ -854,7 +849,6 @@
             margin-top: 0.25rem;
         }
 
-        /* ─── Conditional Test Button ─── */
         #test-connection-btn {
             display: none;
         }
@@ -864,7 +858,6 @@
             text-align: center;
         }
 
-        /* ─── Dashboard Stat Cards ─── */
         .stat-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -875,7 +868,7 @@
             background: white;
             border-radius: 0.5rem;
             padding: 0.4rem 0.5rem;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
             border: 1px solid #e5e7eb;
             text-align: center;
         }
@@ -893,24 +886,47 @@
             margin-top: 0.1rem;
         }
         @media (min-width: 480px) {
-            .stat-grid .stat-item .number { font-size: 1.8rem; }
+            .stat-grid .stat-item .number {
+                font-size: 1.8rem;
+            }
         }
 
-        /* ─── Coloured stat cards ─── */
-        .stat-grid .stat-item.today { background: #fee2e2; border-color: #fca5a5; }
-        .stat-grid .stat-item.today .number { color: #dc2626; }
-        .stat-grid .stat-item.yesterday { background: #fef3c7; border-color: #fcd34d; }
-        .stat-grid .stat-item.yesterday .number { color: #d97706; }
-        .stat-grid .stat-item.week { background: #dbeafe; border-color: #93c5fd; }
-        .stat-grid .stat-item.week .number { color: #2563eb; }
-        .stat-grid .stat-item.total { background: #dcfce7; border-color: #86efac; }
-        .stat-grid .stat-item.total .number { color: #16a34a; }
+        .stat-grid .stat-item.today {
+            background: #fee2e2;
+            border-color: #fca5a5;
+        }
+        .stat-grid .stat-item.today .number {
+            color: #dc2626;
+        }
+        .stat-grid .stat-item.yesterday {
+            background: #fef3c7;
+            border-color: #fcd34d;
+        }
+        .stat-grid .stat-item.yesterday .number {
+            color: #d97706;
+        }
+        .stat-grid .stat-item.week {
+            background: #dbeafe;
+            border-color: #93c5fd;
+        }
+        .stat-grid .stat-item.week .number {
+            color: #2563eb;
+        }
+        .stat-grid .stat-item.total {
+            background: #dcfce7;
+            border-color: #86efac;
+        }
+        .stat-grid .stat-item.total .number {
+            color: #16a34a;
+        }
 
-        /* ─── Chart container header colours ─── */
-        .dashboard-chart-container.time-chart .chart-header h4 { color: #dc2626; }
-        .dashboard-chart-container.user-chart .chart-header h4 { color: #16a34a; }
+        .dashboard-chart-container.time-chart .chart-header h4 {
+            color: #dc2626;
+        }
+        .dashboard-chart-container.user-chart .chart-header h4 {
+            color: #16a34a;
+        }
 
-        /* ─── Duplicate table – tighter spacing ─── */
         .dup-table {
             font-size: 0.7rem;
             width: 100%;
@@ -977,7 +993,6 @@
             pointer-events: none;
         }
 
-        /* ─── Deleted row styling – darker & thicker ─── */
         .dup-table tr.deleted {
             opacity: 0.75;
             background-color: #d1d5db !important;
@@ -1007,7 +1022,6 @@
             opacity: 0.4;
         }
 
-        /* ─── STICKY HEADERS for duplicate table ─── */
         #panel-duplicates {
             overflow-y: auto;
             max-height: 70vh;
@@ -1045,7 +1059,6 @@
             background: #e5e7eb !important;
         }
 
-        /* ─── Red batch delete button with counter ─── */
         .batch-delete-wrap {
             display: flex;
             align-items: center;
@@ -1117,7 +1130,6 @@
             height: 0.9rem;
         }
 
-        /* ─── Checkbox column styles ─── */
         .dup-table .col-checkbox {
             text-align: center;
             width: 2.2rem;
@@ -1135,7 +1147,6 @@
             justify-content: center;
         }
 
-        /* ─── Delete Confirmation Modal ─── */
         #delete-confirm-modal .modal-card {
             max-width: 480px;
         }
@@ -1197,7 +1208,6 @@
             }
         }
 
-        /* ─── Table header with batch delete and refresh ─── */
         .dup-table-header {
             display: flex;
             justify-content: space-between;
@@ -1218,7 +1228,6 @@
             flex-wrap: wrap;
         }
 
-        /* ─── Inactivity Timer ─── */
         .inactivity-timer {
             font-size: 0.7rem;
             color: #6b7280;
@@ -1239,11 +1248,15 @@
             animation: pulse-timer 1s infinite;
         }
         @keyframes pulse-timer {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
         }
 
-        /* ─── Inactivity Warning Modal ─── */
         #inactivity-warning-modal .modal-card {
             max-width: 420px;
             border-top-color: #f59e0b;
@@ -1278,8 +1291,13 @@
             color: #dc2626;
         }
         @keyframes flash-countdown {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.3;
+            }
         }
         #inactivity-warning-modal .modal-card .btn-green {
             flex: 1;
@@ -1299,7 +1317,6 @@
             }
         }
 
-        /* ─── User List Modal with sticky header ─── */
         #user-list-modal .modal-card {
             max-width: 500px;
             display: flex;
@@ -1407,7 +1424,6 @@
             }
         }
 
-        /* ─── Dashboard modal refresh button ─── */
         #dashboard-modal .modal-header-actions {
             display: flex;
             align-items: center;
@@ -1431,7 +1447,6 @@
             animation: spin 1s linear infinite;
         }
 
-        /* ─── Ensure duplicate panel is hidden by default ─── */
         #panel-duplicates.hidden {
             display: none !important;
         }
@@ -1446,7 +1461,7 @@
 
     <!-- ========== VIEW 1: LOGIN ========== -->
     <div id="view-login" class="w-full max-w-md card p-6 md:p-8">
-        <span class="version-badge login-version">v3.27</span>
+        <span class="version-badge login-version">v3.4</span>
         <div class="text-center mb-6">
             <div class="flex justify-center mb-3">
                 <i data-lucide="bike" class="w-14 h-14 text-red-600"></i>
@@ -1471,7 +1486,6 @@
                 <button type="button" onclick="clearLoginForm()" class="w-full btn-grey">Clear</button>
             </div>
 
-            <!-- ─── Login Progress Bar ─── -->
             <div id="login-progress-container" class="login-progress-container">
                 <div class="login-progress-bar-bg">
                     <div id="login-progress-bar" class="login-progress-bar" style="width: 0%;"></div>
@@ -1483,7 +1497,6 @@
                 <div id="login-progress-status" class="login-progress-status">Initializing...</div>
             </div>
 
-            <!-- ─── Test Connection Button ─── -->
             <div id="test-connection-btn">
                 <button type="button" onclick="testBackend()" class="btn-grey text-sm" style="border:1px dashed #dc2626; width:100%;">
                     <i data-lucide="wifi" class="w-4 h-4"></i> Test Backend Connection
@@ -1505,11 +1518,10 @@
                     <i data-lucide="clock" class="w-3 h-3"></i>
                     <span id="timer-display">10:00</span>
                 </span>
-                <span class="version-badge">v3.27</span>
+                <span class="version-badge">v3.4</span>
             </div>
         </div>
 
-        <!-- ─── Queue Indicator + Sync Button ─── -->
         <div id="queue-indicator" class="queue-indicator hidden">
             <span class="text-sm font-medium text-gray-600">Pending:</span>
             <span id="queue-icons"></span>
@@ -1519,14 +1531,12 @@
             </button>
         </div>
 
-        <!-- ─── Queue Warning Banner ─── -->
         <div id="queue-warning" class="queue-warning">
             <i data-lucide="alert-triangle" class="w-5 h-5 text-yellow-600"></i>
             <span>Queue is large – please wait for the data to sync or connect to WiFi to force the sync.</span>
         </div>
 
         <div class="space-y-5 flex-grow">
-            <!-- Bike Number + Photo -->
             <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
                 <label class="block text-sm font-bold text-gray-700 mb-2">1. Bike Number</label>
                 <input type="text" id="bike-number" maxlength="5" class="input-field uppercase" placeholder="e.g. 1A2B3" autocomplete="off" />
@@ -1534,7 +1544,6 @@
                     <span>5 characters, starts with 1-6 or 9.</span>
                 </div>
 
-                <!-- Photo capture -->
                 <div class="mt-3">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Photo of Bike Number</label>
                     <button type="button" onclick="openCamera()" id="take-photo-btn" class="btn-grey w-full">
@@ -1548,7 +1557,6 @@
                 </div>
             </div>
 
-            <!-- QR / Barcode -->
             <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
                 <label class="block text-sm font-bold text-gray-700 mb-2">2. QR / Barcode</label>
                 <button type="button" onclick="startQrScanner()" class="btn-red w-full mb-3">
@@ -1597,11 +1605,10 @@
                 <button onclick="logout()" class="text-sm text-gray-500 hover:text-gray-800 flex items-center gap-1 transition">
                     <i data-lucide="log-out" class="w-4 h-4"></i> Log Out
                 </button>
-                <span class="version-badge">v3.27</span>
+                <span class="version-badge">v3.4</span>
             </div>
         </div>
 
-        <!-- Stats cards with loaders – 4 CARDS -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
             <div class="stat-card bg-red-50 p-3 rounded-xl text-center border border-red-100 relative">
                 <div id="stat-total-loader" class="stat-loader active">
@@ -1610,7 +1617,6 @@
                 <div id="stat-total" class="text-2xl font-bold text-red-700 stat-value">0</div>
                 <div class="stat-label">Registrations</div>
             </div>
-            <!-- Green tile – clickable -->
             <div class="stat-card bg-green-50 p-3 rounded-xl text-center border border-green-100 relative clickable" onclick="openUserListModal()" title="Click to manage users">
                 <div id="stat-users-loader" class="stat-loader active">
                     <i data-lucide="loader-2" class="w-6 h-6 animate-spin text-green-600"></i>
@@ -1675,7 +1681,6 @@
             </div>
         </div>
 
-        <!-- ===== TABBED INTERFACE (only Records and Duplicates) ===== -->
         <div class="border border-gray-200 rounded-xl overflow-hidden flex-1 flex flex-col min-h-0">
             <div class="flex border-b border-gray-200 bg-gray-50 overflow-x-auto flex-shrink-0">
                 <button onclick="switchAdminTab('records')" id="tab-records" class="flex-1 py-3 px-4 text-sm font-medium text-red-600 border-b-2 border-red-600 transition whitespace-nowrap">
@@ -1687,7 +1692,6 @@
                 </button>
             </div>
 
-            <!-- Records Panel -->
             <div id="panel-records" class="p-4 overflow-y-auto scrollable" style="max-height: 400px;">
                 <div class="flex justify-between items-center mb-3">
                     <span class="text-sm font-medium text-gray-600">All bike registrations</span>
@@ -1707,7 +1711,6 @@
                 </div>
             </div>
 
-            <!-- Duplicates Panel – strictly hidden when not on duplicates tab -->
             <div id="panel-duplicates" class="hidden p-4 flex-1 min-h-0 overflow-y-auto scrollable">
                 <div class="flex justify-between items-center mb-3 flex-shrink-0">
                     <span class="text-sm font-medium text-yellow-600 flex items-center gap-2">
@@ -1728,7 +1731,6 @@
 
     <!-- ========== MODALS ========== -->
 
-    <!-- ─── Alert Modal ─── -->
     <div id="alert-modal" class="hidden-view fixed inset-0 modal-overlay z-[60]">
         <div class="modal-card max-w-sm p-6 text-center border-t-4 border-red-500">
             <div class="mx-auto flex items-center justify-center h-14 w-14 rounded-full bg-red-100 mb-4">
@@ -1740,7 +1742,6 @@
         </div>
     </div>
 
-    <!-- ─── CSV Progress Modal ─── -->
     <div id="csv-progress-modal" class="hidden-view fixed inset-0 modal-overlay z-[90]">
         <div class="modal-card max-w-sm p-6 text-center">
             <div class="flex justify-center">
@@ -1750,7 +1751,6 @@
         </div>
     </div>
 
-    <!-- ─── DELETE CONFIRMATION MODAL ─── -->
     <div id="delete-confirm-modal" class="hidden-view fixed inset-0 modal-overlay z-[100]">
         <div class="modal-card max-w-lg p-6 text-center border-t-4 border-red-500">
             <div class="icon-wrapper">
@@ -1769,7 +1769,6 @@
         </div>
     </div>
 
-    <!-- ─── INACTIVITY WARNING MODAL ─── -->
     <div id="inactivity-warning-modal" class="hidden-view fixed inset-0 modal-overlay z-[110]">
         <div class="modal-card max-w-sm p-6 text-center border-t-4 border-yellow-500">
             <div class="icon-wrapper">
@@ -1787,10 +1786,8 @@
         </div>
     </div>
 
-    <!-- ─── USER LIST MODAL (with sticky header) ─── -->
     <div id="user-list-modal" class="hidden-view fixed inset-0 modal-overlay z-[120]">
         <div class="modal-card border-t-4 border-green-500">
-            <!-- Sticky header -->
             <div class="modal-header">
                 <div class="title">
                     <i data-lucide="users" class="w-5 h-5 text-green-600"></i> Manage Users
@@ -1803,13 +1800,11 @@
                     <p class="text-sm text-gray-500 mt-2">Loading users…</p>
                 </div>
                 <div id="user-list-container-modal" class="hidden">
-                    <!-- users will be rendered here -->
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- QR Scanner Modal -->
     <div id="qr-scanner-modal" class="hidden-view fixed inset-0 modal-overlay z-50">
         <div class="modal-card max-w-md p-5">
             <div class="flex justify-between items-center mb-4">
@@ -1835,7 +1830,6 @@
         </div>
     </div>
 
-    <!-- Camera Modal -->
     <div id="camera-modal" class="hidden-view fixed inset-0 modal-overlay z-50">
         <div class="modal-card p-4">
             <h3 class="text-lg font-bold mb-3 text-gray-800">Take Photo</h3>
@@ -1849,7 +1843,6 @@
         </div>
     </div>
 
-    <!-- Photo Viewer Modal -->
     <div id="photo-modal" class="hidden-view fixed inset-0 modal-overlay z-[70]">
         <div class="modal-card p-4" id="photo-modal-card">
             <div class="flex justify-between items-center mb-3">
@@ -1868,7 +1861,6 @@
         </div>
     </div>
 
-    <!-- Dashboard Modal – with manual refresh button -->
     <div id="dashboard-modal" class="hidden-view fixed inset-0 modal-overlay z-[80]">
         <div class="modal-card p-3 md:p-4" id="dashboard-modal-card">
             <div class="flex justify-between items-center mb-2 md:mb-3">
@@ -1937,16 +1929,16 @@
     </div>
 
     <script>
-        console.log('🚲 QR Code Bike Registration System starting... (v3.27)');
+        console.log('🚲 QR Code Bike Registration System starting... (v3.4)');
 
-        // ─── CONFIGURATION ───
-        const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzCpyoHw7x20SXFJbXRJASeMrthPcoMOUGkUGfEk4eeKbvHyoDLWw0S31KwYarutjxX7w/exec";
-        const APP_VERSION = "v3.27";
+        // ─── CONFIG (UPDATED URL) ───
+        const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwbUZsJ61g8tYmsGHd8hz8oK7wth4ihntitLXRiXb1jwdeA9OyynlWCyGcdKYiJ6r30zg/exec";
+        const APP_VERSION = "v3.4";
 
-        // ─── State ───
+        // ─── STATE ───
         let currentUser = null;
         let currentUserRole = null;
-        let adminTab = 'records'; // default to 'records'
+        let adminTab = 'records';
         let qrScannerInstance = null;
         let isScanning = false;
         const barcodeInput = document.getElementById('barcode-value');
@@ -2004,7 +1996,8 @@
 
         let chartTimeInstance = null;
         let chartUserInstance = null;
-        let dashboardData = [];
+        let dailyEntries = [];        // NEW: pre‑aggregated daily data from Sheet5
+        let userBikeCounts = [];      // from Sheet3
 
         let refreshInterval = null;
         let countdownSeconds = 900;
@@ -2013,28 +2006,20 @@
         const statusDot = document.getElementById('status-dot');
         const refreshAllBtn = document.getElementById('refresh-all-btn');
 
-        // ─── Delete confirmation state ───
         let pendingDelete = null;
-
-        // ─── Selection state ───
         let selectedRows = new Set();
         const MAX_SELECTION = 10;
-
-        // ─── Deleted rows ───
         let deletedRows = new Set();
-
-        // ─── Sorting state ───
         let sortField = null;
         let sortDirection = 'asc';
 
-        // ─── Inactivity Timer State ───
         let inactivityRemaining = 600;
         let inactivityInterval = null;
         let inactivityWarningShown = false;
         let inactivityTimeoutId = null;
         let inactivityStarted = false;
 
-        // ── Helper functions ──
+        // ── Helpers ──
         function formatDateToDMY(date) {
             if (!date || isNaN(date.getTime())) return '';
             const d = String(date.getDate()).padStart(2, '0');
@@ -2138,7 +2123,7 @@
             lucide.createIcons();
         }
 
-        // ── Camera functions ──
+        // ── Camera ──
         async function openCamera() {
             if (hasPhoto) removeBikePhoto();
             try {
@@ -2202,7 +2187,6 @@
             updateSaveButton();
         }
 
-        // ── Photo viewers ──
         function viewPhoto(index) {
             const photo = photoStore[index];
             if (photo && photo.length > 10) {
@@ -2336,7 +2320,7 @@
             }
         }
 
-        // ── API CALL ──
+        // ── API ──
         async function apiCall(action, payload) {
             console.log(`📤 API Call: ${action}`, payload);
             try {
@@ -2366,7 +2350,21 @@
             }
         }
 
-        // ── MASTER LIST CACHING ──
+        // ── logLogin ──
+        async function logLoginToSheet(username, appVersion) {
+            try {
+                const res = await apiCall('logLogin', { username: username, appVersion: appVersion });
+                if (res.success) {
+                    console.log('✅ Login logged to sheet.');
+                } else {
+                    console.warn('⚠️ Login log failed:', res.message);
+                }
+            } catch (e) {
+                console.warn('⚠️ Login log error:', e.message);
+            }
+        }
+
+        // ── Master list ──
         async function fetchMasterList() {
             try {
                 const res = await apiCall('getMasterList', {});
@@ -2381,7 +2379,7 @@
             }
         }
 
-        // ── QUEUE MANAGEMENT ──
+        // ── Queue ──
         function updateQueueUI() {
             const count = pendingQueue.length;
             if (count > 0) {
@@ -2506,7 +2504,6 @@
             }
         }
 
-        // ── Manual "Sync Now" ──
         let isForceSyncing = false;
 
         async function forceSync() {
@@ -2576,7 +2573,6 @@
             }
         }
 
-        // ── Scroll helper ──
         function scrollToSubmit() {
             if (submitBtn) {
                 setTimeout(() => {
@@ -2585,7 +2581,7 @@
             }
         }
 
-        // ── TEST BACKEND ──
+        // ── Test backend ──
         async function testBackend() {
             testResultDiv.classList.remove('hidden');
             testResultDiv.innerHTML = '🔄 Testing connection...';
@@ -2621,7 +2617,7 @@
             testConnBtn.classList.remove('visible');
         }
 
-        // ── TOAST ──
+        // ── Toast ──
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
             const map = { success: 'toast-success', error: 'toast-error', warning: 'toast-warning', info: 'toast-info' };
@@ -2638,7 +2634,7 @@
             }, 4000);
         }
 
-        // ── NAVIGATION ──
+        // ── Navigation ──
         function switchView(viewId) {
             var views = ['view-login', 'view-data', 'view-admin'];
             for (var i = 0; i < views.length; i++) {
@@ -2698,7 +2694,7 @@
             if (status) loginProgressStatus.textContent = status;
         }
 
-        // ── ADMIN TAB SWITCHING (fixed visibility) ──
+        // ── Admin tab switching ──
         function switchAdminTab(tab) {
             adminTab = tab;
             var panels = {
@@ -2710,12 +2706,11 @@
                 duplicates: document.getElementById('tab-duplicates')
             };
 
-            // Toggle visibility using both class and display for safety
             for (var key in panels) {
                 if (panels[key]) {
                     if (key === tab) {
                         panels[key].classList.remove('hidden');
-                        panels[key].style.display = ''; // remove inline display if any
+                        panels[key].style.display = '';
                     } else {
                         panels[key].classList.add('hidden');
                         panels[key].style.display = 'none';
@@ -2723,7 +2718,6 @@
                 }
             }
 
-            // Update tab styles
             var tabKeys = ['records', 'duplicates'];
             for (var i = 0; i < tabKeys.length; i++) {
                 var t = tabs[tabKeys[i]];
@@ -2738,14 +2732,11 @@
                 }
             }
 
-            // Load content based on tab
             if (tab === 'records') {
                 loadRecords(1);
-                // Ensure duplicates container is cleared and hidden
                 document.getElementById('duplicate-container').innerHTML = '<p class="text-sm text-gray-500 text-center py-4">Click the tab to load duplicates.</p>';
             }
             if (tab === 'duplicates') {
-                // Reset sorting when switching to duplicates tab
                 sortField = null;
                 sortDirection = 'asc';
                 loadDuplicateTable();
@@ -2753,7 +2744,7 @@
             lucide.createIcons();
         }
 
-        // ── LOGIN ──
+        // ── LOGIN (with login tracking) ──
         async function handleLogin(e) {
             e.preventDefault();
             var user = document.getElementById('login-user').value.trim();
@@ -2781,6 +2772,10 @@
                 currentUser = user;
                 currentUserRole = res.role || 'user';
 
+                // ── Log login to sheet ──
+                updateLoginProgress(48, 'Logging login...', 'Recording login event...');
+                await logLoginToSheet(user, APP_VERSION);
+
                 updateLoginProgress(55, 'Fetching master list...', 'Loading bike number database...');
                 await fetchMasterList();
                 updateLoginProgress(70, 'Master list loaded.', `${masterListCache.length} bike numbers found.`);
@@ -2802,11 +2797,8 @@
                     showToast('Admin welcome, ' + user + '!', 'success');
                     startRefreshCycle();
                     updateLoginProgress(98, 'Loading admin data...', 'Please wait...');
-                    // Initial load: stats and records only
                     await loadStats();
-                    // Ensure default tab is records and panels are correct
                     switchAdminTab('records');
-                    // Update duplicate badge from stats
                     const dupCount = parseInt(document.getElementById('stat-duplicates').textContent) || 0;
                     document.getElementById('dup-tab-badge').textContent = dupCount;
                     setTimeout(() => {
@@ -2887,7 +2879,7 @@
             testResultDiv.innerHTML = '';
         }
 
-        // ── INACTIVITY TIMER FUNCTIONS ──
+        // ── INACTIVITY TIMER ──
         function startInactivityTimer() {
             if (inactivityStarted) return;
             if (currentUserRole !== 'user') return;
@@ -2996,6 +2988,7 @@
             showToast('Session extended.', 'success');
         }
 
+        // ── Updated logoutInactivity: flush queue, logout, then reload ──
         async function logoutInactivity() {
             if (inactivityInterval) {
                 clearInterval(inactivityInterval);
@@ -3023,9 +3016,15 @@
             }
 
             logout();
+
+            // ── REFRESH after automatic logout ──
+            setTimeout(() => {
+                console.log('🔄 Auto-logout: refreshing page to pull latest version...');
+                location.reload(true);
+            }, 600);
         }
 
-        // ── ACTIVITY LISTENERS ──
+        // ── Activity listeners ──
         let activityListenersAttached = false;
 
         function attachActivityListeners() {
@@ -3056,7 +3055,7 @@
             activityListenersAttached = false;
         }
 
-        // ── BIKE NUMBER VALIDATION ──
+        // ── Bike validation ──
         function validateBikeNumberFormat(str) {
             var s = str.toUpperCase().trim();
             if (s.length !== 5) return { valid: false, msg: 'Must be exactly 5 characters.' };
@@ -3144,7 +3143,7 @@
             });
         });
 
-        // ── QR SCANNER ──
+        // ── QR Scanner ──
         function onQrCodeSuccess(decodedText) {
             barcodeInput.value = decodedText;
             showToast('QR Code scanned successfully!', 'success');
@@ -3158,11 +3157,13 @@
         async function startQrScanner() {
             if (isScanning) { showToast('Scanner already active.', 'info'); return; }
             if (typeof Html5Qrcode === 'undefined') { showToast('QR scanner library failed to load. Please refresh.', 'error'); return; }
-            if (!('mediaDevices' in navigator) || !('getUserMedia' in navigator.mediaDevices)) { showToast('Camera not supported on this device.', 'error'); return; }
+            if (!('mediaDevices' in navigator) || !('getUserMedia' in navigator.mediaDevices)) { showToast(
+                    'Camera not supported on this device.', 'error'); return; }
             if (navigator.permissions && navigator.permissions.query) {
                 try {
                     var perm = await navigator.permissions.query({ name: 'camera' });
-                    if (perm.state === 'denied') { showToast('Camera permission denied. Please allow access in settings.', 'error'); return; }
+                    if (perm.state === 'denied') { showToast('Camera permission denied. Please allow access in settings.',
+                            'error'); return; }
                 } catch (e) {}
             }
             showModal('qr-scanner-modal');
@@ -3174,7 +3175,8 @@
                     var cameras = await Html5Qrcode.getCameras();
                     var cameraId = null;
                     if (cameras && cameras.length > 0) {
-                        var env = cameras.find(function(c) { return c.label.toLowerCase().includes('back') || c.label.toLowerCase().includes('environment'); });
+                        var env = cameras.find(function(c) { return c.label.toLowerCase().includes('back') || c.label
+                                .toLowerCase().includes('environment'); });
                         cameraId = env ? env.id : cameras[0].id;
                     }
                     var config = { fps: 15, qrbox: { width: 260, height: 260 }, aspectRatio: 1.0 };
@@ -3184,9 +3186,12 @@
                 } catch (err) {
                     console.error('QR scanner error:', err);
                     var msg = 'Could not access camera. ';
-                    if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') msg += 'Please grant camera permission in your browser settings.';
-                    else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') msg += 'No camera found on this device.';
-                    else if (err.name === 'NotReadableError' || err.name === 'TrackStartError') msg += 'Camera is busy or in use by another app.';
+                    if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') msg +=
+                        'Please grant camera permission in your browser settings.';
+                    else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') msg +=
+                        'No camera found on this device.';
+                    else if (err.name === 'NotReadableError' || err.name === 'TrackStartError') msg +=
+                        'Camera is busy or in use by another app.';
                     else msg += err.message || 'Unknown error.';
                     showToast(msg, 'error');
                     closeModal('qr-scanner-modal');
@@ -3210,7 +3215,8 @@
                         qrScannerInstance = null;
                         isScanning = false;
                     });
-                } catch (e) { qrScannerInstance = null; isScanning = false; }
+                } catch (e) { qrScannerInstance = null;
+                    isScanning = false; }
             }
             closeModal('qr-scanner-modal');
             isScanning = false;
@@ -3223,7 +3229,7 @@
             }
         });
 
-        // ── SAVE DATA ──
+        // ── SAVE ──
         async function saveData() {
             var bikeNum = bikeInput.value;
             var barcode = barcodeInput.value.trim();
@@ -3278,14 +3284,13 @@
             showModal('alert-modal');
         }
 
-        // ── ADMIN FUNCTIONS ──
+        // ── ADMIN ──
 
-        // ── USER LIST MODAL (on-demand) ──
+        // ── User list modal ──
         async function openUserListModal() {
             showModal('user-list-modal');
             const loading = document.getElementById('user-list-loading');
             const container = document.getElementById('user-list-container-modal');
-            // Reset content
             loading.classList.remove('hidden');
             container.classList.add('hidden');
             container.innerHTML = '';
@@ -3300,7 +3305,8 @@
             } catch (err) {
                 loading.classList.add('hidden');
                 container.classList.remove('hidden');
-                container.innerHTML = `<p class="text-sm text-red-500 text-center py-4">Failed to load users: ${err.message}</p>`;
+                container.innerHTML =
+                    `<p class="text-sm text-red-500 text-center py-4">Failed to load users: ${err.message}</p>`;
                 showToast('Failed to fetch users.', 'error');
             }
         }
@@ -3337,9 +3343,7 @@
                 const res = await apiCall('deleteUser', { username: username });
                 if (!res.success) throw new Error(res.message);
                 showToast(`User '${username}' deleted.`, 'info');
-                // Update modal list
-                await openUserListModal(); // re-fetch and re-render
-                // Update the stat tile
+                await openUserListModal();
                 await loadStats();
             } catch (err) {
                 showToast(err.message || 'Deletion failed.', 'error');
@@ -3350,14 +3354,15 @@
             closeModal('user-list-modal');
         }
 
-        // ── ALL RECORDS ──
+        // ── Records ──
         function renderRows(rows, total) {
             var container = document.getElementById('records-container');
             if (!rows || rows.length === 0) {
                 container.innerHTML = '<p class="text-sm text-gray-500 text-center py-4">No records found.</p>';
                 return;
             }
-            var html = '<div class="record-count text-xs text-gray-400 mb-2">Showing ' + rows.length + ' records' + (total ? ' of ' + total : '') + '</div>';
+            var html = '<div class="record-count text-xs text-gray-400 mb-2">Showing ' + rows.length + ' records' + (total ?
+                ' of ' + total : '') + '</div>';
             html += '<table class="records-table"><thead><tr>';
             var headers = ['Date', 'User', 'BikeNo', 'QRcode', 'Duplicate', 'BikePhoto'];
             for (var h = 0; h < headers.length; h++) {
@@ -3373,7 +3378,8 @@
                     if (c === 5 && cell && cell.length > 10) {
                         var idx = photoStore.length;
                         photoStore.push(cell);
-                        html += '<td><button class="photo-view-btn" data-index="' + idx + '" onclick="viewPhoto(this.dataset.index)" title="View photo"><i data-lucide="camera" class="w-5 h-5 text-blue-600 hover:text-blue-800 cursor-pointer"></i></button></td>';
+                        html += '<td><button class="photo-view-btn" data-index="' + idx +
+                            '" onclick="viewPhoto(this.dataset.index)" title="View photo"><i data-lucide="camera" class="w-5 h-5 text-blue-600 hover:text-blue-800 cursor-pointer"></i></button></td>';
                     } else if (c === 4 && cell && cell.toLowerCase().includes('warning')) {
                         html += '<td class="duplicate-warning">' + cell + '</td>';
                     } else {
@@ -3423,7 +3429,8 @@
                 updatePaginationControls(page, totalRecords, pageLimit);
             } catch (e) {
                 console.error('loadRecords error:', e);
-                document.getElementById('records-container').innerHTML = '<p class="text-sm text-red-500 text-center py-4">Failed to load records.</p>';
+                document.getElementById('records-container').innerHTML =
+                    '<p class="text-sm text-red-500 text-center py-4">Failed to load records.</p>';
                 showToast(e.message || 'Failed to load records.', 'error');
             }
         }
@@ -3460,7 +3467,8 @@
                 }
                 var rows = res.rows || [];
                 if (rows.length === 0) {
-                    showCustomAlert('No Records Found', 'No records found for bike number: <strong>' + bikeNumber + '</strong>');
+                    showCustomAlert('No Records Found', 'No records found for bike number: <strong>' + bikeNumber +
+                        '</strong>');
                     searchInput.value = '';
                     loadRecords(currentPage);
                     return;
@@ -3474,7 +3482,8 @@
                 document.getElementById('page-info').textContent = 'Search results (' + rows.length + ' found)';
             } catch (e) {
                 console.error('searchRecords error:', e);
-                document.getElementById('records-container').innerHTML = '<p class="text-sm text-red-500 text-center py-4">Search failed.</p>';
+                document.getElementById('records-container').innerHTML =
+                    '<p class="text-sm text-red-500 text-center py-4">Search failed.</p>';
                 showToast(e.message || 'Search failed.', 'error');
             }
         }
@@ -3486,7 +3495,7 @@
             loadRecords(1);
         }
 
-        // ── STATS ──
+        // ── Stats (UPDATED to use getMetrics) ──
         function setStatsLoading(loading) {
             statsLoading = loading;
             const loaderIds = ['stat-total-loader', 'stat-users-loader', 'stat-photos-loader', 'stat-duplicates-loader'];
@@ -3519,11 +3528,13 @@
             if (statsLoading) return;
             setStatsLoading(true);
             try {
-                const res = await apiCall('getStats', {});
-                if (!res.success) throw new Error(res.message || 'Failed to fetch stats.');
+                const res = await apiCall('getMetrics', {});
+                if (!res.success) throw new Error(res.message || 'Failed to fetch metrics.');
 
-                const total = res.totalRegistrations || 0;
-                const userCount = res.userCount || 0;
+                const total = res.registrations || 0;
+                const userCount = res.totalUsers || 0;
+                const qrScans = res.qrScans || 0;
+                const duplicateScans = res.duplicateScans || 0;
 
                 const oldTotal = parseInt(document.getElementById('stat-total').textContent) || 0;
                 const oldUsers = parseInt(document.getElementById('stat-users').textContent) || 0;
@@ -3531,21 +3542,14 @@
 
                 document.getElementById('stat-total').textContent = total;
                 document.getElementById('stat-users').textContent = userCount;
-                document.getElementById('stat-photos').textContent = total;
+                document.getElementById('stat-photos').textContent = qrScans;
+                document.getElementById('stat-duplicates').textContent = duplicateScans;
 
                 if (total !== oldTotal) flashValue('stat-total', 'flash');
                 if (userCount !== oldUsers) flashValue('stat-users', 'flash-red');
-                if (total !== oldPhotos) flashValue('stat-photos', 'flash-purple');
+                if (qrScans !== oldPhotos) flashValue('stat-photos', 'flash-purple');
 
-                const dupRes = await apiCall('getDuplicateCount', {});
-                if (dupRes.success) {
-                    const dupCount = dupRes.duplicateCount || 0;
-                    const oldDup = parseInt(document.getElementById('stat-duplicates').textContent) || 0;
-                    document.getElementById('stat-duplicates').textContent = dupCount;
-                    if (dupCount !== oldDup) flashValue('stat-duplicates', 'flash');
-                } else {
-                    console.warn('Failed to fetch duplicate count:', dupRes.message);
-                }
+                document.getElementById('dup-tab-badge').textContent = duplicateScans;
 
                 countdownSeconds = 900;
                 updateTimerDisplay();
@@ -3584,7 +3588,6 @@
             }, 1000);
         }
 
-        // ── Global refresh all (no users/history) ──
         async function refreshAll(includeDuplicates = true) {
             if (statsLoading) return;
             showToast('Refreshing all data...', 'info');
@@ -3603,7 +3606,7 @@
             showToast('All data refreshed.', 'success');
         }
 
-        // ── Dashboard manual refresh ──
+        // ── Dashboard (UPDATED) ──
         async function refreshDashboard() {
             const btn = document.querySelector('#dashboard-modal .refresh-dashboard-btn');
             if (btn) {
@@ -3612,7 +3615,6 @@
             }
             showToast('Refreshing dashboard...', 'info');
             try {
-                // Re-run the same logic as openDashboard
                 await loadDashboardData();
                 showToast('Dashboard updated.', 'success');
             } catch (e) {
@@ -3627,51 +3629,28 @@
         }
 
         async function loadDashboardData() {
-            // This is the data loading part extracted from openDashboard
-            const res = await apiCall('getCSV', {});
-            if (!res.success) throw new Error(res.message);
-            const csvData = res.csvData;
-            const parseResult = Papa.parse(csvData, {
-                header: false,
-                skipEmptyLines: true,
-                trimHeaders: false
-            });
-            const rows = parseResult.data;
-            if (rows.length <= 1) {
-                document.getElementById('dashboard-loading').innerHTML = '<p class="text-gray-500">No data available.</p>';
-                return;
-            }
-            const dataRows = rows.slice(1);
-            const dashboardRows = [];
-            for (let i = 0; i < dataRows.length; i++) {
-                const cols = dataRows[i];
-                if (cols.length >= 2) {
-                    const dateStr = cols[0] || '';
-                    const user = cols[1] || 'unknown';
-                    const dateObj = parseDateFromAnyString(dateStr);
-                    if (dateObj) {
-                        dashboardRows.push({ date: dateObj.toISOString(), user: user });
-                    } else {
-                        const d = new Date(dateStr);
-                        if (!isNaN(d.getTime())) {
-                            dashboardRows.push({ date: d.toISOString(), user: user });
-                        }
-                    }
-                }
-            }
-            dashboardData = dashboardRows;
+            // 1. Get summary stats from Sheet5 via getMetrics
+            const metricsRes = await apiCall('getMetrics', {});
+            if (!metricsRes.success) throw new Error(metricsRes.message);
+            document.getElementById('stat-today').textContent = metricsRes.today || 0;
+            document.getElementById('stat-yesterday').textContent = metricsRes.yesterday || 0;
+            document.getElementById('stat-week').textContent = metricsRes.thisWeek || 0;
+            document.getElementById('stat-total-dash').textContent = metricsRes.total || 0;
 
-            const stats = computeStats(dashboardData);
-            document.getElementById('stat-today').textContent = stats.todayCount;
-            document.getElementById('stat-yesterday').textContent = stats.yesterdayCount;
-            document.getElementById('stat-week').textContent = stats.weekCount;
-            document.getElementById('stat-total-dash').textContent = stats.totalCount;
+            // 2. Get user‑bike counts from Sheet3 via getUserBikeCounts
+            const usersRes = await apiCall('getUserBikeCounts', {});
+            if (!usersRes.success) throw new Error(usersRes.message);
+            userBikeCounts = usersRes.users || [];
 
-            // Update charts
+            // 3. Get pre‑aggregated daily entries from Sheet5 via getDailyEntries
+            const dailyRes = await apiCall('getDailyEntries', {});
+            if (!dailyRes.success) throw new Error(dailyRes.message);
+            dailyEntries = dailyRes.entries || [];
+
+            // Render charts
             updateDashboard();
         }
 
-        // ── Date range helper ──
         function getPeriodRange(period) {
             const now = new Date();
             const start = new Date(now);
@@ -3724,7 +3703,7 @@
             return { start, end };
         }
 
-        // ── ADMIN ACTIONS ──
+        // ── Admin actions ──
         async function adminAction(actionType) {
             try {
                 if (actionType === 'addUser') {
@@ -3738,7 +3717,6 @@
                     document.getElementById('new-username').value = '';
                     document.getElementById('new-password').value = '';
                     if (passwordVisible) togglePasswordVisibility();
-                    // Update the stat tile (user count)
                     await loadStats();
                     toggleSpinner('admin-add', false, 'Save User');
                 } else if (actionType === 'downloadCSV') {
@@ -3782,7 +3760,8 @@
                         fields: keepIndices.map(i => header[i] || ''),
                         data: newRows
                     });
-                    const rangeLabels = { today: 'Today', yesterday: 'Yesterday', last7: 'Last 7 Days', month: 'Current Month', total: 'Total' };
+                    const rangeLabels = { today: 'Today', yesterday: 'Yesterday', last7: 'Last 7 Days', month: 'Current Month',
+                        total: 'Total' };
                     const label = rangeLabels[range] || range;
                     closeModal('csv-progress-modal');
                     downloadFile('bike_registrations_' + label.toLowerCase().replace(/\s/g, '_'), finalCsv.trim());
@@ -3813,73 +3792,16 @@
             document.body.removeChild(a);
         }
 
-        // ── DASHBOARD ──
-        function aggregateByDay(data) {
-            const map = {};
-            data.forEach(row => {
-                const key = row.date.split('T')[0];
-                map[key] = (map[key] || 0) + 1;
-            });
-            const keys = Object.keys(map).sort();
-            return { labels: keys.map(k => k.substring(5)), values: keys.map(k => map[k]) };
-        }
-
-        function aggregateByUser(data) {
-            const map = {};
-            data.forEach(row => {
-                const user = row.user || 'unknown';
-                map[user] = (map[user] || 0) + 1;
-            });
-            const sorted = Object.entries(map).sort((a, b) => b[1] - a[1]);
-            return { labels: sorted.map(item => item[0]), values: sorted.map(item => item[1]) };
-        }
-
-        function filterDataByPeriod(data, period) {
-            if (period === 'total') return data;
+        // ── Dashboard ──
+        function filterDailyEntriesByPeriod(entries, period) {
+            if (period === 'total') return entries;
             const { start, end } = getPeriodRange(period);
-            if (!start || !end) return data;
-            return data.filter(row => {
-                const date = new Date(row.date);
-                return date >= start && date <= end;
+            if (!start || !end) return entries;
+            return entries.filter(entry => {
+                // entry.date is expected as YYYY-MM-DD
+                const d = new Date(entry.date + 'T00:00:00');
+                return d >= start && d <= end;
             });
-        }
-
-        function computeStats(data) {
-            const now = new Date();
-            const todayStart = new Date(now);
-            todayStart.setHours(0, 0, 0, 0);
-            const todayEnd = new Date(now);
-            todayEnd.setHours(23, 59, 59, 999);
-
-            const yesterdayStart = new Date(now);
-            yesterdayStart.setDate(yesterdayStart.getDate() - 1);
-            yesterdayStart.setHours(0, 0, 0, 0);
-            const yesterdayEnd = new Date(now);
-            yesterdayEnd.setDate(yesterdayEnd.getDate() - 1);
-            yesterdayEnd.setHours(23, 59, 59, 999);
-
-            const day = now.getDay();
-            const diffToMon = (day === 0 ? 6 : day - 1);
-            const weekStart = new Date(now);
-            weekStart.setDate(weekStart.getDate() - diffToMon);
-            weekStart.setHours(0, 0, 0, 0);
-            const weekEnd = new Date(weekStart);
-            weekEnd.setDate(weekEnd.getDate() + 6);
-            weekEnd.setHours(23, 59, 59, 999);
-
-            let todayCount = 0,
-                yesterdayCount = 0,
-                weekCount = 0,
-                totalCount = data.length;
-
-            data.forEach(row => {
-                const date = new Date(row.date);
-                if (date >= todayStart && date <= todayEnd) todayCount++;
-                if (date >= yesterdayStart && date <= yesterdayEnd) yesterdayCount++;
-                if (date >= weekStart && date <= weekEnd) weekCount++;
-            });
-
-            return { todayCount, yesterdayCount, weekCount, totalCount };
         }
 
         async function openDashboard() {
@@ -3894,7 +3816,8 @@
                 lucide.createIcons();
             } catch (e) {
                 console.error('Dashboard error:', e);
-                document.getElementById('dashboard-loading').innerHTML = '<p class="text-red-500">Failed to load dashboard data.</p>';
+                document.getElementById('dashboard-loading').innerHTML =
+                    '<p class="text-red-500">Failed to load dashboard data.</p>';
                 showToast('Failed to load dashboard.', 'error');
             }
         }
@@ -3912,40 +3835,103 @@
         }
 
         function updateDashboard() {
+            // ========================
+            // 1) TIME CHART (using pre‑aggregated daily entries)
+            // ========================
             const periodTime = document.getElementById('period-select-time').value;
-            const periodUser = document.getElementById('period-select-user').value;
+            const filteredEntries = filterDailyEntriesByPeriod(dailyEntries, periodTime);
 
-            const filteredTime = filterDataByPeriod(dashboardData, periodTime);
-            const timeData = aggregateByDay(filteredTime);
+            // Sort by date (ascending)
+            filteredEntries.sort((a, b) => a.date.localeCompare(b.date));
+
+            const labels = filteredEntries.map(e => {
+                // Show short date (e.g., "Jan 12") – we keep the full date for tooltip
+                const d = new Date(e.date + 'T00:00:00');
+                return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+            });
+            const values = filteredEntries.map(e => e.total);
+
+            // Compute average
+            let avg = null;
+            if (values.length > 0) {
+                const sum = values.reduce((a, b) => a + b, 0);
+                avg = sum / values.length;
+            }
+
             const ctx1 = document.getElementById('chart-time').getContext('2d');
             if (chartTimeInstance) chartTimeInstance.destroy();
+
+            const datasets = [{
+                label: 'Registrations',
+                data: values,
+                borderColor: 'rgba(220, 38, 38, 1)',
+                backgroundColor: 'rgba(220, 38, 38, 0.1)',
+                fill: true,
+                tension: 0.2,
+                pointRadius: 2
+            }];
+
+            if (avg !== null) {
+                datasets.push({
+                    label: 'Average per day',
+                    data: Array(values.length).fill(avg),
+                    borderColor: 'rgba(220, 38, 38, 0.5)',
+                    borderDash: [6, 4],
+                    borderWidth: 2,
+                    pointRadius: 0,
+                    fill: false,
+                    tension: 0
+                });
+            }
+
             chartTimeInstance = new Chart(ctx1, {
                 type: 'line',
                 data: {
-                    labels: timeData.labels,
-                    datasets: [{
-                        label: 'Registrations',
-                        data: timeData.values,
-                        borderColor: 'rgba(220, 38, 38, 1)',
-                        backgroundColor: 'rgba(220, 38, 38, 0.1)',
-                        fill: true,
-                        tension: 0.2,
-                        pointRadius: 2
-                    }]
+                    labels: labels,
+                    datasets: datasets
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: true,
-                    plugins: { legend: { display: false } },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            labels: { boxWidth: 10, fontSize: 10 }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) label += ': ';
+                                    if (context.parsed.y !== null) {
+                                        label += context.parsed.y;
+                                    }
+                                    // Show the full date in tooltip
+                                    const index = context.dataIndex;
+                                    const entry = filteredEntries[index];
+                                    if (entry) {
+                                        label += ' (' + entry.date + ')';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
                     scales: {
                         y: { beginAtZero: true, ticks: { stepSize: 1 }, title: { display: true, text: 'Count' } },
-                        x: { title: { display: true, text: 'Day' } }
+                        x: { title: { display: true, text: 'Date' } }
                     }
                 }
             });
 
-            const filteredUser = filterDataByPeriod(dashboardData, periodUser);
-            const userData = aggregateByUser(filteredUser);
+            // ========================
+            // 2) USER CHART (descending order)
+            // ========================
+            const sortedUsers = [...userBikeCounts].sort((a, b) => b.count - a.count);
+            const userData = {
+                labels: sortedUsers.map(item => item.user),
+                values: sortedUsers.map(item => item.count)
+            };
             const ctx2 = document.getElementById('chart-user').getContext('2d');
             if (chartUserInstance) chartUserInstance.destroy();
             chartUserInstance = new Chart(ctx2, {
@@ -3973,11 +3959,12 @@
             });
         }
 
-        // ─── DELETE FUNCTIONS ───
-
+        // ── DELETE (unchanged) ──
         function showSingleDeleteConfirm(rowNumber, bikeNumber) {
             pendingDelete = { type: 'single', rowNumber: rowNumber, bikeNumber: bikeNumber };
-            showDeleteModal(`Delete Record for Bike ${bikeNumber}?`, `You are about to delete the duplicate record for bike <strong>${bikeNumber}</strong> (row ${rowNumber}).`, null, 'Delete Record');
+            showDeleteModal(`Delete Record for Bike ${bikeNumber}?`,
+                `You are about to delete the duplicate record for bike <strong>${bikeNumber}</strong> (row ${rowNumber}).`,
+                null, 'Delete Record');
         }
 
         function showBatchDeleteConfirm(selectedRecords) {
@@ -4117,8 +4104,7 @@
             }
         }
 
-        // ─── SELECTION FUNCTIONS ───
-
+        // ── Selection ──
         function toggleSelectAll() {
             const selectAllCheckbox = document.getElementById('select-all-checkbox');
             if (!selectAllCheckbox) return;
@@ -4238,7 +4224,6 @@
             showBatchDeleteConfirm(selected);
         }
 
-        // ─── Refresh Duplicates ───
         async function refreshDuplicates() {
             deletedRows.clear();
             clearSelection();
@@ -4248,7 +4233,7 @@
             showToast('Duplicate list refreshed.', 'success');
         }
 
-        // ─── SORTING ───
+        // ── Sorting ──
         function sortDuplicateData(data, field, direction) {
             const sorted = [...data];
             sorted.sort((a, b) => {
@@ -4321,7 +4306,7 @@
             renderDuplicateTable(duplicateGroups);
         }
 
-        // ─── RENDER DUPLICATE TABLE ───
+        // ── Render duplicate table ──
         function renderDuplicateTable(duplicateGroups) {
             const container = document.getElementById('duplicate-container');
 
@@ -4358,9 +4343,12 @@
             html += `<div class="dup-table-wrap" style="min-width:100%;">`;
             html += `<table class="records-table dup-table"><thead>`;
             html += `<tr>`;
-            html += `<th class="sortable ${sortField === 'bikeNumber' ? 'sort-active' : ''}" onclick="handleSort('bikeNumber')">Bike # <span class="sort-indicator">${sortIndicator('bikeNumber')}</span></th>`;
-            html += `<th class="sortable ${sortField === 'timestamp' ? 'sort-active' : ''}" onclick="handleSort('timestamp')">Timestamp <span class="sort-indicator">${sortIndicator('timestamp')}</span></th>`;
-            html += `<th class="sortable ${sortField === 'user' ? 'sort-active' : ''}" onclick="handleSort('user')">User <span class="sort-indicator">${sortIndicator('user')}</span></th>`;
+            html +=
+                `<th class="sortable ${sortField === 'bikeNumber' ? 'sort-active' : ''}" onclick="handleSort('bikeNumber')">Bike # <span class="sort-indicator">${sortIndicator('bikeNumber')}</span></th>`;
+            html +=
+                `<th class="sortable ${sortField === 'timestamp' ? 'sort-active' : ''}" onclick="handleSort('timestamp')">Timestamp <span class="sort-indicator">${sortIndicator('timestamp')}</span></th>`;
+            html +=
+                `<th class="sortable ${sortField === 'user' ? 'sort-active' : ''}" onclick="handleSort('user')">User <span class="sort-indicator">${sortIndicator('user')}</span></th>`;
             html += `<th>QR/Barcode</th><th>Photo</th><th>Delete</th>`;
             html += `<th class="col-checkbox"><div class="select-all-wrap"><input type="checkbox" id="select-all-checkbox" onchange="toggleSelectAll()" title="Select All" /></div></th>`;
             html += `</tr></thead><tbody>`;
@@ -4392,7 +4380,8 @@
                     if (rec.photo && rec.photo.length > 10) {
                         const idxPhoto = dupPhotoStore.length;
                         dupPhotoStore.push(rec.photo);
-                        photoCell = `<button class="photo-view-btn" data-index="${idxPhoto}" onclick="viewDupPhoto(this.dataset.index)" title="View photo"><i data-lucide="camera" class="w-3 h-3 text-blue-600 hover:text-blue-800 cursor-pointer"></i></button>`;
+                        photoCell =
+                            `<button class="photo-view-btn" data-index="${idxPhoto}" onclick="viewDupPhoto(this.dataset.index)" title="View photo"><i data-lucide="camera" class="w-3 h-3 text-blue-600 hover:text-blue-800 cursor-pointer"></i></button>`;
                     }
 
                     const isDeleted = deletedRows.has(rec.rowNumber);
@@ -4400,7 +4389,8 @@
                         `<button class="btn-delete" disabled title="Already deleted"><i data-lucide="trash-2" class="w-3 h-3"></i></button>` :
                         `<button class="btn-delete" data-row="${rec.rowNumber}" onclick="showSingleDeleteConfirm(${rec.rowNumber}, '${rec.bikeNumber}')" title="Delete this record"><i data-lucide="trash-2" class="w-3 h-3"></i></button>`;
 
-                    const rowClass = rec.duplicateFlag && rec.duplicateFlag.includes('WARNING') ? 'duplicate-warning' : '';
+                    const rowClass = rec.duplicateFlag && rec.duplicateFlag.includes('WARNING') ? 'duplicate-warning' :
+                    '';
                     const bgClass = isFirst ? 'bg-green-50' : '';
                     const deletedClass = isDeleted ? 'deleted' : '';
 
@@ -4411,7 +4401,8 @@
                     html += `<td class="max-w-[60px] truncate">${rec.barcode}</td>`;
                     html += `<td>${photoCell}</td>`;
                     html += `<td>${deleteBtn}</td>`;
-                    html += `<td class="col-checkbox"><input type="checkbox" class="dup-row-checkbox" data-row="${rec.rowNumber}" data-bike="${rec.bikeNumber}" data-timestamp="${rec.timestamp}" ${isDeleted ? 'disabled' : ''} onchange="toggleRowCheckbox(${rec.rowNumber})" /></td>`;
+                    html +=
+                        `<td class="col-checkbox"><input type="checkbox" class="dup-row-checkbox" data-row="${rec.rowNumber}" data-bike="${rec.bikeNumber}" data-timestamp="${rec.timestamp}" ${isDeleted ? 'disabled' : ''} onchange="toggleRowCheckbox(${rec.rowNumber})" /></td>`;
                     html += `</tr>`;
                 });
             });
@@ -4428,7 +4419,7 @@
             updateBatchDeleteButton();
         }
 
-        // ─── LOAD DUPLICATE TABLE ───
+        // ── Load duplicate table ──
         async function loadDuplicateTable() {
             const container = document.getElementById('duplicate-container');
             container.innerHTML = '<p class="text-sm text-gray-500 text-center py-4"><i data-lucide="loader-2" class="w-5 h-5 animate-spin mx-auto"></i></p>';
@@ -4547,7 +4538,7 @@
             }
         }
 
-        // ── KEYBOARD SHORTCUTS ──
+        // ── Keyboard shortcuts ──
         document.addEventListener('keydown', function(e) {
             if ((e.ctrlKey || e.metaKey) && e.key === 's') {
                 e.preventDefault();
@@ -4559,7 +4550,8 @@
                     var id = modals[i].id;
                     if (id === 'qr-scanner-modal') { stopQrScanner(); } else if (id === 'camera-modal') { closeCamera(); } else if (id ===
                         'photo-modal') { closePhotoModal(); } else if (id === 'dashboard-modal') { closeDashboard(); } else if (id ===
-                        'alert-modal') { closeAlertModal(); } else if (id === 'csv-progress-modal') { closeModal('csv-progress-modal'); } else if (
+                        'alert-modal') { closeAlertModal(); } else if (id === 'csv-progress-modal') { closeModal(
+                            'csv-progress-modal'); } else if (
                         id === 'delete-confirm-modal') { cancelDelete(); } else if (id === 'inactivity-warning-modal') { stayLoggedIn(); } else if (
                         id === 'user-list-modal') { closeUserListModal(); } else { closeModal(id); }
                 }
@@ -4580,9 +4572,10 @@
         console.log(`✅ QR Code Bike Registration System ready (${APP_VERSION}).`);
         console.log('📊 GAS URL: ' + GAS_WEB_APP_URL);
         console.log('📌 Version: ' + APP_VERSION);
-        console.log('🔄 User modal header is now sticky, close button at top.');
-        console.log('📊 Dashboard has a manual refresh button (↻) next to close.');
-        console.log('📋 Duplicate panel visibility fixed – only shows on Duplicates tab.');
+        console.log('🔐 Login tracking enabled (Sheet4, columns A-C).');
+        console.log('🔄 Auto-refresh after inactivity logout enabled.');
+        console.log('📈 Metrics from Sheet5; daily entries from Sheet5 columns N & O.');
+        console.log('👥 Bikes per user from Sheet3 columns O & P, sorted descending.');
     </script>
 </body>
 </html>
