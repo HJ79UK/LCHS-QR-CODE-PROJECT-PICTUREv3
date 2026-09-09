@@ -15,7 +15,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js">
     </script>
     <style>
-        /* (All styles unchanged – same as before) */
+        /* (All base styles unchanged – only .label bold black added) */
         * {
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
@@ -858,92 +858,101 @@
             text-align: center;
         }
 
-        .stat-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 0.5rem;
-            margin-bottom: 0.75rem;
+        /* --- DASHBOARD STATS ROWS --- */
+        .dashboard-stats-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+            margin-bottom: 0.25rem;
         }
-        .stat-grid .stat-item {
+        .dashboard-stats-row .stat-item {
             background: white;
             border-radius: 0.5rem;
-            padding: 0.4rem 0.5rem;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            padding: 0.25rem 0.4rem;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
             border: 1px solid #e5e7eb;
             text-align: center;
+            flex: 0 1 auto;
+            min-width: 60px;
         }
-        .stat-grid .stat-item .number {
-            font-size: 1.4rem;
+        .dashboard-stats-row.row-1 .stat-item,
+        .dashboard-stats-row.row-4 .stat-item {
+            flex: 1 0 calc(25% - 0.25rem);
+            max-width: calc(25% - 0.25rem);
+        }
+        .dashboard-stats-row.row-2 {
+            gap: 0;
+        }
+        .dashboard-stats-row.row-2 .stat-item {
+            flex: 1 0 calc(16.666% - 0rem);
+            max-width: calc(16.666% - 0rem);
+            border-radius: 0;
+            border-right: 1px solid #e5e7eb;
+        }
+        .dashboard-stats-row.row-2 .stat-item:last-child {
+            border-right: none;
+        }
+        .stat-item .number {
+            font-size: 1rem;
             font-weight: 700;
             color: #1f2937;
-            line-height: 1.2;
+            line-height: 1.1;
         }
-        .stat-grid .stat-item .label {
-            font-size: 0.6rem;
+        .stat-item .label {
+            font-size: 0.55rem;
             text-transform: uppercase;
-            letter-spacing: 0.03em;
-            color: #6b7280;
-            margin-top: 0.1rem;
+            letter-spacing: 0.02em;
+            color: #000000;        /* changed to black */
+            font-weight: 700;      /* added bold */
+            margin-top: 0.05rem;
+            word-break: break-word;
         }
+        /* Existing tile colours (unchanged) */
+        .stat-item.today { background: #fee2e2; border-color: #fca5a5; }
+        .stat-item.today .number { color: #dc2626; }
+        .stat-item.yesterday { background: #fef3c7; border-color: #fcd34d; }
+        .stat-item.yesterday .number { color: #d97706; }
+        .stat-item.week { background: #dbeafe; border-color: #93c5fd; }
+        .stat-item.week .number { color: #2563eb; }
+        .stat-item.total { background: #dcfce7; border-color: #86efac; }
+        .stat-item.total .number { color: #16a34a; }
+        .stat-item.avg { background: #f3e8ff; border-color: #c084fc; }
+        .stat-item.avg .number { color: #7c3aed; }
+        .stat-item.avg3 { background: #fce7f3; border-color: #f9a8d4; }
+        .stat-item.avg3 .number { color: #db2777; }
+
+        /* New tile colour classes (Row 1 & Row 4) */
+        .stat-item.color-blue { background: #e0f2fe; border-color: #7dd3fc; }
+        .stat-item.color-blue .number { color: #0369a1; }
+        .stat-item.color-green { background: #dcfce7; border-color: #86efac; }
+        .stat-item.color-green .number { color: #15803d; }
+        .stat-item.color-orange { background: #ffedd5; border-color: #fdba74; }
+        .stat-item.color-orange .number { color: #c2410c; }
+        .stat-item.color-purple { background: #f3e8ff; border-color: #c084fc; }
+        .stat-item.color-purple .number { color: #6b21a8; }
+        .stat-item.color-pink { background: #fce7f3; border-color: #f9a8d4; }
+        .stat-item.color-pink .number { color: #be185d; }
+        .stat-item.color-teal { background: #ccfbf1; border-color: #5eead4; }
+        .stat-item.color-teal .number { color: #0d9488; }
+        .stat-item.color-indigo { background: #e0e7ff; border-color: #a5b4fc; }
+        .stat-item.color-indigo .number { color: #4338ca; }
+
         @media (max-width: 480px) {
-            .stat-grid {
-                grid-template-columns: repeat(2, 1fr);
+            .dashboard-stats-row.row-1 .stat-item,
+            .dashboard-stats-row.row-4 .stat-item {
+                flex: 1 0 calc(50% - 0.25rem);
+                max-width: calc(50% - 0.25rem);
             }
-        }
-        @media (min-width: 481px) {
-            .stat-grid .stat-item .number {
-                font-size: 1.8rem;
+            .dashboard-stats-row.row-2 .stat-item {
+                flex: 1 0 calc(33.333% - 0rem);
+                max-width: calc(33.333% - 0rem);
             }
-        }
-
-        .stat-grid .stat-item.today {
-            background: #fee2e2;
-            border-color: #fca5a5;
-        }
-        .stat-grid .stat-item.today .number {
-            color: #dc2626;
-        }
-        .stat-grid .stat-item.yesterday {
-            background: #fef3c7;
-            border-color: #fcd34d;
-        }
-        .stat-grid .stat-item.yesterday .number {
-            color: #d97706;
-        }
-        .stat-grid .stat-item.week {
-            background: #dbeafe;
-            border-color: #93c5fd;
-        }
-        .stat-grid .stat-item.week .number {
-            color: #2563eb;
-        }
-        .stat-grid .stat-item.total {
-            background: #dcfce7;
-            border-color: #86efac;
-        }
-        .stat-grid .stat-item.total .number {
-            color: #16a34a;
-        }
-        .stat-grid .stat-item.avg {
-            background: #f3e8ff;
-            border-color: #c084fc;
-        }
-        .stat-grid .stat-item.avg .number {
-            color: #7c3aed;
-        }
-        .stat-grid .stat-item.avg3 {
-            background: #fce7f3;
-            border-color: #f9a8d4;
-        }
-        .stat-grid .stat-item.avg3 .number {
-            color: #db2777;
-        }
-
-        .dashboard-chart-container.time-chart .chart-header h4 {
-            color: #dc2626;
-        }
-        .dashboard-chart-container.user-chart .chart-header h4 {
-            color: #16a34a;
+            .stat-item .number {
+                font-size: 0.9rem;
+            }
+            .stat-item .label {
+                font-size: 0.5rem;
+            }
         }
 
         .dup-table {
@@ -1480,7 +1489,7 @@
 
     <!-- ========== VIEW 1: LOGIN ========== -->
     <div id="view-login" class="w-full max-w-md card p-6 md:p-8">
-        <span class="version-badge login-version">v3.6</span>
+        <span class="version-badge login-version">v3.9</span>
         <div class="text-center mb-6">
             <div class="flex justify-center mb-3">
                 <i data-lucide="bike" class="w-14 h-14 text-red-600"></i>
@@ -1537,7 +1546,7 @@
                     <i data-lucide="clock" class="w-3 h-3"></i>
                     <span id="timer-display">10:00</span>
                 </span>
-                <span class="version-badge">v3.6</span>
+                <span class="version-badge">v3.9</span>
             </div>
         </div>
 
@@ -1624,7 +1633,7 @@
                 <button onclick="logout()" class="text-sm text-gray-500 hover:text-gray-800 flex items-center gap-1 transition">
                     <i data-lucide="log-out" class="w-4 h-4"></i> Log Out
                 </button>
-                <span class="version-badge">v3.6</span>
+                <span class="version-badge">v3.9</span>
             </div>
         </div>
 
@@ -1899,9 +1908,32 @@
                     <p class="mt-1 text-sm">Loading data…</p>
                 </div>
                 <div id="dashboard-charts" class="hidden">
-                    <!-- New 2-row, 3-column layout -->
-                    <div class="stat-grid" id="stat-grid">
-                        <!-- Top row: Today, Yesterday, This Week -->
+                    <!-- ===== ROW 1: 4 new tiles with colours ===== -->
+                    <div class="dashboard-stats-row row-1">
+                        <div class="stat-item color-blue">
+                            <div class="number" id="stat-today-date">-</div>
+                            <div class="label">Today’s Date</div>
+                        </div>
+                        <div class="stat-item color-green">
+                            <div class="number" id="stat-completion-target">-</div>
+                            <div class="label">Completion Target</div>
+                        </div>
+                        <div class="stat-item color-orange">
+                            <div class="number" id="stat-bike-target">0</div>
+                            <div class="label">Bike Target</div>
+                        </div>
+                        <div class="stat-item color-purple">
+                            <div class="number" id="stat-outstanding-bikes">0</div>
+                            <div class="label">Outstanding Bikes</div>
+                        </div>
+                    </div>
+
+                    <!-- ===== ROW 2: existing 6 tiles (reduced width, no gaps) ===== -->
+                    <div class="dashboard-stats-row row-2">
+                        <div class="stat-item total">
+                            <div class="number" id="stat-total-dash">0</div>
+                            <div class="label">Total Bikes</div>
+                        </div>
                         <div class="stat-item today">
                             <div class="number" id="stat-today">0</div>
                             <div class="label">Today</div>
@@ -1914,11 +1946,6 @@
                             <div class="number" id="stat-week">0</div>
                             <div class="label">This Week</div>
                         </div>
-                        <!-- Bottom row: Total, Avg Daily (total), Avg Last 3 Days -->
-                        <div class="stat-item total">
-                            <div class="number" id="stat-total-dash">0</div>
-                            <div class="label">Total</div>
-                        </div>
                         <div class="stat-item avg">
                             <div class="number" id="stat-avg">0</div>
                             <div class="label">Avg Daily</div>
@@ -1928,6 +1955,28 @@
                             <div class="label">Avg Last 3 Days</div>
                         </div>
                     </div>
+
+                    <!-- ===== ROW 4: 4 new tiles with colours ===== -->
+                    <div class="dashboard-stats-row row-4">
+                        <div class="stat-item color-pink">
+                            <div class="number" id="stat-net-days-left">0</div>
+                            <div class="label">Net Days Left</div>
+                        </div>
+                        <div class="stat-item color-teal">
+                            <div class="number" id="stat-total-days-left">0</div>
+                            <div class="label">Total Days Left</div>
+                        </div>
+                        <div class="stat-item color-indigo">
+                            <div class="number" id="stat-bikes-per-day-net">0</div>
+                            <div class="label">Bikes/Day (Net)</div>
+                        </div>
+                        <div class="stat-item color-purple" style="background:#f3e8ff;border-color:#c084fc;">
+                            <div class="number" id="stat-bikes-per-day-total">0</div>
+                            <div class="label">Bikes/Day (Total)</div>
+                        </div>
+                    </div>
+
+                    <!-- Charts (unchanged) -->
                     <div class="dashboard-chart-container time-chart">
                         <div class="chart-header">
                             <h4>📈 Registrations over time</h4>
@@ -1959,11 +2008,11 @@
     </div>
 
     <script>
-        console.log('🚲 QR Code Bike Registration System starting... (v3.6)');
+        console.log('🚲 QR Code Bike Registration System starting... (v3.9)');
 
-        // ─── CONFIG ───
-        const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwbUZsJ61g8tYmsGHd8hz8oK7wth4ihntitLXRiXb1jwdeA9OyynlWCyGcdKYiJ6r30zg/exec";
-        const APP_VERSION = "v3.6";
+        // ─── CONFIG (UPDATED URL) ───
+        const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwNdebaFztMlq6A0VW2aAetqEFW7S3ytU1N62-Rfhpb07CTFaRBv-Xg-EOuv-POYw2cDw/exec";
+        const APP_VERSION = "v3.9";
 
         // ─── STATE ───
         let currentUser = null;
@@ -2098,6 +2147,14 @@
             let dNative = new Date(dateStr);
             if (!isNaN(dNative.getTime())) return dNative;
             return null;
+        }
+
+        function formatDateDDMMYYYY(dateObj) {
+            if (!dateObj || isNaN(dateObj.getTime())) return '-';
+            const d = String(dateObj.getDate()).padStart(2, '0');
+            const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const y = dateObj.getFullYear();
+            return `${d}/${m}/${y}`;
         }
 
         function togglePasswordVisibility() {
@@ -3657,25 +3714,43 @@
         }
 
         async function loadDashboardData() {
-            // 1. Get summary stats from Sheet5 via getMetrics
+            // 1. Get all metrics from Sheet5 (including new fields)
             const metricsRes = await apiCall('getMetrics', {});
             if (!metricsRes.success) throw new Error(metricsRes.message);
+
+            // Helper to format date string to DD/MM/YYYY
+            function formatDateString(dateVal) {
+                if (!dateVal) return '-';
+                // if it's already a string, try to parse it
+                let d = parseDateFromAnyString(dateVal);
+                if (d) return formatDateDDMMYYYY(d);
+                // if it's a number (Excel serial) convert
+                if (typeof dateVal === 'number') {
+                    // Excel date serial: days since 1900-01-01
+                    let dateObj = new Date((dateVal - 25569) * 86400 * 1000);
+                    if (!isNaN(dateObj.getTime())) return formatDateDDMMYYYY(dateObj);
+                }
+                return dateVal; // fallback
+            }
+
+            // Populate new row 1 tiles with date formatting
+            document.getElementById('stat-today-date').textContent = formatDateString(metricsRes.todayDate);
+            document.getElementById('stat-completion-target').textContent = formatDateString(metricsRes.completionTarget);
+            document.getElementById('stat-bike-target').textContent = metricsRes.bikeTarget || 0;
+            document.getElementById('stat-outstanding-bikes').textContent = metricsRes.outstandingBikes || 0;
+
+            // Populate existing tiles (row 2)
             document.getElementById('stat-today').textContent = metricsRes.today || 0;
             document.getElementById('stat-yesterday').textContent = metricsRes.yesterday || 0;
             document.getElementById('stat-week').textContent = metricsRes.thisWeek || 0;
             document.getElementById('stat-total-dash').textContent = metricsRes.total || 0;
 
-            // 2. Get user‑bike counts from Sheet3 via getUserBikeCounts
-            const usersRes = await apiCall('getUserBikeCounts', {});
-            if (!usersRes.success) throw new Error(usersRes.message);
-            userBikeCounts = usersRes.users || [];
-
-            // 3. Get pre‑aggregated daily entries from Sheet5 via getDailyEntries
+            // Compute and display averages (these are also part of row 2)
+            // Avg Daily (total) – using dailyEntries
             const dailyRes = await apiCall('getDailyEntries', {});
             if (!dailyRes.success) throw new Error(dailyRes.message);
             dailyEntries = dailyRes.entries || [];
 
-            // 4. Compute average daily registrations (overall) – floor to nearest integer
             const totalDays = dailyEntries.length;
             let avgDaily = 0;
             if (totalDays > 0) {
@@ -3684,10 +3759,10 @@
             }
             document.getElementById('stat-avg').textContent = avgDaily;
 
-            // 5. Compute average of last 3 working days (skip days with zero entries)
+            // Avg Last 3 Days (working days only)
             const workingDays = dailyEntries
                 .filter(e => e.total > 0)
-                .sort((a, b) => b.date.localeCompare(a.date)); // most recent first
+                .sort((a, b) => b.date.localeCompare(a.date));
             let avgLast3 = 0;
             const last3 = workingDays.slice(0, 3);
             if (last3.length > 0) {
@@ -3695,6 +3770,17 @@
                 avgLast3 = Math.floor(sum3 / last3.length);
             }
             document.getElementById('stat-avg3').textContent = avgLast3;
+
+            // Populate new row 4 tiles with rounding (floor) for the Bikes/Day values
+            document.getElementById('stat-net-days-left').textContent = metricsRes.netDaysLeft || 0;
+            document.getElementById('stat-total-days-left').textContent = metricsRes.totalDaysLeft || 0;
+            document.getElementById('stat-bikes-per-day-net').textContent = Math.floor(metricsRes.bikesPerDayNet || 0);
+            document.getElementById('stat-bikes-per-day-total').textContent = Math.floor(metricsRes.bikesPerDayTotal || 0);
+
+            // Get user bike counts for the chart
+            const usersRes = await apiCall('getUserBikeCounts', {});
+            if (!usersRes.success) throw new Error(usersRes.message);
+            userBikeCounts = usersRes.users || [];
 
             // Render charts
             updateDashboard();
@@ -4657,9 +4743,8 @@
         console.log('📌 Version: ' + APP_VERSION);
         console.log('🔐 Login tracking enabled (Sheet4, columns A-C).');
         console.log('🔄 Auto-refresh after inactivity logout enabled.');
-        console.log('📈 Metrics from Sheet5; daily entries from Sheet5 columns N & O.');
-        console.log('👥 Bikes per user from Sheet3 columns O & P, sorted descending.');
-        console.log('📊 Dashboard now shows 2 rows of 3 tiles: Today, Yesterday, This Week | Total, Avg Daily, Avg Last 3 Days');
+        console.log('📈 Metrics from Sheet5 extended with new dashboard fields.');
+        console.log('🎨 Dashboard tile descriptions now bold and black.');
     </script>
 </body>
 </html>
