@@ -15,7 +15,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js">
     </script>
     <style>
-        /* (All base styles unchanged – only .label bold black added) */
+        /* (All base styles unchanged) */
         * {
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
@@ -464,12 +464,21 @@
         #camera-modal .modal-card {
             max-width: 480px;
         }
-        #camera-modal video {
-            width: 100%;
-            background: #000;
+        #camera-modal .camera-container {
+            aspect-ratio: 4 / 3;
+            overflow: hidden;
             border-radius: 0.75rem;
-            max-height: 60vh;
+            background: #000;
+            position: relative;
+        }
+        #camera-modal video {
+            width: 100% !important;
+            height: 100% !important;
             object-fit: cover;
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
         }
         .camera-controls {
             display: flex;
@@ -899,13 +908,14 @@
             line-height: 1.1;
         }
         .stat-item .label {
-            font-size: 0.55rem;
+            font-size: 0.5rem;
             text-transform: uppercase;
             letter-spacing: 0.02em;
-            color: #000000;        /* changed to black */
-            font-weight: 700;      /* added bold */
+            color: #000000;
+            font-weight: 700;
             margin-top: 0.05rem;
             word-break: break-word;
+            line-height: 1.2;
         }
         /* Existing tile colours (unchanged) */
         .stat-item.today { background: #fee2e2; border-color: #fca5a5; }
@@ -951,7 +961,7 @@
                 font-size: 0.9rem;
             }
             .stat-item .label {
-                font-size: 0.5rem;
+                font-size: 0.45rem;
             }
         }
 
@@ -1489,7 +1499,7 @@
 
     <!-- ========== VIEW 1: LOGIN ========== -->
     <div id="view-login" class="w-full max-w-md card p-6 md:p-8">
-        <span class="version-badge login-version">v3.9</span>
+        <span class="version-badge login-version">v4.1</span>
         <div class="text-center mb-6">
             <div class="flex justify-center mb-3">
                 <i data-lucide="bike" class="w-14 h-14 text-red-600"></i>
@@ -1546,7 +1556,7 @@
                     <i data-lucide="clock" class="w-3 h-3"></i>
                     <span id="timer-display">10:00</span>
                 </span>
-                <span class="version-badge">v3.9</span>
+                <span class="version-badge">v4.1</span>
             </div>
         </div>
 
@@ -1633,7 +1643,7 @@
                 <button onclick="logout()" class="text-sm text-gray-500 hover:text-gray-800 flex items-center gap-1 transition">
                     <i data-lucide="log-out" class="w-4 h-4"></i> Log Out
                 </button>
-                <span class="version-badge">v3.9</span>
+                <span class="version-badge">v4.1</span>
             </div>
         </div>
 
@@ -1861,8 +1871,8 @@
     <div id="camera-modal" class="hidden-view fixed inset-0 modal-overlay z-50">
         <div class="modal-card p-4">
             <h3 class="text-lg font-bold mb-3 text-gray-800">Take Photo</h3>
-            <div class="relative bg-black rounded-xl overflow-hidden">
-                <video id="camera-video" autoplay playsinline class="w-full"></video>
+            <div class="camera-container relative bg-black">
+                <video id="camera-video" autoplay playsinline></video>
             </div>
             <div class="camera-controls mt-4">
                 <button onclick="closeCamera()" class="btn-grey">Cancel</button>
@@ -1908,7 +1918,7 @@
                     <p class="mt-1 text-sm">Loading data…</p>
                 </div>
                 <div id="dashboard-charts" class="hidden">
-                    <!-- ===== ROW 1: 4 new tiles with colours ===== -->
+                    <!-- ===== ROW 1: 4 tiles ===== -->
                     <div class="dashboard-stats-row row-1">
                         <div class="stat-item color-blue">
                             <div class="number" id="stat-today-date">-</div>
@@ -1920,47 +1930,47 @@
                         </div>
                         <div class="stat-item color-orange">
                             <div class="number" id="stat-bike-target">0</div>
-                            <div class="label">Bike Target</div>
+                            <div class="label">Bikes in total to be done</div>
                         </div>
                         <div class="stat-item color-purple">
                             <div class="number" id="stat-outstanding-bikes">0</div>
-                            <div class="label">Outstanding Bikes</div>
+                            <div class="label">Outstanding bikes to be done</div>
                         </div>
                     </div>
 
-                    <!-- ===== ROW 2: existing 6 tiles (reduced width, no gaps) ===== -->
+                    <!-- ===== ROW 2: existing 6 tiles (names updated) ===== -->
                     <div class="dashboard-stats-row row-2">
                         <div class="stat-item total">
                             <div class="number" id="stat-total-dash">0</div>
-                            <div class="label">Total Bikes</div>
+                            <div class="label">Total bikes done to date</div>
                         </div>
                         <div class="stat-item today">
                             <div class="number" id="stat-today">0</div>
-                            <div class="label">Today</div>
+                            <div class="label">Bikes Done Today</div>
                         </div>
                         <div class="stat-item yesterday">
                             <div class="number" id="stat-yesterday">0</div>
-                            <div class="label">Yesterday</div>
+                            <div class="label">Bikes Done Yesterday</div>
                         </div>
                         <div class="stat-item week">
                             <div class="number" id="stat-week">0</div>
-                            <div class="label">This Week</div>
+                            <div class="label">Bikes Done This Week</div>
                         </div>
                         <div class="stat-item avg">
                             <div class="number" id="stat-avg">0</div>
-                            <div class="label">Avg Daily</div>
+                            <div class="label">Average daily total</div>
                         </div>
                         <div class="stat-item avg3">
                             <div class="number" id="stat-avg3">0</div>
-                            <div class="label">Avg Last 3 Days</div>
+                            <div class="label">Average done in the last 3 days</div>
                         </div>
                     </div>
 
-                    <!-- ===== ROW 4: 4 new tiles with colours ===== -->
+                    <!-- ===== ROW 4: 4 new tiles ===== -->
                     <div class="dashboard-stats-row row-4">
                         <div class="stat-item color-pink">
                             <div class="number" id="stat-net-days-left">0</div>
-                            <div class="label">Net Days Left</div>
+                            <div class="label">Net working days left</div>
                         </div>
                         <div class="stat-item color-teal">
                             <div class="number" id="stat-total-days-left">0</div>
@@ -1968,11 +1978,11 @@
                         </div>
                         <div class="stat-item color-indigo">
                             <div class="number" id="stat-bikes-per-day-net">0</div>
-                            <div class="label">Bikes/Day (Net)</div>
+                            <div class="label">Bikes to be done per day (net)</div>
                         </div>
                         <div class="stat-item color-purple" style="background:#f3e8ff;border-color:#c084fc;">
                             <div class="number" id="stat-bikes-per-day-total">0</div>
-                            <div class="label">Bikes/Day (Total)</div>
+                            <div class="label">Bikes to be done per day (total)</div>
                         </div>
                     </div>
 
@@ -2008,11 +2018,11 @@
     </div>
 
     <script>
-        console.log('🚲 QR Code Bike Registration System starting... (v3.9)');
+        console.log('🚲 QR Code Bike Registration System starting... (v4.1)');
 
-        // ─── CONFIG (UPDATED URL) ───
+        // ─── CONFIG ───
         const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwNdebaFztMlq6A0VW2aAetqEFW7S3ytU1N62-Rfhpb07CTFaRBv-Xg-EOuv-POYw2cDw/exec";
-        const APP_VERSION = "v3.9";
+        const APP_VERSION = "v4.1";
 
         // ─── STATE ───
         let currentUser = null;
@@ -2831,7 +2841,7 @@
             lucide.createIcons();
         }
 
-        // ── LOGIN (with login tracking) ──
+        // ── LOGIN ──
         async function handleLogin(e) {
             e.preventDefault();
             var user = document.getElementById('login-user').value.trim();
@@ -2859,7 +2869,6 @@
                 currentUser = user;
                 currentUserRole = res.role || 'user';
 
-                // ── Log login to sheet ──
                 updateLoginProgress(48, 'Logging login...', 'Recording login event...');
                 await logLoginToSheet(user, APP_VERSION);
 
@@ -3714,39 +3723,30 @@
         }
 
         async function loadDashboardData() {
-            // 1. Get all metrics from Sheet5 (including new fields)
             const metricsRes = await apiCall('getMetrics', {});
             if (!metricsRes.success) throw new Error(metricsRes.message);
 
-            // Helper to format date string to DD/MM/YYYY
             function formatDateString(dateVal) {
                 if (!dateVal) return '-';
-                // if it's already a string, try to parse it
                 let d = parseDateFromAnyString(dateVal);
                 if (d) return formatDateDDMMYYYY(d);
-                // if it's a number (Excel serial) convert
                 if (typeof dateVal === 'number') {
-                    // Excel date serial: days since 1900-01-01
                     let dateObj = new Date((dateVal - 25569) * 86400 * 1000);
                     if (!isNaN(dateObj.getTime())) return formatDateDDMMYYYY(dateObj);
                 }
-                return dateVal; // fallback
+                return dateVal;
             }
 
-            // Populate new row 1 tiles with date formatting
             document.getElementById('stat-today-date').textContent = formatDateString(metricsRes.todayDate);
             document.getElementById('stat-completion-target').textContent = formatDateString(metricsRes.completionTarget);
             document.getElementById('stat-bike-target').textContent = metricsRes.bikeTarget || 0;
             document.getElementById('stat-outstanding-bikes').textContent = metricsRes.outstandingBikes || 0;
 
-            // Populate existing tiles (row 2)
             document.getElementById('stat-today').textContent = metricsRes.today || 0;
             document.getElementById('stat-yesterday').textContent = metricsRes.yesterday || 0;
             document.getElementById('stat-week').textContent = metricsRes.thisWeek || 0;
             document.getElementById('stat-total-dash').textContent = metricsRes.total || 0;
 
-            // Compute and display averages (these are also part of row 2)
-            // Avg Daily (total) – using dailyEntries
             const dailyRes = await apiCall('getDailyEntries', {});
             if (!dailyRes.success) throw new Error(dailyRes.message);
             dailyEntries = dailyRes.entries || [];
@@ -3759,7 +3759,6 @@
             }
             document.getElementById('stat-avg').textContent = avgDaily;
 
-            // Avg Last 3 Days (working days only)
             const workingDays = dailyEntries
                 .filter(e => e.total > 0)
                 .sort((a, b) => b.date.localeCompare(a.date));
@@ -3771,18 +3770,15 @@
             }
             document.getElementById('stat-avg3').textContent = avgLast3;
 
-            // Populate new row 4 tiles with rounding (floor) for the Bikes/Day values
             document.getElementById('stat-net-days-left').textContent = metricsRes.netDaysLeft || 0;
             document.getElementById('stat-total-days-left').textContent = metricsRes.totalDaysLeft || 0;
             document.getElementById('stat-bikes-per-day-net').textContent = Math.floor(metricsRes.bikesPerDayNet || 0);
             document.getElementById('stat-bikes-per-day-total').textContent = Math.floor(metricsRes.bikesPerDayTotal || 0);
 
-            // Get user bike counts for the chart
             const usersRes = await apiCall('getUserBikeCounts', {});
             if (!usersRes.success) throw new Error(usersRes.message);
             userBikeCounts = usersRes.users || [];
 
-            // Render charts
             updateDashboard();
         }
 
@@ -3838,7 +3834,6 @@
             return { start, end };
         }
 
-        // ── Linear regression helper ──
         function linearRegression(x, y) {
             const n = x.length;
             if (n === 0) return { slope: 0, intercept: 0 };
@@ -3988,9 +3983,6 @@
         }
 
         function updateDashboard() {
-            // ========================
-            // 1) TIME CHART (with trend line)
-            // ========================
             const periodTime = document.getElementById('period-select-time').value;
             const filteredEntries = filterDailyEntriesByPeriod(dailyEntries, periodTime);
 
@@ -4002,7 +3994,6 @@
             });
             const values = filteredEntries.map(e => e.total);
 
-            // Compute average for selected period
             let avg = null;
             if (values.length > 0) {
                 const sum = values.reduce((a, b) => a + b, 0);
@@ -4022,7 +4013,6 @@
                 pointRadius: 2
             }];
 
-            // Average line
             if (avg !== null) {
                 datasets.push({
                     label: 'Average per day',
@@ -4036,7 +4026,6 @@
                 });
             }
 
-            // Trend line (linear regression) – only if at least 2 points
             if (filteredEntries.length >= 2) {
                 const indices = filteredEntries.map((_, i) => i);
                 const yValues = filteredEntries.map(e => e.total);
@@ -4093,9 +4082,6 @@
                 }
             });
 
-            // ========================
-            // 2) USER CHART (unchanged)
-            // ========================
             const sortedUsers = [...userBikeCounts].sort((a, b) => b.count - a.count);
             const userData = {
                 labels: sortedUsers.map(item => item.user),
@@ -4744,7 +4730,7 @@
         console.log('🔐 Login tracking enabled (Sheet4, columns A-C).');
         console.log('🔄 Auto-refresh after inactivity logout enabled.');
         console.log('📈 Metrics from Sheet5 extended with new dashboard fields.');
-        console.log('🎨 Dashboard tile descriptions now bold and black.');
+        console.log('📛 Dashboard tile names updated: Today→Bikes Done Today, Yesterday→Bikes Done Yesterday, This Week→Bikes Done This Week');
     </script>
 </body>
 </html>
