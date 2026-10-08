@@ -96,8 +96,8 @@ input,button,select,textarea{font-family:inherit;font-size:1rem}input:focus,butt
 #dashboard-modal #dashboard-charts{display:flex!important;flex-direction:column!important;gap:.5rem!important}
 #dashboard-modal .dashboard-chart-container{margin-bottom:0!important}
 @media (max-width:640px){#dashboard-modal .modal-card{max-width:98vw;padding:.5rem!important}.dashboard-chart-container canvas{max-height:130px!important;height:130px!important}}
-#csv-progress-modal .modal-card{max-width:460px;text-align:center;padding:1.75rem 1.5rem}
-#csv-progress-modal .modal-card .spinner{width:2.5rem;height:2.5rem;color:#dc2626;animation:spin 1s linear infinite}
+#csv-progress-modal .modal-card,#outstanding-progress-modal .modal-card{max-width:460px;text-align:center;padding:1.75rem 1.5rem}
+#csv-progress-modal .modal-card .spinner,#outstanding-progress-modal .modal-card .spinner{width:2.5rem;height:2.5rem;color:#dc2626;animation:spin 1s linear infinite}
 .queue-indicator{display:flex;gap:.3rem;align-items:center;font-size:1.2rem;margin-bottom:.5rem;flex-wrap:wrap}
 .queue-warning{background:#fef3c7;border:1px solid #f59e0b;border-radius:.5rem;padding:.5rem .75rem;margin-bottom:.5rem;font-size:.85rem;color:#92400e;display:none;align-items:center;gap:.5rem}
 .queue-warning.show{display:flex}
@@ -172,8 +172,18 @@ input,button,select,textarea{font-family:inherit;font-size:1rem}input:focus,butt
 #user-list-modal .btn-delete-user{background:none;border:none;color:#dc2626;cursor:pointer;padding:.2rem .4rem;display:flex;align-items:center;gap:.3rem;font-size:.8rem}
 #user-list-modal .loading-spinner{text-align:center;padding:2rem 0}
 #user-list-modal .loading-spinner .lucide{width:2rem;height:2rem;color:#16a34a;animation:spin 1s linear infinite}
-#dashboard-modal .refresh-dashboard-btn{background:none;border:none;color:#6b7280;cursor:pointer;padding:.25rem;display:flex;align-items:center}
+#dashboard-modal .refresh-dashboard-btn{background:none;border:none;color:#6b7280;cursor:pointer;padding:.25rem;display:flex;align-items:center;transition:color .2s,transform .2s}
+#dashboard-modal .refresh-dashboard-btn:hover{color:#1f2937;transform:rotate(45deg)}
 #dashboard-modal .refresh-dashboard-btn.spinning .lucide{animation:spin 1s linear infinite}
+#dashboard-modal .refresh-dashboard-btn.spinning:hover{transform:none}
+.dashboard-status-dot{display:inline-block;width:10px;height:10px;border-radius:9999px;flex-shrink:0;transition:background .3s ease,box-shadow .3s ease;box-shadow:0 0 0 2px #fff,0 0 0 3px #e5e7eb}
+.dashboard-status-dot.status-green{background:#16a34a}
+.dashboard-status-dot.status-red{background:#dc2626}
+.dashboard-status-dot.status-orange{background:#f59e0b;animation:pulse-dot 1s infinite}
+@keyframes pulse-dot{0%,100%{opacity:1;box-shadow:0 0 0 2px #fff,0 0 0 3px #e5e7eb}50%{opacity:.35;box-shadow:0 0 0 2px #fff,0 0 0 3px #fde68a}}
+#dashboard-step-text{font-size:.72rem;color:#6b7280;font-weight:500;white-space:nowrap;transition:color .3s ease}
+#dashboard-step-text.step-error{color:#dc2626;font-weight:600}
+#dashboard-step-text.step-done{color:#16a34a;font-weight:600}
 .export-progress-track{width:100%;height:10px;background:#e5e7eb;border-radius:9999px;overflow:hidden;margin-top:.85rem}
 .export-progress-fill{height:100%;width:0%;background:linear-gradient(90deg,#dc2626,#ef4444);border-radius:9999px;transition:width .4s ease}
 .export-step-text{font-size:.8rem;color:#374151;margin-top:.85rem;min-height:2.6rem;display:flex;align-items:center;justify-content:center;font-weight:500;line-height:1.3;padding:0 .5rem}
@@ -185,13 +195,20 @@ input,button,select,textarea{font-family:inherit;font-size:1rem}input:focus,butt
 .export-cancel-btn{margin-top:1rem;width:100%;background:#f3f4f6;color:#4b5563;border:1px solid #e5e7eb;padding:.6rem 1rem;border-radius:.6rem;font-weight:600;font-size:.85rem;cursor:pointer;transition:background .2s}
 .export-cancel-btn:hover{background:#e5e7eb}
 .export-cancel-btn:disabled{opacity:.5;cursor:not-allowed}
+.db-module{padding:.75rem!important}
+.db-module h2{font-size:.95rem!important;margin-bottom:.25rem!important}
+.db-module p{font-size:.75rem!important;margin-bottom:.5rem!important}
+.db-module button{padding:.4rem .75rem!important;font-size:.8rem!important}
+.outstanding-module h2{font-size:.95rem!important;margin-bottom:.25rem!important}
+.outstanding-module p{font-size:.75rem!important;margin-bottom:.5rem!important}
+.outstanding-module button{padding:.4rem .75rem!important;font-size:.8rem!important}
 </style>
 </head>
 <body>
 <div id="toast-container"></div>
 
 <div id="view-login" class="w-full max-w-md card p-6 md:p-8">
-<span class="version-badge login-version">v4.9</span>
+<span class="version-badge login-version">v5.3</span>
 <div class="text-center mb-6">
 <div class="flex justify-center mb-3"><i data-lucide="bike" class="w-14 h-14 text-red-600"></i></div>
 <h1 class="text-2xl font-bold text-gray-800">QR CODE BIKE REGISTER</h1>
@@ -220,7 +237,7 @@ input,button,select,textarea{font-family:inherit;font-size:1rem}input:focus,butt
 <div class="flex items-center gap-2">
 <span id="logged-in-user" class="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full font-medium"></span>
 <span id="inactivity-timer" class="inactivity-timer"><i data-lucide="clock" class="w-3 h-3"></i><span id="timer-display">10:00</span></span>
-<span class="version-badge">v4.9</span>
+<span class="version-badge">v5.3</span>
 </div>
 </div>
 <div id="queue-indicator" class="queue-indicator hidden"><span class="text-sm font-medium text-gray-600">Pending:</span><span id="queue-icons"></span><span class="text-xs text-gray-400 ml-1" id="queue-count-label">(0)</span><button id="sync-now-btn" class="sync-now-btn"><i data-lucide="refresh-cw" class="w-4 h-4"></i> Sync Now</button></div>
@@ -261,7 +278,7 @@ input,button,select,textarea{font-family:inherit;font-size:1rem}input:focus,butt
 <span id="countdown-timer" class="countdown-timer"><i data-lucide="clock" class="w-4 h-4"></i><span id="timer-text">--:--</span></span>
 <span id="status-dot" class="stat-dot ready"></span>
 <button onclick="logout()" class="text-sm text-gray-500 hover:text-gray-800 flex items-center gap-1"><i data-lucide="log-out" class="w-4 h-4"></i> Log Out</button>
-<span class="version-badge">v4.9</span>
+<span class="version-badge">v5.3</span>
 </div>
 </div>
 <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
@@ -270,27 +287,43 @@ input,button,select,textarea{font-family:inherit;font-size:1rem}input:focus,butt
 <div class="stat-card bg-purple-50 p-3 rounded-xl text-center border border-purple-100 relative"><div id="stat-photos-loader" class="stat-loader active"><i data-lucide="loader-2" class="w-6 h-6 animate-spin text-purple-600"></i></div><div id="stat-photos" class="text-2xl font-bold text-purple-700 stat-value">0</div><div class="stat-label">QR Scans</div></div>
 <div class="stat-card bg-yellow-50 p-3 rounded-xl text-center border border-yellow-100 relative"><div id="stat-duplicates-loader" class="stat-loader active"><i data-lucide="loader-2" class="w-6 h-6 animate-spin text-yellow-600"></i></div><div id="stat-duplicates" class="text-2xl font-bold text-yellow-700 stat-value">0</div><div class="stat-label">Duplicates Bikes Scans</div></div>
 </div>
+
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
-<div class="border border-gray-200 rounded-xl p-4 bg-gray-50">
-<h2 class="font-semibold text-lg text-gray-800 mb-3 flex items-center gap-2"><i data-lucide="user-plus" class="w-5 h-5 text-red-600"></i> Add / Update User</h2>
-<div class="space-y-3">
-<input type="text" id="new-username" placeholder="Username" class="input-field" />
-<div class="password-wrapper"><input type="password" id="new-password" placeholder="Password" class="input-field" /><button type="button" class="eye-toggle" onclick="togglePasswordVisibility()"><i data-lucide="eye" id="eye-icon" class="w-5 h-5"></i></button></div>
-<button onclick="adminAction('addUser')" class="btn-red w-full"><span id="admin-add-text">Save User</span><i id="admin-add-spinner" data-lucide="loader-2" class="w-4 h-4 animate-spin hidden"></i></button>
+  <div class="border border-gray-200 rounded-xl p-4 bg-gray-50">
+    <h2 class="font-semibold text-lg text-gray-800 mb-3 flex items-center gap-2"><i data-lucide="user-plus" class="w-5 h-5 text-red-600"></i> Add / Update User</h2>
+    <div class="space-y-3">
+      <input type="text" id="new-username" placeholder="Username" class="input-field" />
+      <div class="password-wrapper"><input type="password" id="new-password" placeholder="Password" class="input-field" /><button type="button" class="eye-toggle" onclick="togglePasswordVisibility()"><i data-lucide="eye" id="eye-icon" class="w-5 h-5"></i></button></div>
+      <button onclick="adminAction('addUser')" class="btn-red w-full"><span id="admin-add-text">Save User</span><i id="admin-add-spinner" data-lucide="loader-2" class="w-4 h-4 animate-spin hidden"></i></button>
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-3">
+    <div class="border border-gray-200 rounded-xl bg-gray-50 flex flex-col justify-between db-module">
+      <div>
+        <h2 class="font-semibold text-gray-800 flex items-center gap-2"><i data-lucide="database" class="w-4 h-4 text-green-600"></i> Database download of all bikes which had QR codes applied</h2>
+        <p class="text-gray-600">Export the full merged database (DS1 + DS2 + DS3) as a single CSV: Date, User, BikeNo, QRcode, Duplicate.</p>
+      </div>
+      <div class="csv-range-selector mt-2">
+        <button onclick="adminAction('downloadCSV')" class="btn-green flex items-center gap-2 w-full justify-center">
+          <i data-lucide="download" class="w-4 h-4"></i> Download Full Database (CSV)
+        </button>
+      </div>
+    </div>
+    <div class="border border-gray-200 rounded-xl bg-gray-50 flex flex-col justify-between outstanding-module">
+      <div>
+        <h2 class="font-semibold text-gray-800 flex items-center gap-2"><i data-lucide="clipboard-list" class="w-4 h-4 text-orange-600"></i> Database of bikes outstanding for QR code application</h2>
+        <p class="text-gray-600">Export of all bikes which require application of the QR codes {day}, {bike number}, {actions to be completed}.</p>
+      </div>
+      <div class="mt-2">
+        <button onclick="downloadOutstandingBikesCSV()" class="btn-green flex items-center gap-2 w-full justify-center">
+          <i data-lucide="download" class="w-4 h-4"></i> Download Outstanding Bikes (CSV)
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
-</div>
-<div class="border border-gray-200 rounded-xl p-4 bg-gray-50 flex flex-col justify-between">
-<div>
-<h2 class="font-semibold text-lg text-gray-800 mb-2 flex items-center gap-2"><i data-lucide="database" class="w-5 h-5 text-green-600"></i> Database</h2>
-<p class="text-sm text-gray-600 mb-4">Export all registered bikes from all three data sets as a single CSV file (Date, User, BikeNo, QRcode, Duplicate).</p>
-</div>
-<div class="csv-range-selector">
-<button onclick="adminAction('downloadCSV')" class="btn-green text-sm py-2 px-4 flex items-center gap-2 w-full justify-center">
-<i data-lucide="download" class="w-4 h-4"></i> Download Full Database (CSV)
-</button>
-</div>
-</div>
-</div>
+
 <div class="border border-gray-200 rounded-xl overflow-hidden flex-1 flex flex-col min-h-0">
 <div class="flex border-b border-gray-200 bg-gray-50 overflow-x-auto flex-shrink-0">
 <button onclick="switchAdminTab('records')" id="tab-records" class="flex-1 py-3 px-4 text-sm font-medium text-red-600 border-b-2 border-red-600 transition whitespace-nowrap"><i data-lucide="list" class="w-4 h-4 inline mr-1"></i> All Records</button>
@@ -334,6 +367,18 @@ input,button,select,textarea{font-family:inherit;font-size:1rem}input:focus,butt
 </div>
 </div>
 
+<div id="outstanding-progress-modal" class="hidden-view fixed inset-0 modal-overlay z-[91]">
+<div class="modal-card">
+<div class="flex justify-center mb-3"><i data-lucide="loader-2" class="spinner"></i></div>
+<h3 class="text-base font-bold text-gray-800 mb-1">Exporting Outstanding Bikes</h3>
+<div class="export-step-text" id="outstanding-progress-text">Preparing export…</div>
+<div class="export-progress-track"><div id="outstanding-progress-bar" class="export-progress-fill" style="width:0%;"></div></div>
+<div class="export-percent-text" id="outstanding-progress-percent">0%</div>
+<div class="export-diagnostics" id="outstanding-progress-log"></div>
+<button id="outstanding-cancel-btn" class="export-cancel-btn" onclick="cancelOutstandingExport()">Cancel Export</button>
+</div>
+</div>
+
 <div id="delete-confirm-modal" class="hidden-view fixed inset-0 modal-overlay z-[100]">
 <div class="modal-card max-w-lg p-6 text-center border-t-4 border-red-500">
 <div class="icon-wrapper"><i data-lucide="alert-triangle"></i></div>
@@ -366,6 +411,17 @@ input,button,select,textarea{font-family:inherit;font-size:1rem}input:focus,butt
 </div>
 </div>
 
+<div id="dashboard-error-modal" class="hidden-view fixed inset-0 modal-overlay z-[130]">
+<div class="modal-card max-w-sm p-6 text-center border-t-4 border-red-500">
+<div class="mx-auto flex items-center justify-center h-14 w-14 rounded-full bg-red-100 mb-4">
+<i data-lucide="alert-triangle" class="h-7 w-7 text-red-600"></i>
+</div>
+<h3 class="text-lg font-bold mb-2 text-gray-900">Data dashboard failed</h3>
+<p class="text-sm text-gray-600 mb-6">Data dashboard failed, please refresh.</p>
+<button onclick="handleDashboardErrorOK()" class="w-full btn-red">OK</button>
+</div>
+</div>
+
 <div id="qr-scanner-modal" class="hidden-view fixed inset-0 modal-overlay z-50">
 <div class="modal-card max-w-md p-5">
 <div class="flex justify-between items-center mb-4"><h3 class="text-lg font-bold text-gray-900 flex items-center gap-2"><i data-lucide="scan" class="w-5 h-5 text-red-600"></i> Scan QR Code</h3><button onclick="stopQrScanner()" class="text-gray-500 text-2xl">&times;</button></div>
@@ -393,9 +449,19 @@ input,button,select,textarea{font-family:inherit;font-size:1rem}input:focus,butt
 
 <div id="dashboard-modal" class="hidden-view fixed inset-0 modal-overlay z-[80]">
 <div class="modal-card p-3 md:p-4">
-<div class="flex justify-between items-center mb-2 md:mb-3">
+<div class="flex justify-between items-center mb-2 md:mb-3 gap-2 flex-wrap">
 <h2 class="text-base md:text-lg font-bold text-gray-800 flex items-center gap-2"><i data-lucide="bar-chart-2" class="w-5 h-5 text-red-600"></i> Progress Dashboard</h2>
-<div><button class="refresh-dashboard-btn" onclick="refreshDashboard()"><i data-lucide="refresh-cw" class="w-5 h-5"></i></button><button onclick="closeDashboard()" class="text-gray-500 text-2xl close-btn">&times;</button></div>
+<div class="flex items-center gap-2 flex-wrap">
+<span id="dashboard-step-text" class="hidden sm:inline">Ready</span>
+<span id="dashboard-status-dot" class="dashboard-status-dot status-green" title="Dashboard status"></span>
+<button class="btn-grey" id="dashboard-refresh-btn" onclick="refreshDashboard()" style="padding:.3rem .7rem;font-size:.75rem;">
+<i data-lucide="refresh-cw" class="w-3 h-3"></i> Refresh
+</button>
+<button class="refresh-dashboard-btn" id="dashboard-spin-wheel" onclick="refreshDashboard()" title="Refresh dashboard data">
+<i data-lucide="refresh-cw" class="w-5 h-5"></i>
+</button>
+<button onclick="closeDashboard()" class="text-gray-500 text-2xl close-btn">&times;</button>
+</div>
 </div>
 <div id="dashboard-content">
 <div class="dashboard-loading" id="dashboard-loading"><i data-lucide="loader-2" class="w-6 h-6 animate-spin mx-auto text-gray-400"></i><p class="mt-1 text-sm">Loading data…</p></div>
@@ -434,15 +500,52 @@ input,button,select,textarea{font-family:inherit;font-size:1rem}input:focus,butt
 </div>
 
 <script>
-console.log('🚲 QR Code Bike Registration System starting... (v4.9)');
+console.log('🚲 QR Code Bike Registration System starting... (v5.3)');
 
 const GAS_WEB_APP_URL     = "https://script.google.com/macros/s/AKfycbzeUnu8qkwxb2TixDHxCyf78k7gyeL2CPxr0HQO-ypEtZRpBV3hlJkjr1otmg-x2HjKjg/exec";
 const GAS_WEB_APP_URL_DS1 = "https://script.google.com/macros/s/AKfycbx4yhoiYRNqT6f0lVArx_WDvKoQhhGptshF8Ex57WpJyu49PDPP3-x1J4tPfjbVekE/exec";
-const GAS_WEB_APP_URL_DS2 = "https://script.google.com/macros/s/AKfycbwNdebaFztMlq6A0VW2aAetqEFW7S3ytU1N62-Rfhpb07CTFaRBv-Xg-EOuv-POYw2cDw/exec";
-const APP_VERSION = "v4.9";
+const GAS_WEB_APP_URL_DS2 = "https://script.google.com/macros/s/AKfycbw7MtpvOcFAKa13h2r2ujVo1b7J3Q3BV48XljCqrL5uC4stB5ETuEMXZM-Ob6FfmrwU/exec";
+const APP_VERSION = "v5.3";
 
-// Export cancel support
 let exportAbortController = null;
+let outstandingAbortController = null;
+
+// ═══════════════════════════════════════════════════════════════════════
+//  GLOBAL SUPPRESSION (v5.3)
+//  Never let default browser errors or Google/GAS references surface.
+// ═══════════════════════════════════════════════════════════════════════
+window.addEventListener('error', function (e) {
+  if (e && e.error) {
+    console.error('[suppressed script error]', e.error);
+  }
+  if (e && typeof e.preventDefault === 'function') e.preventDefault();
+}, true);
+
+window.addEventListener('unhandledrejection', function (e) {
+  console.error('[suppressed unhandled rejection]', e.reason);
+  if (typeof e.preventDefault === 'function') e.preventDefault();
+  const msg = (e.reason && (e.reason.message || String(e.reason))) || '';
+  // Only auto-prompt for data-source connection issues; skip aborts & validation errors
+  if (!msg || msg === 'ABORTED' || /Invalid credentials/i.test(msg)) return;
+  const errModal = document.getElementById('dashboard-error-modal');
+  if (errModal && errModal.classList.contains('hidden-view')) {
+    showConnectionErrorModal();
+  }
+});
+
+// Strip any Google/GAS/Sheet references from any text we might display
+function sanitizeLog(msg) {
+  if (!msg) return '';
+  return String(msg)
+    .replace(/Google Sheets?/gi, 'the database')
+    .replace(/Google Drive/gi, 'the file store')
+    .replace(/Google/gi, 'the service')
+    .replace(/Apps Script/gi, 'the backend')
+    .replace(/\bGAS\b/gi, 'backend')
+    .replace(/\bSheet\s*\d+/gi, 'data source')
+    .replace(/\bSheet\d+/gi, 'data source')
+    .replace(/\bSheet\b/gi, 'data source');
+}
 
 // ─── STATE ───
 let currentUser=null,currentUserRole=null,adminTab='records';
@@ -483,6 +586,7 @@ let pendingDelete=null,selectedRows=new Set();const MAX_SELECTION=10;
 let deletedRows=new Set(),sortField=null,sortDirection='asc';
 let inactivityRemaining=600,inactivityInterval=null;
 let inactivityWarningShown=false,inactivityTimeoutId=null,inactivityStarted=false;
+let dashboardRefreshing=false;
 
 // ── Helpers ──
 function formatDateToDMY(date){if(!date||isNaN(date.getTime()))return'';const d=String(date.getDate()).padStart(2,'0'),m=String(date.getMonth()+1).padStart(2,'0'),y=date.getFullYear(),h=String(date.getHours()).padStart(2,'0'),min=String(date.getMinutes()).padStart(2,'0'),s=String(date.getSeconds()).padStart(2,'0');if(h==='00'&&min==='00'&&s==='00')return`${d}/${m}/${y}`;return`${d}/${m}/${y} ${h}:${min}:${s}`;}
@@ -519,41 +623,68 @@ function closePhotoModal(){closeModal('photo-modal');const img=document.getEleme
 function zoomPhoto(){toggleZoom();}
 function toggleZoom(){const img=document.getElementById('photo-modal-img'),b=document.getElementById('zoom-btn'),c=document.getElementById('photo-modal-card');const z=1.5;if(photoZoomed){b.textContent='Zoom +';c.style.width='';c.style.height='';c.style.maxWidth='';c.style.maxHeight='';img.style.width='';img.style.height='';img.style.maxWidth='';img.style.maxHeight='';photoZoomed=false;}else{if(originalModalWidth>0&&naturalImgWidth>0){const nMW=originalModalWidth*z,nMH=originalModalHeight*z,vw=window.innerWidth*.9,vh=window.innerHeight*.9,fMW=Math.min(nMW,vw),fMH=Math.min(nMH,vh);c.style.width=fMW+'px';c.style.height='auto';c.style.maxWidth='90vw';c.style.maxHeight='90vh';let iW=naturalImgWidth*z,iH=naturalImgHeight*z;const miW=fMW-32,miH=fMH-100;if(iW>miW){const r=miW/iW;iW=miW;iH*=r;}if(iH>miH){const r=miH/iH;iH=miH;iW*=r;}img.style.width=iW+'px';img.style.height=iH+'px';img.style.maxWidth='none';img.style.maxHeight='none';b.textContent='Zoom -';photoZoomed=true;}else{const r=c.getBoundingClientRect();originalModalWidth=r.width;originalModalHeight=r.height;if(naturalImgWidth===0){naturalImgWidth=img.naturalWidth||400;naturalImgHeight=img.naturalHeight||300;}toggleZoom();}}}
 
-async function apiCall(action,payload){try{const r=await fetch(GAS_WEB_APP_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action,...payload})});if(!r.ok){const t=await r.text();throw new Error(`HTTP ${r.status}: ${t}`);}return await r.json();}catch(e){let m='Network error. ';if(e.message.includes('Failed to fetch')||e.message.includes('Load failed')||e.message.includes('NetworkError'))m+='The mobile network dropped the connection.';else m+='Details: '+e.message;throw new Error(m);}}
+// ── SANITISED apiCall ──
+async function apiCall(action,payload){
+  try{
+    const r=await fetch(GAS_WEB_APP_URL,{
+      method:'POST',
+      headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({action,...payload})
+    });
+    if(!r.ok){
+      // Read but never expose — server may return HTML error pages.
+      const _t = await r.text();
+      console.warn('API HTTP '+r.status+' for action '+action);
+      throw new Error('Data connection failed ('+r.status+')');
+    }
+    return await r.json();
+  }catch(e){
+    let m='Data connection failed.';
+    const em=String(e.message||'');
+    if(em.includes('Failed to fetch')||em.includes('Load failed')||em.includes('NetworkError'))m='Network connection failed.';
+    else if(em.includes('Invalid JSON'))m='Data format error.';
+    else if(em.includes('HTTP'))m='Data connection failed.';
+    throw new Error(m);
+  }
+}
 
-// ═══════════════════════════════════════════════════════════════════════
-//  ROBUST FETCHER (v4.9)
-//  Priority order per database:
-//   1. getRecordsLite (paginated, cols A-E, no photo) — preferred
-//   2. getRecords     (paginated, all cols incl. photo) — fallback
-//   3. getCSVLite     (single-shot, cols A-E) — fallback
-//   4. getCSV         (single-shot, all cols) — last resort
-//  Page size = 500.  No artificial record cap.
-//  Cancellable via exportAbortController.
-// ═══════════════════════════════════════════════════════════════════════
+// ── Connection error modal helpers ──
+function showConnectionErrorModal(){
+  showModal('dashboard-error-modal');
+}
+function handleConnectionErrorOK(){
+  closeModal('dashboard-error-modal');
+  // Restart the refresh cycle based on current view
+  setTimeout(function(){
+    if(!document.getElementById('dashboard-modal').classList.contains('hidden-view')){
+      refreshDashboard();
+    } else {
+      refreshAll(true);
+    }
+  },300);
+}
+// Backwards-compatible aliases used elsewhere in the code
+function showDashboardErrorModal(){ showConnectionErrorModal(); }
+function handleDashboardErrorOK(){ handleConnectionErrorOK(); }
 
-// Core fetch helper with retry + abort support
-async function fetchJSONWithRetry(url, body, signal, maxRetries = 3) {
+// ── Fetch helpers ──
+async function fetchJSONWithRetry(url, body, signal, maxRetries) {
+  maxRetries = maxRetries || 3;
   let lastError;
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     if (signal && signal.aborted) throw new Error('ABORTED');
     try {
-      const resp = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify(body),
-        signal: signal
-      });
+      const resp = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(body), signal: signal });
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
       const text = await resp.text();
       try { return JSON.parse(text); }
-      catch (pe) { throw new Error(`Invalid JSON (truncated or CORS-blocked): ${text.substring(0, 120)}`); }
+      catch (pe) { throw new Error(`Invalid JSON`); }
     } catch (err) {
       if (err.name === 'AbortError' || err.message === 'ABORTED') throw new Error('ABORTED');
       lastError = err;
       if (attempt < maxRetries - 1) {
         const delay = 1000 * Math.pow(2, attempt);
-        console.log(`   ↻ retry ${attempt + 1}/${maxRetries - 1} in ${delay}ms (${err.message})`);
+        console.log('   retry '+attempt+'/'+(maxRetries-1)+' in '+delay+'ms');
         await new Promise(r => setTimeout(r, delay));
         if (signal && signal.aborted) throw new Error('ABORTED');
       }
@@ -562,80 +693,57 @@ async function fetchJSONWithRetry(url, body, signal, maxRetries = 3) {
   throw lastError;
 }
 
-// Strategy A: paginated (works for getRecordsLite or getRecords)
 async function fetchViaPagination(url, action, label, onProgress, logExport, signal) {
   const PAGE_SIZE = 500;
-  const MAX_PAGES = 100000; // sanity cap only
+  const MAX_PAGES = 100000;
   const allRows = [];
   let page = 1;
   let totalReported = null;
-
   while (page <= MAX_PAGES) {
     if (signal && signal.aborted) throw new Error('ABORTED');
     let json;
-    try {
-      json = await fetchJSONWithRetry(url, { action, page, limit: PAGE_SIZE }, signal, 3);
-    } catch (err) {
-      if (err.message === 'ABORTED') throw err;
-      throw new Error(`page ${page}: ${err.message}`);
-    }
-
+    try { json = await fetchJSONWithRetry(url, { action, page, limit: PAGE_SIZE }, signal, 3); }
+    catch (err) { if (err.message === 'ABORTED') throw err; throw new Error(`page ${page}: ${err.message}`); }
     if (json.success === false) {
       const msg = (json.message || '').toLowerCase();
-      if (msg.includes('unknown') || msg.includes('not found') || msg.includes('unsupported')) {
-        throw new Error(`${action}_not_supported`);
-      }
-      throw new Error(json.message || `${action} returned failure`);
+      if (msg.includes('unknown') || msg.includes('not found') || msg.includes('unsupported')) throw new Error(`${action}_not_supported`);
+      throw new Error('Fetch failed');
     }
-
     const rows = json.rows || [];
     if (page === 1) {
       const t = json.total;
       totalReported = (typeof t === 'number') ? t : (parseInt(t, 10) || null);
-      console.log(`📊 ${label} [${action}]: server reports total=${totalReported}`);
-      if (logExport) logExport(`   · ${label}: server reports ${totalReported} total`);
+      if (logExport) logExport(`   · ${label}: ${totalReported} total`);
     }
-
     if (rows.length === 0) break;
     allRows.push(...rows);
     if (onProgress) onProgress(allRows.length, totalReported || allRows.length);
     if (logExport && page % 5 === 0) logExport(`   · ${label}: page ${page}, ${allRows.length} rows`);
-
     if (rows.length < PAGE_SIZE) break;
     page++;
-    // Small delay between pages to ease rate limiting
     await new Promise(r => setTimeout(r, 100));
   }
   return { rows: allRows, totalReported, pages: page };
 }
 
-// Strategy B: single-shot CSV
 async function fetchViaCSV(url, action, label, logExport, signal) {
   const json = await fetchJSONWithRetry(url, { action, _ts: Date.now() }, signal, 3);
-  if (!json.success) throw new Error(json.message || `${action} returned failure`);
+  if (!json.success) throw new Error('Fetch failed');
   const csv = json.csvData || '';
   if (!csv || csv.trim() === '') return { rows: [] };
-
   const parsed = Papa.parse(csv, { header: false, skipEmptyLines: true });
   const allParsed = parsed.data || [];
   if (allParsed.length === 0) return { rows: [] };
-
   let dataRows;
   const firstRow = allParsed[0];
-  if (firstRow && firstRow.length > 0 && !parseDateFromAnyString(firstRow[0] || '')) {
-    dataRows = allParsed.slice(1);
-  } else {
-    dataRows = allParsed;
-  }
+  if (firstRow && firstRow.length > 0 && !parseDateFromAnyString(firstRow[0] || '')) dataRows = allParsed.slice(1);
+  else dataRows = allParsed;
   dataRows = dataRows.filter(r => Array.isArray(r) && r.length > 0 && r.some(c => c !== '' && c !== null && c !== undefined));
-  console.log(`📊 ${label} [${action}]: parsed ${dataRows.length} rows`);
-  if (logExport) logExport(`   · ${label}: ${action} parsed ${dataRows.length} rows`);
+  if (logExport) logExport(`   · ${label}: ${dataRows.length} rows`);
   return { rows: dataRows };
 }
 
-// Orchestrator — try all four strategies in priority order
 async function fetchAllRecordsFromUrl(url, label, onProgress, logExport, signal) {
-  // 1. getRecordsLite (paginated, no photo) — best option
   let result = null, lastErr = null;
   const attempts = [
     { action: 'getRecordsLite', kind: 'paginated', note: 'paginated, no photo' },
@@ -643,40 +751,34 @@ async function fetchAllRecordsFromUrl(url, label, onProgress, logExport, signal)
     { action: 'getCSVLite',     kind: 'csv',       note: 'single-shot, no photo' },
     { action: 'getCSV',         kind: 'csv',       note: 'single-shot, with photo' }
   ];
-
   for (const a of attempts) {
     if (signal && signal.aborted) throw new Error('ABORTED');
     try {
-      if (logExport) logExport(`   · ${label}: trying ${a.action} (${a.note})…`);
-      if (a.kind === 'paginated') {
-        result = await fetchViaPagination(url, a.action, label, onProgress, logExport, signal);
-      } else {
-        result = await fetchViaCSV(url, a.action, label, logExport, signal);
-      }
+      if (logExport) logExport(`   · ${label}: trying ${a.action}…`);
+      if (a.kind === 'paginated') result = await fetchViaPagination(url, a.action, label, onProgress, logExport, signal);
+      else result = await fetchViaCSV(url, a.action, label, logExport, signal);
       if (result.rows.length > 0) {
-        const source = `${a.action} (${a.note}, ${result.rows.length} records${result.totalReported ? `, server-total=${result.totalReported}` : ''}${result.pages ? `, pages=${result.pages}` : ''})`;
+        const source = `${a.action} (${a.note}, ${result.rows.length} records)`;
         return { rows: result.rows, source };
       }
-      // If 0 rows, try next strategy
       lastErr = new Error(`${a.action} returned 0 rows`);
       await new Promise(r => setTimeout(r, 300));
     } catch (err) {
       if (err.message === 'ABORTED') throw err;
       lastErr = err;
-      console.warn(`⚠️ ${label} ${a.action} failed: ${err.message}`);
-      if (logExport) logExport(`   ⚠️ ${label} ${a.action}: ${err.message}`, 'warn');
+      if (logExport) logExport(`   ⚠️ ${label} ${a.action}: failed`, 'warn');
       await new Promise(r => setTimeout(r, 300));
     }
   }
   throw lastErr || new Error('All fetch strategies returned empty');
 }
 
-async function logLoginToSheet(u,v){try{await apiCall('logLogin',{username:u,appVersion:v});}catch(e){console.warn('Login log error:',e.message);}}
-async function fetchMasterList(){try{const r=await apiCall('getMasterList',{});if(r.success&&Array.isArray(r.numbers))masterListCache=r.numbers.map(n=>String(n).toUpperCase().trim());}catch(e){console.error('master list:',e);}}
+async function logLoginToSheet(u,v){try{await apiCall('logLogin',{username:u,appVersion:v});}catch(e){console.warn('Login log error');}}
+async function fetchMasterList(){try{const r=await apiCall('getMasterList',{});if(r.success&&Array.isArray(r.numbers))masterListCache=r.numbers.map(n=>String(n).toUpperCase().trim());}catch(e){console.error('master list');}}
 
 function updateQueueUI(){const count=pendingQueue.length;if(count>0){queueIndicator.classList.remove('hidden');let h='';for(let i=0;i<Math.min(count,5);i++)h+=`<span class="queue-icon">🚲</span>`;queueIconsContainer.innerHTML=h;queueCountLabel.textContent=`(${count})`;if(count>=QUEUE_WARNING_THRESHOLD){syncNowBtn.classList.add('visible');syncNowBtn.disabled=false;}else{syncNowBtn.classList.remove('visible');syncNowBtn.disabled=true;}}else{queueIndicator.classList.add('hidden');queueIconsContainer.innerHTML='';queueCountLabel.textContent='(0)';syncNowBtn.classList.remove('visible');syncNowBtn.disabled=true;syncFailCount=0;nextAllowedSyncTime=0;networkToastShown=false;}if(count>QUEUE_WARNING_THRESHOLD)queueWarning.classList.add('show');else queueWarning.classList.remove('show');localStorage.setItem('bikeQueue',JSON.stringify(pendingQueue));}
 function addToQueue(r){pendingQueue.push(r);updateQueueUI();startSync();}
-function removeFromQueue(i,s=false){if(i>=0&&i<pendingQueue.length){pendingQueue.splice(i,1);updateQueueUI();if(pendingQueue.length===0){stopSyncIfIdle();if(!s)showToast('All records synced.','success');}return true;}return false;}
+function removeFromQueue(i,s){s=s||false;if(i>=0&&i<pendingQueue.length){pendingQueue.splice(i,1);updateQueueUI();if(pendingQueue.length===0){stopSyncIfIdle();if(!s)showToast('All records synced.','success');}return true;}return false;}
 function startSync(){if(syncIntervalId)return;syncIntervalId=setInterval(()=>{if(!isProcessing)processQueue();},3000);}
 function stopSyncIfIdle(){if(pendingQueue.length===0&&syncIntervalId){clearInterval(syncIntervalId);syncIntervalId=null;}}
 async function processQueue(){if(isProcessing||pendingQueue.length===0||!navigator.onLine||Date.now()<nextAllowedSyncTime)return;isProcessing=true;try{const r=pendingQueue[0];const res=await apiCall('saveData',{user:r.user,bikeNumber:r.bikeNumber,barcode:r.barcode,bikePhoto:r.bikePhoto,timestamp:r.timestamp});if(res.success){removeFromQueue(0,true);syncFailCount=0;nextAllowedSyncTime=0;networkToastShown=false;}else{syncFailCount++;const cd=Math.min(1000*Math.pow(2,syncFailCount-1),10000);nextAllowedSyncTime=Date.now()+cd;if(!networkToastShown){networkToastShown=true;showToast('Sync failed. Retrying...','warning');}}}catch(e){syncFailCount++;const cd=Math.min(1000*Math.pow(2,syncFailCount-1),10000);nextAllowedSyncTime=Date.now()+cd;if(!networkToastShown){networkToastShown=true;showToast('Network unstable. Will retry.','warning');}}finally{isProcessing=false;if(pendingQueue.length===0)stopSyncIfIdle();}}
@@ -685,11 +787,11 @@ let isForceSyncing=false;
 async function forceSync(){if(isForceSyncing||pendingQueue.length===0)return;isForceSyncing=true;syncNowBtn.disabled=true;syncNowBtn.innerHTML='<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Syncing...';showToast('Force syncing...','info');if(syncIntervalId){clearInterval(syncIntervalId);syncIntervalId=null;}let c=0;try{while(pendingQueue.length>0){while(isProcessing)await new Promise(r=>setTimeout(r,100));isProcessing=true;try{const r=pendingQueue[0];const res=await apiCall('saveData',{user:r.user,bikeNumber:r.bikeNumber,barcode:r.barcode,bikePhoto:r.bikePhoto,timestamp:r.timestamp});if(res.success){removeFromQueue(0,true);c++;syncFailCount=0;nextAllowedSyncTime=0;networkToastShown=false;}else{break;}}catch(e){break;}finally{isProcessing=false;}await new Promise(r=>setTimeout(r,800));}}finally{if(pendingQueue.length>0)startSync();if(pendingQueue.length===0)showToast(`Force synced ${c} record(s).`,'success');else showToast(`Force sync: ${c} synced, ${pendingQueue.length} remaining.`,'warning');syncNowBtn.disabled=false;syncNowBtn.innerHTML='<i data-lucide="refresh-cw" class="w-4 h-4"></i> Sync Now';isForceSyncing=false;updateQueueUI();}}
 
 function scrollToSubmit(){if(submitBtn)setTimeout(()=>submitBtn.scrollIntoView({behavior:'smooth',block:'center'}),300);}
-async function testBackend(){testResultDiv.classList.remove('hidden');testResultDiv.innerHTML='🔄 Testing...';testResultDiv.className='mt-3 text-xs text-blue-600 text-center';try{const r=await apiCall('getStats',{});if(r.success){testResultDiv.innerHTML='✅ Backend reachable.';testResultDiv.className='mt-3 text-xs text-green-600 text-center';showToast('Backend OK.','success');}else{testResultDiv.innerHTML='❌ '+r.message;testResultDiv.className='mt-3 text-xs text-red-600 text-center';}}catch(e){testResultDiv.innerHTML='❌ '+e.message;testResultDiv.className='mt-3 text-xs text-red-600 text-center';}}
+async function testBackend(){testResultDiv.classList.remove('hidden');testResultDiv.innerHTML='Testing connection...';testResultDiv.className='mt-3 text-xs text-blue-600 text-center';try{const r=await apiCall('getStats',{});if(r.success){testResultDiv.innerHTML='Backend reachable.';testResultDiv.className='mt-3 text-xs text-green-600 text-center';showToast('Backend OK.','success');}else{testResultDiv.innerHTML='Backend test failed.';testResultDiv.className='mt-3 text-xs text-red-600 text-center';}}catch(e){testResultDiv.innerHTML='Connection test failed.';testResultDiv.className='mt-3 text-xs text-red-600 text-center';}}
 
 function clearLoginForm(){document.getElementById('login-form').reset();testResultDiv.classList.add('hidden');testResultDiv.innerHTML='';loginProgressContainer.classList.remove('active');loginProgressBar.style.width='0%';loginProgressPercent.textContent='0%';loginProgressLabel.textContent='Connecting...';loginProgressStatus.textContent='Initializing...';testConnBtn.classList.remove('visible');}
 
-function showToast(msg,type='success'){const c=document.getElementById('toast-container'),m={success:'toast-success',error:'toast-error',warning:'toast-warning',info:'toast-info'},i={success:'check-circle',error:'alert-circle',warning:'alert-triangle',info:'info'};const e=document.createElement('div');e.className='toast '+(m[type]||'toast-info');e.innerHTML='<i data-lucide="'+(i[type]||'bell')+'" class="w-5 h-5 flex-shrink-0"></i><span>'+msg+'</span>';c.appendChild(e);lucide.createIcons();setTimeout(()=>{e.classList.add('removing');setTimeout(()=>e.remove(),350);},4000);}
+function showToast(msg,type){type=type||'success';const c=document.getElementById('toast-container'),m={success:'toast-success',error:'toast-error',warning:'toast-warning',info:'toast-info'},i={success:'check-circle',error:'alert-circle',warning:'alert-triangle',info:'info'};const e=document.createElement('div');e.className='toast '+(m[type]||'toast-info');e.innerHTML='<i data-lucide="'+(i[type]||'bell')+'" class="w-5 h-5 flex-shrink-0"></i><span>'+sanitizeLog(msg)+'</span>';c.appendChild(e);lucide.createIcons();setTimeout(()=>{e.classList.add('removing');setTimeout(()=>e.remove(),350);},4000);}
 
 function switchView(v){['view-login','view-data','view-admin'].forEach(id=>{const el=document.getElementById(id);if(el){if(id===v)el.classList.remove('hidden-view');else el.classList.add('hidden-view');}});if(v==='view-data'){updateSaveButton();updatePhotoButton();updateQueueUI();if(currentUserRole==='user'&&!inactivityStarted)startInactivityTimer();}else if(v==='view-login'||v==='view-admin')stopInactivityTimer();setTimeout(lucide.createIcons,50);}
 function showModal(id){document.getElementById(id).classList.remove('hidden-view');document.body.style.overflow='hidden';}
@@ -697,11 +799,228 @@ function closeModal(id){document.getElementById(id).classList.add('hidden-view')
 function toggleSpinner(p,l,t){const lb=document.getElementById(p+'-text'),sp=document.getElementById(p+'-spinner');if(!lb||!sp)return;if(l){lb.textContent=t||'Processing…';sp.classList.remove('hidden');}else{lb.textContent=t||'Submit';sp.classList.add('hidden');}}
 function updateLoginProgress(p,l,s){loginProgressBar.style.width=p+'%';loginProgressPercent.textContent=p+'%';if(l)loginProgressLabel.textContent=l;if(s)loginProgressStatus.textContent=s;}
 
+function setDashboardStep(text, state) {
+  const stepEl = document.getElementById('dashboard-step-text');
+  const dotEl  = document.getElementById('dashboard-status-dot');
+  const wheel  = document.getElementById('dashboard-spin-wheel');
+  const rBtn   = document.getElementById('dashboard-refresh-btn');
+  if (stepEl && text) {
+    stepEl.textContent = text;
+    stepEl.classList.remove('step-error', 'step-done');
+    if (state === 'error') stepEl.classList.add('step-error');
+    else if (state === 'done') stepEl.classList.add('step-done');
+  }
+  if (dotEl) {
+    dotEl.className = 'dashboard-status-dot';
+    if (state === 'done') dotEl.classList.add('status-green');
+    else if (state === 'error') dotEl.classList.add('status-red');
+    else if (state === 'connecting' || state === 'fetching' || state === 'downloading' || state === 'graphing') dotEl.classList.add('status-orange');
+    else dotEl.classList.add('status-green');
+  }
+  const busy = (state === 'connecting' || state === 'fetching' || state === 'downloading' || state === 'graphing');
+  if (wheel) wheel.classList.toggle('spinning', busy);
+  if (rBtn)  rBtn.disabled = busy;
+}
+function resetDashboardStatus() { setDashboardStep('Ready', 'idle'); }
+
+async function loadDashboardData() {
+  setDashboardStep('Connecting to database...', 'connecting');
+  await new Promise(r => setTimeout(r, 100));
+  const mr = await apiCall('getMetrics', { _ts: Date.now() });
+  if (!mr.success) throw new Error('metrics');
+
+  setDashboardStep('Fetching data...', 'fetching');
+  await new Promise(r => setTimeout(r, 80));
+  const dr = await apiCall('getDailyEntries', { _ts: Date.now() });
+  if (!dr.success) throw new Error('daily');
+  dailyEntries = dr.entries || [];
+
+  setDashboardStep('Downloading data...', 'downloading');
+  await new Promise(r => setTimeout(r, 80));
+  const ur = await apiCall('getUserBikeCounts', { _ts: Date.now() });
+  if (!ur.success) throw new Error('users');
+  userBikeCounts = ur.users || [];
+
+  function fds(v){if(!v)return'-';let d=parseDateFromAnyString(v);if(d)return formatDateDDMMYYYY(d);if(typeof v==='number'){const dd=new Date((v-25569)*86400*1000);if(!isNaN(dd.getTime()))return formatDateDDMMYYYY(dd);}return v;}
+  document.getElementById('stat-today-date').textContent=fds(mr.todayDate);
+  document.getElementById('stat-completion-target').textContent=fds(mr.completionTarget);
+  document.getElementById('stat-bike-target').textContent=mr.bikeTarget||0;
+  document.getElementById('stat-outstanding-bikes').textContent=mr.outstandingBikes||0;
+  document.getElementById('stat-today').textContent=mr.today||0;
+  document.getElementById('stat-yesterday').textContent=mr.yesterday||0;
+  document.getElementById('stat-week').textContent=mr.thisWeek||0;
+  document.getElementById('stat-total-dash').textContent=mr.total||0;
+  const td=dailyEntries.length;let ad=0;
+  if(td>0)ad=Math.floor(dailyEntries.reduce((a,e)=>a+e.total,0)/td);
+  document.getElementById('stat-avg').textContent=ad;
+  const wd=dailyEntries.filter(e=>e.total>0).sort((a,b)=>b.date.localeCompare(a.date));
+  let a3=0;const l3=wd.slice(0,3);
+  if(l3.length>0)a3=Math.floor(l3.reduce((a,e)=>a+e.total,0)/l3.length);
+  document.getElementById('stat-avg3').textContent=a3;
+  document.getElementById('stat-net-days-left').textContent=mr.netDaysLeft||0;
+  document.getElementById('stat-total-days-left').textContent=mr.totalDaysLeft||0;
+  document.getElementById('stat-bikes-per-day-net').textContent=Math.floor(mr.bikesPerDayNet||0);
+  document.getElementById('stat-bikes-per-day-total').textContent=Math.floor(mr.bikesPerDayTotal||0);
+
+  setDashboardStep('Creating graphs...', 'graphing');
+  await new Promise(r => setTimeout(r, 120));
+  updateDashboard();
+
+  setDashboardStep('Dashboard ready', 'done');
+}
+
+async function openDashboard() {
+  showModal('dashboard-modal');
+  document.getElementById('dashboard-loading').classList.remove('hidden');
+  document.getElementById('dashboard-charts').classList.add('hidden');
+  resetDashboardStatus();
+  try {
+    await loadDashboardData();
+    document.getElementById('dashboard-loading').classList.add('hidden');
+    document.getElementById('dashboard-charts').classList.remove('hidden');
+    setDashboardStep('Dashboard ready', 'done');
+    lucide.createIcons();
+  } catch (e) {
+    console.warn('Dashboard load failed');
+    document.getElementById('dashboard-loading').classList.add('hidden');
+    document.getElementById('dashboard-charts').classList.add('hidden');
+    setDashboardStep('Load failed', 'error');
+    showConnectionErrorModal();
+  }
+}
+
+function closeDashboard() {
+  closeModal('dashboard-modal');
+  if (chartTimeInstance) { chartTimeInstance.destroy(); chartTimeInstance = null; }
+  if (chartUserInstance) { chartUserInstance.destroy(); chartUserInstance = null; }
+}
+
+async function refreshDashboard() {
+  if (dashboardRefreshing) return;
+  dashboardRefreshing = true;
+  document.getElementById('dashboard-loading').classList.remove('hidden');
+  document.getElementById('dashboard-charts').classList.add('hidden');
+  resetDashboardStatus();
+  try {
+    await loadDashboardData();
+    document.getElementById('dashboard-loading').classList.add('hidden');
+    document.getElementById('dashboard-charts').classList.remove('hidden');
+    setDashboardStep('Dashboard ready', 'done');
+    showToast('Dashboard updated.', 'success');
+    lucide.createIcons();
+  } catch (e) {
+    console.warn('Dashboard refresh failed');
+    document.getElementById('dashboard-loading').classList.add('hidden');
+    document.getElementById('dashboard-charts').classList.add('hidden');
+    setDashboardStep('Load failed', 'error');
+    showConnectionErrorModal();
+  } finally {
+    dashboardRefreshing = false;
+  }
+}
+
+function getPeriodRange(p){const n=new Date(),s=new Date(n);let e=new Date(n);switch(p){case 'today':s.setHours(0,0,0,0);e.setHours(23,59,59,999);break;case 'yesterday':s.setDate(s.getDate()-1);s.setHours(0,0,0,0);e.setDate(e.getDate()-1);e.setHours(23,59,59,999);break;case 'last7':s.setDate(s.getDate()-6);s.setHours(0,0,0,0);e.setHours(23,59,59,999);break;case 'thisweek':{const d=s.getDay(),df=(d===0?6:d-1);s.setDate(s.getDate()-df);s.setHours(0,0,0,0);e=new Date(s);e.setDate(e.getDate()+6);e.setHours(23,59,59,999);break;}case 'lastweek':{const d=s.getDay(),df=(d===0?6:d-1)+7;s.setDate(s.getDate()-df);s.setHours(0,0,0,0);e=new Date(s);e.setDate(e.getDate()+6);e.setHours(23,59,59,999);break;}case 'month':s.setDate(1);s.setHours(0,0,0,0);e.setHours(23,59,59,999);break;default:return{start:null,end:null};}return{start:s,end:e};}
+function linearRegression(x,y){const n=x.length;if(n===0)return{slope:0,intercept:0};let sx=0,sy=0,sxy=0,sxx=0;for(let i=0;i<n;i++){sx+=x[i];sy+=y[i];sxy+=x[i]*y[i];sxx+=x[i]*x[i];}const slope=(n*sxy-sx*sy)/(n*sxx-sx*sx);return{slope,intercept:(sy-slope*sx)/n};}
+function filterDailyEntriesByPeriod(entries,period){if(period==='total')return entries;const{start,end}=getPeriodRange(period);if(!start||!end)return entries;return entries.filter(e=>{const d=new Date(e.date+'T00:00:00');return d>=start&&d<=end;});}
+
+function updateDashboard(){
+  const pt=document.getElementById('period-select-time').value;
+  const fe=filterDailyEntriesByPeriod(dailyEntries,pt);
+  fe.sort((a,b)=>a.date.localeCompare(b.date));
+  const labels=fe.map(e=>{const d=new Date(e.date+'T00:00:00');return d.toLocaleDateString(undefined,{month:'short',day:'numeric'});});
+  const values=fe.map(e=>e.total);
+  let avg=null;if(values.length>0)avg=values.reduce((a,b)=>a+b,0)/values.length;
+  const ctx1=document.getElementById('chart-time').getContext('2d');
+  if(chartTimeInstance)chartTimeInstance.destroy();
+  const datasets=[{label:'Registrations',data:values,borderColor:'rgba(220,38,38,1)',backgroundColor:'rgba(220,38,38,0.1)',fill:true,tension:.2,pointRadius:2}];
+  if(avg!==null)datasets.push({label:'Average per day',data:Array(values.length).fill(avg),borderColor:'rgba(220,38,38,0.5)',borderDash:[6,4],borderWidth:2,pointRadius:0,fill:false,tension:0});
+  if(fe.length>=2){const idx=fe.map((_,i)=>i);const yv=fe.map(e=>e.total);const reg=linearRegression(idx,yv);const tv=idx.map(i=>reg.slope*i+reg.intercept);datasets.push({label:'Trend',data:tv,borderColor:'rgba(54,162,235,1)',borderDash:[5,5],borderWidth:2,pointRadius:0,fill:false,tension:0});}
+  chartTimeInstance=new Chart(ctx1,{type:'line',data:{labels,datasets},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:true,labels:{boxWidth:10,fontSize:10}},tooltip:{callbacks:{label:function(c){let l=c.dataset.label||'';if(l)l+=': ';if(c.parsed.y!==null)l+=c.parsed.y;const e=fe[c.dataIndex];if(e)l+=' ('+e.date+')';return l;}}}},scales:{y:{beginAtZero:true,ticks:{stepSize:1},title:{display:true,text:'Count'}},x:{title:{display:true,text:'Date'}}}}});
+  const su=[...userBikeCounts].sort((a,b)=>b.count-a.count);
+  const ctx2=document.getElementById('chart-user').getContext('2d');
+  if(chartUserInstance)chartUserInstance.destroy();
+  chartUserInstance=new Chart(ctx2,{type:'bar',data:{labels:su.map(u=>u.user),datasets:[{label:'Total bikes per user',data:su.map(u=>u.count),backgroundColor:'rgba(22,163,74,0.7)',borderColor:'rgba(22,163,74,1)',borderWidth:1,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1},title:{display:true,text:'Count'}},x:{title:{display:true,text:'User'}}}}});
+}
+
 function switchAdminTab(tab){adminTab=tab;const panels={records:document.getElementById('panel-records'),duplicates:document.getElementById('panel-duplicates')};const tabs={records:document.getElementById('tab-records'),duplicates:document.getElementById('tab-duplicates')};for(const k in panels){if(panels[k]){if(k===tab){panels[k].classList.remove('hidden');panels[k].style.display='';}else{panels[k].classList.add('hidden');panels[k].style.display='none';}}}['records','duplicates'].forEach(k=>{const t=tabs[k];if(!t)return;if(k===tab)t.className='flex-1 py-3 px-4 text-sm font-medium text-red-600 border-b-2 border-red-600 transition';else if(k==='duplicates')t.className='flex-1 py-3 px-4 text-sm font-medium text-gray-500 border-b-2 border-transparent hover:text-yellow-600 transition';else t.className='flex-1 py-3 px-4 text-sm font-medium text-gray-500 border-b-2 border-transparent hover:text-gray-700 transition';});if(tab==='records'){loadRecords(1);document.getElementById('duplicate-container').innerHTML='<p class="text-sm text-gray-500 text-center py-4">Click the tab to load duplicates.</p>';}if(tab==='duplicates'){sortField=null;sortDirection='asc';loadDuplicateTable();}lucide.createIcons();}
 
-async function handleLogin(e){e.preventDefault();const u=document.getElementById('login-user').value.trim(),p=document.getElementById('login-pass').value;if(!u||!p){showToast('Please fill in all fields.','warning');return;}testConnBtn.classList.remove('visible');loginProgressContainer.classList.add('active');updateLoginProgress(0,'Connecting...','Initializing...');toggleSpinner('login',true);document.getElementById('login-btn').disabled=true;try{await new Promise(r=>setTimeout(r,200));updateLoginProgress(15,'Connecting...','Establishing connection...');const res=await apiCall('login',{username:u,password:p});if(!res.success)throw new Error(res.message||'Login failed.');updateLoginProgress(40,'Authenticating...','Credentials verified.');currentUser=u;currentUserRole=res.role||'user';updateLoginProgress(48,'Logging login...','Recording...');await logLoginToSheet(u,APP_VERSION);updateLoginProgress(55,'Fetching master list...','Loading...');await fetchMasterList();updateLoginProgress(70,'Master list loaded.',`${masterListCache.length} bike numbers.`);updateLoginProgress(80,'Loading user data...','Preparing...');await new Promise(r=>setTimeout(r,300));updateLoginProgress(95,'Almost ready...','Finalizing...');await new Promise(r=>setTimeout(r,200));if(currentUserRole==='admin'){switchView('view-admin');showToast('Admin welcome, '+u+'!','success');startRefreshCycle();updateLoginProgress(98,'Loading admin data...','Please wait...');await loadStats();switchAdminTab('records');const d=parseInt(document.getElementById('stat-duplicates').textContent)||0;document.getElementById('dup-tab-badge').textContent=d;setTimeout(()=>{updateLoginProgress(100,'Welcome!','Login complete.');setTimeout(()=>loginProgressContainer.classList.remove('active'),600);},400);}else{document.getElementById('logged-in-user').textContent=u;switchView('view-data');showToast('Welcome, '+u+'!','success');updateLoginProgress(100,'Welcome!','Login complete.');setTimeout(()=>loginProgressContainer.classList.remove('active'),600);}document.getElementById('login-form').reset();testResultDiv.classList.add('hidden');testResultDiv.innerHTML='';}catch(err){const em=err.message||'Invalid credentials.';showToast(em,'error');if(em.toLowerCase().includes('network')||em.toLowerCase().includes('failed to fetch')||em.toLowerCase().includes('load failed')){testConnBtn.classList.add('visible');loginProgressStatus.textContent='Connection issue. Use test button below.';loginProgressStatus.style.color='#dc2626';}else testConnBtn.classList.remove('visible');loginProgressContainer.classList.remove('active');loginProgressBar.style.width='0%';loginProgressPercent.textContent='0%';loginProgressLabel.textContent='Connecting...';loginProgressStatus.textContent='Initializing...';loginProgressStatus.style.color='#6b7280';}finally{toggleSpinner('login',false,'Login');document.getElementById('login-btn').disabled=false;}}
+async function handleLogin(e){
+  e.preventDefault();
+  const u=document.getElementById('login-user').value.trim(),p=document.getElementById('login-pass').value;
+  if(!u||!p){showToast('Please fill in all fields.','warning');return;}
+  testConnBtn.classList.remove('visible');
+  loginProgressContainer.classList.add('active');
+  updateLoginProgress(0,'Connecting...','Initializing...');
+  toggleSpinner('login',true);
+  document.getElementById('login-btn').disabled=true;
+  try{
+    await new Promise(r=>setTimeout(r,200));
+    updateLoginProgress(15,'Connecting...','Establishing connection...');
+    const res=await apiCall('login',{username:u,password:p});
+    if(!res.success){
+      // Credentials error → toast only, not the connection modal
+      throw { _credentials: true, message: 'Invalid credentials.' };
+    }
+    updateLoginProgress(40,'Authenticating...','Credentials verified.');
+    currentUser=u;currentUserRole=res.role||'user';
+    updateLoginProgress(48,'Logging login...','Recording...');
+    await logLoginToSheet(u,APP_VERSION);
+    updateLoginProgress(55,'Fetching master list...','Loading...');
+    await fetchMasterList();
+    updateLoginProgress(70,'Master list loaded.',`${masterListCache.length} bike numbers.`);
+    updateLoginProgress(80,'Loading user data...','Preparing...');
+    await new Promise(r=>setTimeout(r,300));
+    updateLoginProgress(95,'Almost ready...','Finalizing...');
+    await new Promise(r=>setTimeout(r,200));
+    if(currentUserRole==='admin'){
+      switchView('view-admin');
+      showToast('Admin welcome, '+u+'!','success');
+      startRefreshCycle();
+      updateLoginProgress(98,'Loading admin data...','Please wait...');
+      await loadStats();
+      switchAdminTab('records');
+      const d=parseInt(document.getElementById('stat-duplicates').textContent)||0;
+      document.getElementById('dup-tab-badge').textContent=d;
+      setTimeout(()=>{updateLoginProgress(100,'Welcome!','Login complete.');setTimeout(()=>loginProgressContainer.classList.remove('active'),600);},400);
+    }else{
+      document.getElementById('logged-in-user').textContent=u;
+      switchView('view-data');
+      showToast('Welcome, '+u+'!','success');
+      updateLoginProgress(100,'Welcome!','Login complete.');
+      setTimeout(()=>loginProgressContainer.classList.remove('active'),600);
+    }
+    document.getElementById('login-form').reset();
+    testResultDiv.classList.add('hidden');testResultDiv.innerHTML='';
+  }catch(err){
+    const errorMsg=(err&&err.message)||'Login failed.';
+    if(err && err._credentials){
+      showToast(errorMsg,'error');
+    } else {
+      // Connection-type failure → custom modal
+      showConnectionErrorModal();
+      loginProgressContainer.classList.remove('active');
+      loginProgressBar.style.width='0%';
+      loginProgressPercent.textContent='0%';
+      loginProgressLabel.textContent='Connecting...';
+      loginProgressStatus.textContent='Initializing...';
+      loginProgressStatus.style.color='#6b7280';
+      toggleSpinner('login',false,'Login');
+      document.getElementById('login-btn').disabled=false;
+      return;
+    }
+    loginProgressContainer.classList.remove('active');
+    loginProgressBar.style.width='0%';
+    loginProgressPercent.textContent='0%';
+    loginProgressLabel.textContent='Connecting...';
+    loginProgressStatus.textContent='Initializing...';
+    loginProgressStatus.style.color='#6b7280';
+  }finally{
+    toggleSpinner('login',false,'Login');
+    document.getElementById('login-btn').disabled=false;
+  }
+}
 
-function logout(){stopInactivityTimer();closeModal('inactivity-warning-modal');closeModal('user-list-modal');currentUser=null;currentUserRole=null;if(refreshInterval){clearInterval(refreshInterval);refreshInterval=null;}if(syncIntervalId){clearInterval(syncIntervalId);syncIntervalId=null;}clearDataForm();stopQrScanner();if(cameraStream){cameraStream.getTracks().forEach(t=>t.stop());cameraStream=null;}switchView('view-login');showToast('Logged out.','info');loginProgressContainer.classList.remove('active');loginProgressBar.style.width='0%';loginProgressPercent.textContent='0%';loginProgressLabel.textContent='Connecting...';loginProgressStatus.textContent='Initializing...';loginProgressStatus.style.color='#6b7280';testConnBtn.classList.remove('visible');testResultDiv.classList.add('hidden');testResultDiv.innerHTML='';}
+function logout(){stopInactivityTimer();closeModal('inactivity-warning-modal');closeModal('user-list-modal');closeModal('dashboard-modal');closeModal('dashboard-error-modal');closeModal('outstanding-progress-modal');currentUser=null;currentUserRole=null;if(refreshInterval){clearInterval(refreshInterval);refreshInterval=null;}if(syncIntervalId){clearInterval(syncIntervalId);syncIntervalId=null;}clearDataForm();stopQrScanner();if(cameraStream){cameraStream.getTracks().forEach(t=>t.stop());cameraStream=null;}switchView('view-login');showToast('Logged out.','info');loginProgressContainer.classList.remove('active');loginProgressBar.style.width='0%';loginProgressPercent.textContent='0%';loginProgressLabel.textContent='Connecting...';loginProgressStatus.textContent='Initializing...';loginProgressStatus.style.color='#6b7280';testConnBtn.classList.remove('visible');testResultDiv.classList.add('hidden');testResultDiv.innerHTML='';}
 
 function startInactivityTimer(){if(inactivityStarted||currentUserRole!=='user')return;inactivityStarted=true;inactivityRemaining=600;inactivityWarningShown=false;updateTimerDisplay();if(inactivityInterval)clearInterval(inactivityInterval);if(inactivityTimeoutId)clearTimeout(inactivityTimeoutId);inactivityInterval=setInterval(()=>{inactivityRemaining--;updateTimerDisplay();const mc=document.getElementById('inactivity-countdown');if(mc){mc.textContent=inactivityRemaining>0?inactivityRemaining:0;if(inactivityRemaining<=10&&inactivityRemaining>0)mc.classList.add('flashing');else mc.classList.remove('flashing');}if(inactivityRemaining<=60&&!inactivityWarningShown)showInactivityWarning();if(inactivityRemaining<=0){clearInterval(inactivityInterval);inactivityInterval=null;logoutInactivity();}},1000);attachActivityListeners();}
 function stopInactivityTimer(){if(inactivityInterval){clearInterval(inactivityInterval);inactivityInterval=null;}if(inactivityTimeoutId){clearTimeout(inactivityTimeoutId);inactivityTimeoutId=null;}inactivityStarted=false;inactivityWarningShown=false;removeActivityListeners();document.getElementById('timer-display').textContent='10:00';document.getElementById('inactivity-timer').classList.remove('warning');}
@@ -722,7 +1041,7 @@ function debouncedBikeCheck(){const v=bikeInput.value.trim();const f=validateBik
 document.addEventListener('DOMContentLoaded',function(){updateSaveButton();updatePhotoButton();syncNowBtn.addEventListener('click',forceSync);bikeInput.addEventListener('input',function(){const v=bikeInput.value.trim();if(v.length===0){feedback.innerHTML='<span>5 characters, starts with 1-6 or 9.</span>';bikeNumberValid=false;lastCheckedBikeNumber=null;lastInvalidShown=null;if(bikeCheckTimeout)clearTimeout(bikeCheckTimeout);bikeNumberChecking=false;updateSaveButton();return;}if(bikeCheckTimeout)clearTimeout(bikeCheckTimeout);bikeCheckTimeout=setTimeout(debouncedBikeCheck,100);});barcodeInput.addEventListener('input',function(){updateSaveButton();});document.addEventListener('visibilitychange',function(){if(!document.hidden&&pendingQueue.length>0&&!isProcessing)processQueue();});});
 
 function onQrCodeSuccess(t){barcodeInput.value=t;showToast('QR Code scanned successfully!','success');barcodeInput.style.borderColor='#16a34a';setTimeout(()=>barcodeInput.style.borderColor='',2000);updateSaveButton();stopQrScanner();scrollToSubmit();}
-async function startQrScanner(){if(isScanning){showToast('Scanner already active.','info');return;}if(typeof Html5Qrcode==='undefined'){showToast('QR scanner library failed to load.','error');return;}if(!('mediaDevices'in navigator)||!('getUserMedia'in navigator.mediaDevices)){showToast('Camera not supported.','error');return;}if(navigator.permissions&&navigator.permissions.query){try{const p=await navigator.permissions.query({name:'camera'});if(p.state==='denied'){showToast('Camera permission denied.','error');return;}}catch(e){}}showModal('qr-scanner-modal');setTimeout(async()=>{try{const re=document.getElementById('qr-reader');re.innerHTML='';qrScannerInstance=new Html5Qrcode('qr-reader');const cams=await Html5Qrcode.getCameras();let cid=null;if(cams&&cams.length>0){const env=cams.find(c=>c.label.toLowerCase().includes('back')||c.label.toLowerCase().includes('environment'));cid=env?env.id:cams[0].id;}const config={fps:15,qrbox:{width:260,height:260},aspectRatio:1.0};const sc=cid?{deviceId:cid}:{facingMode:'environment'};await qrScannerInstance.start(sc,config,onQrCodeSuccess,onQrCodeError);isScanning=true;}catch(err){showToast('Could not access camera. '+(err.message||''),'error');closeModal('qr-scanner-modal');isScanning=false;}},500);}
+async function startQrScanner(){if(isScanning){showToast('Scanner already active.','info');return;}if(typeof Html5Qrcode==='undefined'){showToast('QR scanner library failed to load.','error');return;}if(!('mediaDevices'in navigator)||!('getUserMedia'in navigator.mediaDevices)){showToast('Camera not supported.','error');return;}if(navigator.permissions&&navigator.permissions.query){try{const p=await navigator.permissions.query({name:'camera'});if(p.state==='denied'){showToast('Camera permission denied.','error');return;}}catch(e){}}showModal('qr-scanner-modal');setTimeout(async()=>{try{const re=document.getElementById('qr-reader');re.innerHTML='';qrScannerInstance=new Html5Qrcode('qr-reader');const cams=await Html5Qrcode.getCameras();let cid=null;if(cams&&cams.length>0){const env=cams.find(c=>c.label.toLowerCase().includes('back')||c.label.toLowerCase().includes('environment'));cid=env?env.id:cams[0].id;}const config={fps:15,qrbox:{width:260,height:260},aspectRatio:1.0};const sc=cid?{deviceId:cid}:{facingMode:'environment'};await qrScannerInstance.start(sc,config,onQrCodeSuccess,onQrCodeError);isScanning=true;}catch(err){showToast('Could not access camera.','error');closeModal('qr-scanner-modal');isScanning=false;}},500);}
 function onQrCodeError(m){if(m&&m.includes('No QR code'))return;}
 function stopQrScanner(){if(qrScannerInstance){try{qrScannerInstance.stop().then(()=>{qrScannerInstance.clear();qrScannerInstance=null;isScanning=false;}).catch(()=>{qrScannerInstance=null;isScanning=false;});}catch(e){qrScannerInstance=null;isScanning=false;}}closeModal('qr-scanner-modal');isScanning=false;}
 document.addEventListener('click',function(e){const m=document.getElementById('qr-scanner-modal');if(m&&!m.classList.contains('hidden-view')&&e.target===m)stopQrScanner();});
@@ -731,32 +1050,114 @@ async function saveData(){if(!bikeNumberValid){showToast('Please enter a valid b
 function clearDataForm(){bikeInput.value='';barcodeInput.value='';feedback.innerHTML='<span>5 characters, starts with 1-6 or 9.</span>';bikeNumberValid=false;lastCheckedBikeNumber=null;lastInvalidShown=null;removeBikePhoto();updateSaveButton();bikeInput.focus();stopQrScanner();if(cameraStream){cameraStream.getTracks().forEach(t=>t.stop());cameraStream=null;}}
 function showCustomAlert(t,m){isInvalidBikePopup=false;document.getElementById('alert-title').textContent=t;document.getElementById('alert-message').innerHTML=m;showModal('alert-modal');}
 
-async function openUserListModal(){showModal('user-list-modal');const l=document.getElementById('user-list-loading'),c=document.getElementById('user-list-container-modal');l.classList.remove('hidden');c.classList.add('hidden');c.innerHTML='';try{const r=await apiCall('getUsers',{});if(!r.success)throw new Error(r.message);l.classList.add('hidden');c.classList.remove('hidden');renderUserListModal(r.users||[]);lucide.createIcons();}catch(err){l.classList.add('hidden');c.classList.remove('hidden');c.innerHTML=`<p class="text-sm text-red-500 text-center py-4">Failed to load users: ${err.message}</p>`;showToast('Failed to fetch users.','error');}}
+async function openUserListModal(){
+  showModal('user-list-modal');
+  const l=document.getElementById('user-list-loading'),c=document.getElementById('user-list-container-modal');
+  l.classList.remove('hidden');c.classList.add('hidden');c.innerHTML='';
+  try{
+    const r=await apiCall('getUsers',{});
+    if(!r.success)throw new Error('fetch');
+    l.classList.add('hidden');c.classList.remove('hidden');
+    renderUserListModal(r.users||[]);lucide.createIcons();
+  }catch(err){
+    // Connection issue → close this modal & show the custom connection modal
+    closeModal('user-list-modal');
+    showConnectionErrorModal();
+  }
+}
 function renderUserListModal(users){const c=document.getElementById('user-list-container-modal');if(!users||users.length===0){c.innerHTML='<p class="text-sm text-gray-500 text-center py-4">No users found.</p>';return;}let h='';users.forEach(u=>{const ia=u.role&&u.role.toLowerCase()==='admin';h+=`<div class="user-list-item"><div class="user-info"><span class="username">${u.username}</span><span class="role">${u.role}</span></div>${ia?'<span class="text-xs text-gray-400 italic">protected</span>':`<button class="btn-delete-user" onclick="deleteUserFromModal('${u.username}')"><i data-lucide="trash-2" class="w-4 h-4"></i> Delete</button>`}</div>`;});c.innerHTML=h;lucide.createIcons();}
-async function deleteUserFromModal(u){if(!confirm(`Delete user '${u}'?`))return;try{const r=await apiCall('deleteUser',{username:u});if(!r.success)throw new Error(r.message);showToast(`User '${u}' deleted.`,'info');await openUserListModal();await loadStats();}catch(e){showToast(e.message||'Deletion failed.','error');}}
+async function deleteUserFromModal(u){if(!confirm(`Delete user '${u}'?`))return;try{const r=await apiCall('deleteUser',{username:u});if(!r.success)throw new Error('delete');showToast(`User '${u}' deleted.`,'info');await openUserListModal();await loadStats();}catch(e){showToast('Deletion failed.','error');}}
 function closeUserListModal(){closeModal('user-list-modal');}
 
 function renderRows(rows,total){const c=document.getElementById('records-container');if(!rows||rows.length===0){c.innerHTML='<p class="text-sm text-gray-500 text-center py-4">No records found.</p>';return;}let h='<div class="record-count text-xs text-gray-400 mb-2">Showing '+rows.length+' records'+(total?' of '+total:'')+'</div>';h+='<table class="records-table"><thead><tr>';['Date','User','BikeNo','QRcode','Duplicate','BikePhoto'].forEach(x=>h+='<th>'+x+'</th>');h+='</tr></thead><tbody>';photoStore=[];rows.forEach(row=>{h+='<tr>';for(let c2=0;c2<row.length;c2++){const cell=row[c2]||'';if(c2===5&&cell&&cell.length>10){const idx=photoStore.length;photoStore.push(cell);h+=`<td><button class="photo-view-btn" data-index="${idx}" onclick="viewPhoto(this.dataset.index)" title="View photo"><i data-lucide="camera" class="w-5 h-5 text-blue-600 hover:text-blue-800 cursor-pointer"></i></button></td>`;}else if(c2===4&&cell&&cell.toLowerCase().includes('warning'))h+='<td class="duplicate-warning">'+cell+'</td>';else h+='<td>'+cell+'</td>';}h+='</tr>';});h+='</tbody></table>';c.innerHTML=h;lucide.createIcons();}
 function updatePaginationControls(p,t,l){const tp=Math.ceil(t/l);const pv=document.getElementById('prev-btn'),nx=document.getElementById('next-btn'),pi=document.getElementById('page-info');if(tp<=1){pv.disabled=true;nx.disabled=true;pi.textContent='Page 1 of 1';return;}pv.disabled=(p<=1);nx.disabled=(p>=tp);pi.textContent='Page '+p+' of '+tp;}
-async function loadRecords(page){if(isSearchMode){clearSearch();return;}try{const c=document.getElementById('records-container');c.innerHTML='<p class="text-sm text-gray-500 text-center py-4"><i data-lucide="loader-2" class="w-5 h-5 animate-spin mx-auto"></i></p>';lucide.createIcons();const r=await apiCall('getRecords',{page,limit:pageLimit});if(!r.success)throw new Error(r.message);currentPage=page;totalRecords=r.total||0;currentRows=r.rows||[];renderRows(currentRows,totalRecords);updatePaginationControls(page,totalRecords,pageLimit);}catch(e){document.getElementById('records-container').innerHTML='<p class="text-sm text-red-500 text-center py-4">Failed to load records.</p>';showToast(e.message||'Failed.','error');}}
+
+async function loadRecords(page){
+  if(isSearchMode){clearSearch();return;}
+  try{
+    const c=document.getElementById('records-container');
+    c.innerHTML='<p class="text-sm text-gray-500 text-center py-4"><i data-lucide="loader-2" class="w-5 h-5 animate-spin mx-auto"></i></p>';
+    lucide.createIcons();
+    const r=await apiCall('getRecords',{page,limit:pageLimit});
+    if(!r.success)throw new Error('fetch');
+    currentPage=page;totalRecords=r.total||0;currentRows=r.rows||[];
+    renderRows(currentRows,totalRecords);updatePaginationControls(page,totalRecords,pageLimit);
+  }catch(e){
+    document.getElementById('records-container').innerHTML='<p class="text-sm text-gray-500 text-center py-4">Loading records failed.</p>';
+    showConnectionErrorModal();
+  }
+}
 function nextPage(){if(!isSearchMode&&currentPage<Math.ceil(totalRecords/pageLimit))loadRecords(currentPage+1);}
 function prevPage(){if(!isSearchMode&&currentPage>1)loadRecords(currentPage-1);}
-async function searchRecords(){const si=document.getElementById('search-bike-input');const bn=si.value.trim();if(!bn){showToast('Enter a bike number.','warning');return;}try{const c=document.getElementById('records-container');c.innerHTML='<p class="text-sm text-gray-500 text-center py-4"><i data-lucide="loader-2" class="w-5 h-5 animate-spin mx-auto"></i></p>';lucide.createIcons();const r=await apiCall('searchRecords',{bikeNumber:bn});if(!r.success)throw new Error(r.message);const rows=r.rows||[];if(rows.length===0){showCustomAlert('No Records Found','No records for bike number: <strong>'+bn+'</strong>');si.value='';loadRecords(currentPage);return;}isSearchMode=true;currentRows=rows;totalRecords=rows.length;renderRows(rows,totalRecords);document.getElementById('prev-btn').disabled=true;document.getElementById('next-btn').disabled=true;document.getElementById('page-info').textContent='Search results ('+rows.length+' found)';}catch(e){showToast(e.message||'Search failed.','error');}}
+
+async function searchRecords(){
+  const si=document.getElementById('search-bike-input');
+  const bn=si.value.trim();
+  if(!bn){showToast('Enter a bike number.','warning');return;}
+  try{
+    const c=document.getElementById('records-container');
+    c.innerHTML='<p class="text-sm text-gray-500 text-center py-4"><i data-lucide="loader-2" class="w-5 h-5 animate-spin mx-auto"></i></p>';
+    lucide.createIcons();
+    const r=await apiCall('searchRecords',{bikeNumber:bn});
+    if(!r.success)throw new Error('search');
+    const rows=r.rows||[];
+    if(rows.length===0){
+      showCustomAlert('No Records Found','No records for bike number: <strong>'+bn+'</strong>');
+      si.value='';loadRecords(currentPage);return;
+    }
+    isSearchMode=true;currentRows=rows;totalRecords=rows.length;
+    renderRows(rows,totalRecords);
+    document.getElementById('prev-btn').disabled=true;document.getElementById('next-btn').disabled=true;
+    document.getElementById('page-info').textContent='Search results ('+rows.length+' found)';
+  }catch(e){
+    showConnectionErrorModal();
+  }
+}
 function clearSearch(){document.getElementById('search-bike-input').value='';isSearchMode=false;loadRecords(1);}
 
 function setStatsLoading(l){statsLoading=l;['stat-total-loader','stat-users-loader','stat-photos-loader','stat-duplicates-loader'].forEach(id=>{const e=document.getElementById(id);if(e)e.classList.toggle('active',l);});statusDot.className=l?'stat-dot loading':'stat-dot ready';if(refreshAllBtn)refreshAllBtn.classList.toggle('spinning',l);}
 function flashValue(id,cls){const e=document.getElementById(id);if(!e)return;e.classList.remove('flash','flash-red','flash-purple');void e.offsetWidth;e.classList.add(cls);setTimeout(()=>e.classList.remove(cls),800);}
-async function loadStats(){if(statsLoading)return;setStatsLoading(true);try{const r=await apiCall('getMetrics',{});if(!r.success)throw new Error(r.message||'Failed.');const total=r.registrations||0,uc=r.totalUsers||0,qs=r.qrScans||0,ds=r.duplicateScans||0;const oT=parseInt(document.getElementById('stat-total').textContent)||0;const oU=parseInt(document.getElementById('stat-users').textContent)||0;const oP=parseInt(document.getElementById('stat-photos').textContent)||0;document.getElementById('stat-total').textContent=total;document.getElementById('stat-users').textContent=uc;document.getElementById('stat-photos').textContent=qs;document.getElementById('stat-duplicates').textContent=ds;if(total!==oT)flashValue('stat-total','flash');if(uc!==oU)flashValue('stat-users','flash-red');if(qs!==oP)flashValue('stat-photos','flash-purple');document.getElementById('dup-tab-badge').textContent=ds;countdownSeconds=900;updateTimerDisplay();statusDot.className='stat-dot ready';}catch(e){showToast('Failed to refresh stats.','error');}finally{setStatsLoading(false);}}
+
+async function loadStats(){
+  if(statsLoading)return;
+  setStatsLoading(true);
+  try{
+    const r=await apiCall('getMetrics',{_ts:Date.now()});
+    if(!r.success)throw new Error('stats');
+    const total=r.registrations||0,uc=r.totalUsers||0,qs=r.qrScans||0,ds=r.duplicateScans||0;
+    const oT=parseInt(document.getElementById('stat-total').textContent)||0;
+    const oU=parseInt(document.getElementById('stat-users').textContent)||0;
+    const oP=parseInt(document.getElementById('stat-photos').textContent)||0;
+    document.getElementById('stat-total').textContent=total;
+    document.getElementById('stat-users').textContent=uc;
+    document.getElementById('stat-photos').textContent=qs;
+    document.getElementById('stat-duplicates').textContent=ds;
+    if(total!==oT)flashValue('stat-total','flash');
+    if(uc!==oU)flashValue('stat-users','flash-red');
+    if(qs!==oP)flashValue('stat-photos','flash-purple');
+    document.getElementById('dup-tab-badge').textContent=ds;
+    countdownSeconds=900;updateTimerDisplay();statusDot.className='stat-dot ready';
+  }catch(e){
+    showConnectionErrorModal();
+  }finally{
+    setStatsLoading(false);
+  }
+}
 function updateTimerDisplay(){if(!timerText)return;const m=Math.floor(countdownSeconds/60),s=countdownSeconds%60;timerText.textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;}
 function startRefreshCycle(){if(refreshInterval)clearInterval(refreshInterval);countdownSeconds=900;updateTimerDisplay();refreshInterval=setInterval(()=>{countdownSeconds-=1;if(countdownSeconds<=0){countdownSeconds=0;updateTimerDisplay();if(!statsLoading)refreshAll(false);countdownSeconds=900;}else updateTimerDisplay();},1000);}
-async function refreshAll(inc=true){if(statsLoading)return;showToast('Refreshing all data...','info');await loadStats();await loadRecords(1);if(inc&&adminTab==='duplicates'){sortField=null;sortDirection='asc';await loadDuplicateTable();}else if(inc){document.getElementById('dup-tab-badge').textContent=parseInt(document.getElementById('stat-duplicates').textContent)||0;}showToast('All data refreshed.','success');}
 
-async function refreshDashboard(){const b=document.querySelector('#dashboard-modal .refresh-dashboard-btn');if(b){b.classList.add('spinning');b.disabled=true;}showToast('Refreshing dashboard...','info');try{await loadDashboardData();showToast('Dashboard updated.','success');}catch(e){showToast('Failed to refresh dashboard.','error');}finally{if(b){b.classList.remove('spinning');b.disabled=false;}}}
-async function loadDashboardData(){const mr=await apiCall('getMetrics',{});if(!mr.success)throw new Error(mr.message);function fds(v){if(!v)return'-';let d=parseDateFromAnyString(v);if(d)return formatDateDDMMYYYY(d);if(typeof v==='number'){const dd=new Date((v-25569)*86400*1000);if(!isNaN(dd.getTime()))return formatDateDDMMYYYY(dd);}return v;}document.getElementById('stat-today-date').textContent=fds(mr.todayDate);document.getElementById('stat-completion-target').textContent=fds(mr.completionTarget);document.getElementById('stat-bike-target').textContent=mr.bikeTarget||0;document.getElementById('stat-outstanding-bikes').textContent=mr.outstandingBikes||0;document.getElementById('stat-today').textContent=mr.today||0;document.getElementById('stat-yesterday').textContent=mr.yesterday||0;document.getElementById('stat-week').textContent=mr.thisWeek||0;document.getElementById('stat-total-dash').textContent=mr.total||0;const dr=await apiCall('getDailyEntries',{});if(!dr.success)throw new Error(dr.message);dailyEntries=dr.entries||[];const td=dailyEntries.length;let ad=0;if(td>0)ad=Math.floor(dailyEntries.reduce((a,e)=>a+e.total,0)/td);document.getElementById('stat-avg').textContent=ad;const wd=dailyEntries.filter(e=>e.total>0).sort((a,b)=>b.date.localeCompare(a.date));let a3=0;const l3=wd.slice(0,3);if(l3.length>0)a3=Math.floor(l3.reduce((a,e)=>a+e.total,0)/l3.length);document.getElementById('stat-avg3').textContent=a3;document.getElementById('stat-net-days-left').textContent=mr.netDaysLeft||0;document.getElementById('stat-total-days-left').textContent=mr.totalDaysLeft||0;document.getElementById('stat-bikes-per-day-net').textContent=Math.floor(mr.bikesPerDayNet||0);document.getElementById('stat-bikes-per-day-total').textContent=Math.floor(mr.bikesPerDayTotal||0);const ur=await apiCall('getUserBikeCounts',{});if(!ur.success)throw new Error(ur.message);userBikeCounts=ur.users||[];updateDashboard();}
-function getPeriodRange(p){const n=new Date(),s=new Date(n);let e=new Date(n);switch(p){case 'today':s.setHours(0,0,0,0);e.setHours(23,59,59,999);break;case 'yesterday':s.setDate(s.getDate()-1);s.setHours(0,0,0,0);e.setDate(e.getDate()-1);e.setHours(23,59,59,999);break;case 'last7':s.setDate(s.getDate()-6);s.setHours(0,0,0,0);e.setHours(23,59,59,999);break;case 'thisweek':{const d=s.getDay(),df=(d===0?6:d-1);s.setDate(s.getDate()-df);s.setHours(0,0,0,0);e=new Date(s);e.setDate(e.getDate()+6);e.setHours(23,59,59,999);break;}case 'lastweek':{const d=s.getDay(),df=(d===0?6:d-1)+7;s.setDate(s.getDate()-df);s.setHours(0,0,0,0);e=new Date(s);e.setDate(e.getDate()+6);e.setHours(23,59,59,999);break;}case 'month':s.setDate(1);s.setHours(0,0,0,0);e.setHours(23,59,59,999);break;default:return{start:null,end:null};}return{start:s,end:e};}
-function linearRegression(x,y){const n=x.length;if(n===0)return{slope:0,intercept:0};let sx=0,sy=0,sxy=0,sxx=0;for(let i=0;i<n;i++){sx+=x[i];sy+=y[i];sxy+=x[i]*y[i];sxx+=x[i]*x[i];}const slope=(n*sxy-sx*sy)/(n*sxx-sx*sx);return{slope,intercept:(sy-slope*sx)/n};}
+async function refreshAll(inc){
+  inc=inc!==false;
+  if(statsLoading)return;
+  showToast('Refreshing all data...','info');
+  await loadStats();
+  await loadRecords(1);
+  if(inc&&adminTab==='duplicates'){sortField=null;sortDirection='asc';await loadDuplicateTable();}
+  else if(inc){document.getElementById('dup-tab-badge').textContent=parseInt(document.getElementById('stat-duplicates').textContent)||0;}
+  showToast('All data refreshed.','success');
+}
 
-async function adminAction(t){try{if(t==='addUser'){const u=document.getElementById('new-username').value.trim(),p=document.getElementById('new-password').value;if(!u||!p)return showToast('Enter username and password.','warning');toggleSpinner('admin-add',true);const r=await apiCall('addUser',{username:u,password:p,role:'user'});if(!r.success)throw new Error(r.message);showToast(r.message||'User saved.','success');document.getElementById('new-username').value='';document.getElementById('new-password').value='';if(passwordVisible)togglePasswordVisibility();await loadStats();toggleSpinner('admin-add',false,'Save User');}else if(t==='downloadCSV'){await downloadFullDatabaseCSV();}}catch(e){closeModal('csv-progress-modal');showToast(e.message||'Action failed.','error');toggleSpinner('admin-add',false,'Save User');}}
+async function adminAction(t){try{if(t==='addUser'){const u=document.getElementById('new-username').value.trim(),p=document.getElementById('new-password').value;if(!u||!p)return showToast('Enter username and password.','warning');toggleSpinner('admin-add',true);const r=await apiCall('addUser',{username:u,password:p,role:'user'});if(!r.success)throw new Error('add');showToast(r.message||'User saved.','success');document.getElementById('new-username').value='';document.getElementById('new-password').value='';if(passwordVisible)togglePasswordVisibility();await loadStats();toggleSpinner('admin-add',false,'Save User');}else if(t==='downloadCSV'){await downloadFullDatabaseCSV();}}catch(e){closeModal('csv-progress-modal');if(e && e._credentials){showToast('Action failed.','error');}else{showToast('Action failed.','error');}toggleSpinner('admin-add',false,'Save User');}}
 
 function updateExportProgress(pct,msg){
   const b=document.getElementById('csv-progress-bar');
@@ -764,7 +1165,7 @@ function updateExportProgress(pct,msg){
   const t=document.getElementById('csv-progress-text');
   if(b)b.style.width=pct+'%';
   if(p)p.textContent=pct+'%';
-  if(t&&msg)t.textContent=msg;
+  if(t&&msg)t.textContent=sanitizeLog(msg);
 }
 function logExport(msg,type){
   const log=document.getElementById('csv-progress-log');
@@ -772,15 +1173,12 @@ function logExport(msg,type){
   const cls=type==='err'?'err':(type==='ok'?'ok':(type==='warn'?'warn':''));
   const div=document.createElement('div');
   if(cls)div.className=cls;
-  div.textContent=msg;
+  div.textContent=sanitizeLog(msg);
   log.appendChild(div);
   log.scrollTop=log.scrollHeight;
 }
 function cancelExport(){
-  if(exportAbortController){
-    exportAbortController.abort();
-    logExport('✗ Export cancelled by user.','err');
-  }
+  if(exportAbortController){exportAbortController.abort();logExport('Export cancelled by user.','err');}
   const btn=document.getElementById('csv-cancel-btn');
   if(btn){btn.disabled=true;btn.textContent='Cancelling…';}
 }
@@ -801,132 +1199,202 @@ async function downloadFullDatabaseCSV(){
   const summaries=[];
   let cancelled=false;
 
-  // DB1
   try{
     updateExportProgress(3,'Opening database number one and fetching the data…');
     logExport('→ Database 1: connecting…');
-    const ds1=await fetchAllRecordsFromUrl(
-      GAS_WEB_APP_URL_DS1,'Database 1',
-      (got,total)=>{const pct=3+Math.min(27,Math.floor(27*got/Math.max(total,1)));updateExportProgress(pct,`Database 1: ${got} / ${total||'?'} records…`);},
-      logExport, signal
-    );
-    allRecords.push(...ds1.rows);
-    summaries.push(`DB1=${ds1.rows.length} (${ds1.source})`);
-    logExport(`✓ Database 1: ${ds1.rows.length} records — ${ds1.source}`,'ok');
+    const ds1=await fetchAllRecordsFromUrl(GAS_WEB_APP_URL_DS1,'Database 1',(got,total)=>{const pct=3+Math.min(27,Math.floor(27*got/Math.max(total,1)));updateExportProgress(pct,`Database 1: ${got} / ${total||'?'} records…`);},logExport,signal);
+    allRecords.push(...ds1.rows);summaries.push(`DB1=${ds1.rows.length}`);
+    logExport(`Database 1: ${ds1.rows.length} records`,'ok');
     updateExportProgress(30,`Database 1 complete (${ds1.rows.length} records).`);
-  }catch(e){
-    if(e.message==='ABORTED'){cancelled=true;} else {
-      failures.push(`Database 1 (${e.message})`);
-      logExport(`✗ Database 1 failed: ${e.message}`,'err');
-      updateExportProgress(30,'Database 1 unavailable — continuing…');
-    }
-  }
+  }catch(e){if(e.message==='ABORTED'){cancelled=true;}else{failures.push('Database 1');logExport(`Database 1 unavailable`,'err');updateExportProgress(30,'Database 1 unavailable — continuing…');}}
   if(cancelled){finishCancelledExport();return;}
   await new Promise(r=>setTimeout(r,300));
 
-  // DB2
   try{
     updateExportProgress(33,'Opening database number two and fetching the data records…');
     logExport('→ Database 2: connecting…');
-    const ds2=await fetchAllRecordsFromUrl(
-      GAS_WEB_APP_URL_DS2,'Database 2',
-      (got,total)=>{const pct=33+Math.min(27,Math.floor(27*got/Math.max(total,1)));updateExportProgress(pct,`Database 2: ${got} / ${total||'?'} records…`);},
-      logExport, signal
-    );
-    allRecords.push(...ds2.rows);
-    summaries.push(`DB2=${ds2.rows.length} (${ds2.source})`);
-    logExport(`✓ Database 2: ${ds2.rows.length} records — ${ds2.source}`,'ok');
+    const ds2=await fetchAllRecordsFromUrl(GAS_WEB_APP_URL_DS2,'Database 2',(got,total)=>{const pct=33+Math.min(27,Math.floor(27*got/Math.max(total,1)));updateExportProgress(pct,`Database 2: ${got} / ${total||'?'} records…`);},logExport,signal);
+    allRecords.push(...ds2.rows);summaries.push(`DB2=${ds2.rows.length}`);
+    logExport(`Database 2: ${ds2.rows.length} records`,'ok');
     updateExportProgress(60,`Database 2 complete (${ds2.rows.length} records).`);
-  }catch(e){
-    if(e.message==='ABORTED'){cancelled=true;} else {
-      failures.push(`Database 2 (${e.message})`);
-      logExport(`✗ Database 2 failed: ${e.message}`,'err');
-      updateExportProgress(60,'Database 2 unavailable — continuing…');
-    }
-  }
+  }catch(e){if(e.message==='ABORTED'){cancelled=true;}else{failures.push('Database 2');logExport(`Database 2 unavailable`,'err');updateExportProgress(60,'Database 2 unavailable — continuing…');}}
   if(cancelled){finishCancelledExport();return;}
   await new Promise(r=>setTimeout(r,300));
 
-  // DB3
   try{
     updateExportProgress(63,'Opening database number three and fetching records…');
     logExport('→ Database 3: connecting…');
-    const ds3=await fetchAllRecordsFromUrl(
-      GAS_WEB_APP_URL,'Database 3',
-      (got,total)=>{const pct=63+Math.min(22,Math.floor(22*got/Math.max(total,1)));updateExportProgress(pct,`Database 3: ${got} / ${total||'?'} records…`);},
-      logExport, signal
-    );
-    allRecords.push(...ds3.rows);
-    summaries.push(`DB3=${ds3.rows.length} (${ds3.source})`);
-    logExport(`✓ Database 3: ${ds3.rows.length} records — ${ds3.source}`,'ok');
+    const ds3=await fetchAllRecordsFromUrl(GAS_WEB_APP_URL,'Database 3',(got,total)=>{const pct=63+Math.min(22,Math.floor(22*got/Math.max(total,1)));updateExportProgress(pct,`Database 3: ${got} / ${total||'?'} records…`);},logExport,signal);
+    allRecords.push(...ds3.rows);summaries.push(`DB3=${ds3.rows.length}`);
+    logExport(`Database 3: ${ds3.rows.length} records`,'ok');
     updateExportProgress(85,`Database 3 complete (${ds3.rows.length} records).`);
-  }catch(e){
-    if(e.message==='ABORTED'){cancelled=true;} else {
-      failures.push(`Database 3 (${e.message})`);
-      logExport(`✗ Database 3 failed: ${e.message}`,'err');
-      updateExportProgress(85,'Database 3 unavailable — continuing…');
-    }
-  }
+  }catch(e){if(e.message==='ABORTED'){cancelled=true;}else{failures.push('Database 3');logExport(`Database 3 unavailable`,'err');updateExportProgress(85,'Database 3 unavailable — continuing…');}}
   if(cancelled){finishCancelledExport();return;}
   await new Promise(r=>setTimeout(r,300));
 
   if(allRecords.length===0){
     updateExportProgress(100,'No records could be fetched from any database.');
-    logExport('✗ Total records: 0 — export aborted.','err');
+    logExport('Total records: 0 — export aborted.','err');
     await new Promise(r=>setTimeout(r,1200));
-    closeModal('csv-progress-modal');
-    exportAbortController=null;
-    const detail=failures.length>0?' Errors: '+failures.join(' | '):'';
-    showToast('❌ No records could be fetched from any database.'+detail,'error');
+    closeModal('csv-progress-modal');exportAbortController=null;
+    showConnectionErrorModal();
     return;
   }
 
   updateExportProgress(90,'Finalizing the output and saving the data into the .csv file…');
-  logExport(`→ Merging ${allRecords.length} records (DS1+DS2+DS3)…`);
+  logExport(`Merging ${allRecords.length} records…`);
   await new Promise(r=>setTimeout(r,150));
-
-  allRecords.sort((a,b)=>{
-    const da=parseDateFromAnyString(a[0]||'');
-    const db=parseDateFromAnyString(b[0]||'');
-    if(!da&&!db)return 0;
-    if(!da)return -1;
-    if(!db)return 1;
-    return da.getTime()-db.getTime();
-  });
-
+  allRecords.sort((a,b)=>{const da=parseDateFromAnyString(a[0]||'');const db=parseDateFromAnyString(b[0]||'');if(!da&&!db)return 0;if(!da)return -1;if(!db)return 1;return da.getTime()-db.getTime();});
   const header=['Date','User','BikeNo','QRcode','Duplicate'];
   const csvRows=allRecords.map(row=>[row[0]||'',row[1]||'',row[2]||'',row[3]||'',row[4]||'']);
   const finalCsv=Papa.unparse({fields:header,data:csvRows});
 
   updateExportProgress(100,`Done — ${allRecords.length} records exported.`);
-  logExport(`✓ Total: ${allRecords.length} records saved.`,'ok');
+  logExport(`Total: ${allRecords.length} records saved.`,'ok');
   await new Promise(r=>setTimeout(r,500));
-
-  closeModal('csv-progress-modal');
-  exportAbortController=null;
+  closeModal('csv-progress-modal');exportAbortController=null;
   downloadFile('bike_registrations_full',finalCsv);
+  if(failures.length>0){showToast(`CSV saved with ${allRecords.length} records.`,'warning');}
+  else{showToast(`Full CSV saved — ${allRecords.length} records.`,'success');}
+}
+function finishCancelledExport(){exportAbortController=null;closeModal('csv-progress-modal');showToast('Export cancelled.','info');const btn=document.getElementById('csv-cancel-btn');if(btn){btn.disabled=false;btn.textContent='Cancel Export';}}
 
-  if(failures.length>0){
-    showToast(`✅ CSV saved with ${allRecords.length} records. ⚠️ ${failures.length} database(s) had errors.`,'warning');
-  }else{
-    showToast(`✅ Full CSV saved — ${allRecords.length} records from all three databases.`,'success');
-  }
-  console.log('📊 Export summary:',summaries.join(', '));
-  if(failures.length>0)console.warn('⚠️ Failures:',failures);
+function updateOutstandingProgress(pct,msg){
+  const b=document.getElementById('outstanding-progress-bar');
+  const p=document.getElementById('outstanding-progress-percent');
+  const t=document.getElementById('outstanding-progress-text');
+  if(b)b.style.width=pct+'%';
+  if(p)p.textContent=pct+'%';
+  if(t&&msg)t.textContent=sanitizeLog(msg);
+}
+function logExportOutstanding(msg,type){
+  const log=document.getElementById('outstanding-progress-log');
+  if(!log)return;
+  const cls=type==='err'?'err':(type==='ok'?'ok':(type==='warn'?'warn':''));
+  const div=document.createElement('div');
+  if(cls)div.className=cls;
+  div.textContent=sanitizeLog(msg);
+  log.appendChild(div);
+  log.scrollTop=log.scrollHeight;
+}
+function cancelOutstandingExport(){
+  if(outstandingAbortController){outstandingAbortController.abort();logExportOutstanding('Export cancelled by user.','err');}
+  const btn=document.getElementById('outstanding-cancel-btn');
+  if(btn){btn.disabled=true;btn.textContent='Cancelling…';}
 }
 
-function finishCancelledExport(){
-  exportAbortController=null;
-  closeModal('csv-progress-modal');
-  showToast('Export cancelled.','info');
-  const btn=document.getElementById('csv-cancel-btn');
-  if(btn){btn.disabled=false;btn.textContent='Cancel Export';}
+async function downloadOutstandingBikesCSV(){
+  showModal('outstanding-progress-modal');
+  const logEl=document.getElementById('outstanding-progress-log');
+  if(logEl)logEl.innerHTML='';
+  const cancelBtn=document.getElementById('outstanding-cancel-btn');
+  if(cancelBtn){cancelBtn.disabled=false;cancelBtn.textContent='Cancel Export';}
+  outstandingAbortController=new AbortController();
+  const signal=outstandingAbortController.signal;
+  updateOutstandingProgress(0,'Preparing export…');
+  await new Promise(r=>setTimeout(r,150));
+
+  try {
+    updateOutstandingProgress(5,'Connecting to database…');
+    logExportOutstanding('→ Connecting to database…');
+
+    const PAGE_SIZE = 500;
+    let allRows = [];
+    let page = 1;
+    let totalReported = null;
+
+    while (true) {
+      if (signal.aborted) throw new Error('ABORTED');
+
+      const resp = await fetchJSONWithRetry(GAS_WEB_APP_URL, {
+        action: 'getOutstandingBikesLite',
+        page: page,
+        limit: PAGE_SIZE,
+        _ts: Date.now()
+      }, signal, 3);
+
+      if (resp.success === false) {
+        const msg = (resp.message || '').toLowerCase();
+        if (msg.includes('unknown')) throw new Error('Server does not support this export.');
+        throw new Error('Fetch failed');
+      }
+
+      if (page === 1) {
+        totalReported = resp.total || 0;
+        logExportOutstanding(`Server reports ${totalReported} total records`);
+      }
+
+      const rows = resp.rows || [];
+      if (rows.length === 0) break;
+      allRows.push(...rows);
+
+      const pct = Math.min(90, 5 + Math.floor(85 * allRows.length / Math.max(totalReported, 1)));
+      updateOutstandingProgress(pct, `Fetching data… (${allRows.length} / ${totalReported || '?'} records)`);
+      logExportOutstanding(`Page ${page}: ${allRows.length} records so far`);
+
+      if (rows.length < PAGE_SIZE) break;
+      page++;
+      await new Promise(r => setTimeout(r, 100));
+    }
+
+    if (allRows.length === 0) {
+      updateOutstandingProgress(100,'No outstanding bikes found.');
+      logExportOutstanding('No records returned.','err');
+      await new Promise(r=>setTimeout(r,1200));
+      closeModal('outstanding-progress-modal');outstandingAbortController=null;
+      showToast('No outstanding bikes found.','info');
+      return;
+    }
+
+    updateOutstandingProgress(93,'Downloading data…');
+    logExportOutstanding(`All pages downloaded (${allRows.length} records)`);
+    await new Promise(r=>setTimeout(r,120));
+
+    updateOutstandingProgress(97,'Creating graphs…');
+    logExportOutstanding('Building CSV…');
+    await new Promise(r=>setTimeout(r,120));
+
+    updateOutstandingProgress(99,'Finalizing the output and saving the data into the .csv file…');
+
+    const header = ['Bike Number', 'Description'];
+    const csvRows = allRows
+      .filter(row => {
+        const v = row[0];
+        return v !== null && v !== undefined && String(v).trim() !== '';
+      })
+      .map(row => [row[0], 'Please apply the QR code']);
+    const finalCsv = Papa.unparse({ fields: header, data: csvRows });
+
+    updateOutstandingProgress(100, `Done — ${csvRows.length} records exported.`);
+    logExportOutstanding(`Total: ${csvRows.length} records saved.`,'ok');
+    await new Promise(r=>setTimeout(r,500));
+
+    closeModal('outstanding-progress-modal');
+    outstandingAbortController=null;
+    downloadFile('outstanding_bikes', finalCsv);
+    showToast(`Outstanding bikes CSV saved — ${csvRows.length} records.`, 'success');
+
+  } catch (e) {
+    if (e.message === 'ABORTED') {
+      outstandingAbortController=null;
+      closeModal('outstanding-progress-modal');
+      showToast('Export cancelled.','info');
+      if (cancelBtn) { cancelBtn.disabled=false; cancelBtn.textContent='Cancel Export'; }
+      return;
+    }
+    updateOutstandingProgress(100,'Export failed.');
+    logExportOutstanding(`Failed: ${e.message}`,'err');
+    await new Promise(r=>setTimeout(r,1200));
+    closeModal('outstanding-progress-modal');
+    outstandingAbortController=null;
+    // Route to the custom modal for connection issues
+    showConnectionErrorModal();
+  }
 }
 
 function downloadFile(baseName,text){
   const now=new Date();
-  const ts=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0')+'_'+
-           String(now.getHours()).padStart(2,'0')+'-'+String(now.getMinutes()).padStart(2,'0')+'-'+String(now.getSeconds()).padStart(2,'0');
+  const ts=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0')+'_'+String(now.getHours()).padStart(2,'0')+'-'+String(now.getMinutes()).padStart(2,'0')+'-'+String(now.getSeconds()).padStart(2,'0');
   const filename=baseName+'_'+ts+'.csv';
   const a=document.createElement('a');
   a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(text);
@@ -934,40 +1402,19 @@ function downloadFile(baseName,text){
   document.body.appendChild(a);a.click();document.body.removeChild(a);
 }
 
-function filterDailyEntriesByPeriod(entries,period){if(period==='total')return entries;const{start,end}=getPeriodRange(period);if(!start||!end)return entries;return entries.filter(e=>{const d=new Date(e.date+'T00:00:00');return d>=start&&d<=end;});}
-async function openDashboard(){showModal('dashboard-modal');document.getElementById('dashboard-loading').classList.remove('hidden');document.getElementById('dashboard-charts').classList.add('hidden');try{await loadDashboardData();document.getElementById('dashboard-loading').classList.add('hidden');document.getElementById('dashboard-charts').classList.remove('hidden');lucide.createIcons();}catch(e){document.getElementById('dashboard-loading').innerHTML='<p class="text-red-500">Failed to load dashboard data.</p>';showToast('Failed to load dashboard.','error');}}
-function closeDashboard(){closeModal('dashboard-modal');if(chartTimeInstance){chartTimeInstance.destroy();chartTimeInstance=null;}if(chartUserInstance){chartUserInstance.destroy();chartUserInstance=null;}}
-function updateDashboard(){
-  const pt=document.getElementById('period-select-time').value;
-  const fe=filterDailyEntriesByPeriod(dailyEntries,pt);
-  fe.sort((a,b)=>a.date.localeCompare(b.date));
-  const labels=fe.map(e=>{const d=new Date(e.date+'T00:00:00');return d.toLocaleDateString(undefined,{month:'short',day:'numeric'});});
-  const values=fe.map(e=>e.total);
-  let avg=null;if(values.length>0)avg=values.reduce((a,b)=>a+b,0)/values.length;
-  const ctx1=document.getElementById('chart-time').getContext('2d');
-  if(chartTimeInstance)chartTimeInstance.destroy();
-  const datasets=[{label:'Registrations',data:values,borderColor:'rgba(220,38,38,1)',backgroundColor:'rgba(220,38,38,0.1)',fill:true,tension:.2,pointRadius:2}];
-  if(avg!==null)datasets.push({label:'Average per day',data:Array(values.length).fill(avg),borderColor:'rgba(220,38,38,0.5)',borderDash:[6,4],borderWidth:2,pointRadius:0,fill:false,tension:0});
-  if(fe.length>=2){const idx=fe.map((_,i)=>i);const yv=fe.map(e=>e.total);const reg=linearRegression(idx,yv);const tv=idx.map(i=>reg.slope*i+reg.intercept);datasets.push({label:'Trend',data:tv,borderColor:'rgba(54,162,235,1)',borderDash:[5,5],borderWidth:2,pointRadius:0,fill:false,tension:0});}
-  chartTimeInstance=new Chart(ctx1,{type:'line',data:{labels,datasets},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:true,labels:{boxWidth:10,fontSize:10}},tooltip:{callbacks:{label:function(c){let l=c.dataset.label||'';if(l)l+=': ';if(c.parsed.y!==null)l+=c.parsed.y;const e=fe[c.dataIndex];if(e)l+=' ('+e.date+')';return l;}}}},scales:{y:{beginAtZero:true,ticks:{stepSize:1},title:{display:true,text:'Count'}},x:{title:{display:true,text:'Date'}}}}});
-  const su=[...userBikeCounts].sort((a,b)=>b.count-a.count);
-  const ctx2=document.getElementById('chart-user').getContext('2d');
-  if(chartUserInstance)chartUserInstance.destroy();
-  chartUserInstance=new Chart(ctx2,{type:'bar',data:{labels:su.map(u=>u.user),datasets:[{label:'Total bikes per user',data:su.map(u=>u.count),backgroundColor:'rgba(22,163,74,0.7)',borderColor:'rgba(22,163,74,1)',borderWidth:1,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1},title:{display:true,text:'Count'}},x:{title:{display:true,text:'User'}}}}});
-}
-
 function showSingleDeleteConfirm(r,b){pendingDelete={type:'single',rowNumber:r,bikeNumber:b};showDeleteModal(`Delete Record for Bike ${b}?`,`You are about to delete the duplicate record for bike <strong>${b}</strong> (row ${r}).`,null,'Delete Record');}
 function showBatchDeleteConfirm(recs){if(!recs||recs.length===0)return;let lh='';recs.forEach(r=>{lh+=`<div class="list-item"><span class="bike">${r.bikeNumber}</span><span class="time">${r.timestamp||'Unknown date'}</span></div>`;});pendingDelete={type:'batch',records:recs};showDeleteModal(`Delete ${recs.length} Records?`,`You are about to delete <strong>${recs.length}</strong> duplicate records.`,lh,`Delete ${recs.length} Records`);}
 function showDeleteModal(t,s,lh,bt){document.getElementById('delete-confirm-title').textContent=t;document.getElementById('delete-confirm-subtitle').innerHTML=s;const lc=document.getElementById('delete-confirm-list-container'),le=document.getElementById('delete-confirm-list');if(lh){le.innerHTML=lh;lc.classList.remove('hidden');}else{lc.classList.add('hidden');le.innerHTML='';}document.getElementById('delete-confirm-btn').textContent=bt||'Delete All';showModal('delete-confirm-modal');}
 function cancelDelete(){pendingDelete=null;closeModal('delete-confirm-modal');clearSelection();}
-async function confirmDelete(){if(!pendingDelete)return;const db=document.getElementById('delete-confirm-btn');db.disabled=true;db.innerHTML='<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Deleting...';try{let dIds=[];if(pendingDelete.type==='single'){const{rowNumber,bikeNumber}=pendingDelete;const r=await apiCall('deleteRecord',{rowNumber});if(r.success){showToast(`✅ Record for bike ${bikeNumber} deleted.`,'success');dIds.push(rowNumber);}else showToast(`❌ Failed: ${r.message}`,'error');}else if(pendingDelete.type==='batch'){let d=0,f=0;for(const rec of pendingDelete.records){try{const r=await apiCall('deleteRecord',{rowNumber:rec.rowNumber});if(r.success){d++;dIds.push(rec.rowNumber);}else f++;}catch(e){f++;}}if(d>0&&f===0)showToast(`✅ Deleted ${d} records.`,'success');else if(d>0&&f>0)showToast(`⚠️ Deleted ${d}, ${f} failed.`,'warning');else showToast(`❌ Failed to delete ${f} records.`,'error');}if(dIds.length>0){dIds.forEach(n=>deletedRows.add(n));document.querySelectorAll('#duplicate-container .dup-table tbody tr').forEach(tr=>{const cb=tr.querySelector('.dup-row-checkbox');if(cb){const n=parseInt(cb.dataset.row);if(deletedRows.has(n)){tr.classList.add('deleted');cb.disabled=true;cb.checked=false;const dd=tr.querySelector('.btn-delete');if(dd)dd.disabled=true;selectedRows.delete(n);}}});updateBatchDeleteButton();const tot=document.querySelectorAll('#duplicate-container .dup-table tbody tr').length;const rem=tot-deletedRows.size;document.getElementById('dup-panel-badge').textContent=rem;document.getElementById('dup-tab-badge').textContent=rem;clearSelection();}}catch(e){showToast(`❌ Error: ${e.message}`,'error');}finally{db.disabled=false;db.textContent='Delete All';pendingDelete=null;closeModal('delete-confirm-modal');clearSelection();updateBatchDeleteButton();}}
 
-function toggleSelectAll(){const sa=document.getElementById('select-all-checkbox');if(!sa)return;const cbs=document.querySelectorAll('#duplicate-container .dup-row-checkbox:not(:disabled)');if(sa.checked){let ts=MAX_SELECTION-selectedRows.size;if(ts<=0){sa.checked=false;showToast(`Max ${MAX_SELECTION}.`,'warning');return;}let a=0;cbs.forEach(cb=>{if(a>=ts)return;const n=parseInt(cb.dataset.row);if(!cb.checked&&!selectedRows.has(n)&&!deletedRows.has(n)){cb.checked=true;selectedRows.add(n);a++;}});if(a===0){sa.checked=false;showToast(`Max ${MAX_SELECTION}.`,'warning');}}else{cbs.forEach(cb=>{cb.checked=false;selectedRows.delete(parseInt(cb.dataset.row));});}sa.checked=cbs.length>0&&Array.from(cbs).every(c=>c.checked);updateBatchDeleteButton();}
-function toggleRowCheckbox(n){const cb=document.querySelector(`.dup-row-checkbox[data-row="${n}"]`);if(!cb||cb.disabled)return;if(cb.checked){if(selectedRows.size>=MAX_SELECTION){cb.checked=false;showToast(`Max ${MAX_SELECTION}.`,'warning');return;}selectedRows.add(n);}else selectedRows.delete(n);const cbs=document.querySelectorAll('#duplicate-container .dup-row-checkbox:not(:disabled)');const sa=document.getElementById('select-all-checkbox');if(sa)sa.checked=cbs.length>0&&Array.from(cbs).every(c=>c.checked);updateBatchDeleteButton();}
+async function confirmDelete(){if(!pendingDelete)return;const db=document.getElementById('delete-confirm-btn');db.disabled=true;db.innerHTML='<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Deleting...';try{let dIds=[];if(pendingDelete.type==='single'){const{rowNumber,bikeNumber}=pendingDelete;const r=await apiCall('deleteRecord',{rowNumber});if(r.success){showToast(`Record for bike ${bikeNumber} deleted.`,'success');dIds.push(rowNumber);}else showToast('Failed to delete record.','error');}else if(pendingDelete.type==='batch'){let d=0,f=0;for(const rec of pendingDelete.records){try{const r=await apiCall('deleteRecord',{rowNumber:rec.rowNumber});if(r.success){d++;dIds.push(rec.rowNumber);}else f++;}catch(e){f++;}}if(d>0&&f===0)showToast(`Deleted ${d} records.`,'success');else if(d>0&&f>0)showToast(`Deleted ${d}, ${f} failed.`,'warning');else showToast('Delete failed.','error');}if(dIds.length>0){dIds.forEach(n=>deletedRows.add(n));document.querySelectorAll('#duplicate-container .dup-table tbody tr').forEach(tr=>{const cb=tr.querySelector('.dup-row-checkbox');if(cb){const n=parseInt(cb.dataset.row);if(deletedRows.has(n)){tr.classList.add('deleted');cb.disabled=true;cb.checked=false;const dd=tr.querySelector('.btn-delete');if(dd)dd.disabled=true;selectedRows.delete(n);}}});updateBatchDeleteButton();const tot=document.querySelectorAll('#duplicate-container .dup-table tbody tr').length;const rem=tot-deletedRows.size;document.getElementById('dup-panel-badge').textContent=rem;document.getElementById('dup-tab-badge').textContent=rem;clearSelection();}}catch(e){showToast('Deletion error.','error');}finally{db.disabled=false;db.textContent='Delete All';pendingDelete=null;closeModal('delete-confirm-modal');clearSelection();updateBatchDeleteButton();}}
+
+function toggleSelectAll(){const sa=document.getElementById('select-all-checkbox');if(!sa)return;const cbs=document.querySelectorAll('#duplicate-container .dup-row-checkbox:not(:disabled)');if(sa.checked){let ts=MAX_SELECTION-selectedRows.size;if(ts<=0){sa.checked=false;showToast('Maximum selection reached.','warning');return;}let a=0;cbs.forEach(cb=>{if(a>=ts)return;const n=parseInt(cb.dataset.row);if(!cb.checked&&!selectedRows.has(n)&&!deletedRows.has(n)){cb.checked=true;selectedRows.add(n);a++;}});if(a===0){sa.checked=false;showToast('Maximum selection reached.','warning');}}else{cbs.forEach(cb=>{cb.checked=false;selectedRows.delete(parseInt(cb.dataset.row));});}sa.checked=cbs.length>0&&Array.from(cbs).every(c=>c.checked);updateBatchDeleteButton();}
+function toggleRowCheckbox(n){const cb=document.querySelector(`.dup-row-checkbox[data-row="${n}"]`);if(!cb||cb.disabled)return;if(cb.checked){if(selectedRows.size>=MAX_SELECTION){cb.checked=false;showToast('Maximum selection reached.','warning');return;}selectedRows.add(n);}else selectedRows.delete(n);const cbs=document.querySelectorAll('#duplicate-container .dup-row-checkbox:not(:disabled)');const sa=document.getElementById('select-all-checkbox');if(sa)sa.checked=cbs.length>0&&Array.from(cbs).every(c=>c.checked);updateBatchDeleteButton();}
 function updateBatchDeleteButton(){const b=document.getElementById('batch-delete-btn');const c=selectedRows.size;if(b){if(c>0){b.disabled=false;b.innerHTML=`<i data-lucide="trash-2"></i> Delete <span class="count-badge">${c}</span>`;}else{b.disabled=true;b.innerHTML=`<i data-lucide="trash-2"></i> Delete <span class="count-badge">0</span>`;}lucide.createIcons();}}
 function clearSelection(){selectedRows.clear();document.querySelectorAll('#duplicate-container .dup-row-checkbox:not(:disabled)').forEach(cb=>cb.checked=false);const sa=document.getElementById('select-all-checkbox');if(sa)sa.checked=false;updateBatchDeleteButton();}
 function getSelectedRecords(){const sel=[];document.querySelectorAll('#duplicate-container .dup-row-checkbox:checked').forEach(cb=>{sel.push({rowNumber:parseInt(cb.dataset.row),bikeNumber:cb.dataset.bike||'',timestamp:cb.dataset.timestamp||''});});return sel;}
-function handleBatchDelete(){const s=getSelectedRecords();if(s.length===0){showToast('Select at least one record.','warning');return;}if(s.length>MAX_SELECTION){showToast(`Max ${MAX_SELECTION}.`,'warning');return;}showBatchDeleteConfirm(s);}
+function handleBatchDelete(){const s=getSelectedRecords();if(s.length===0){showToast('Select at least one record.','warning');return;}if(s.length>MAX_SELECTION){showToast('Maximum selection reached.','warning');return;}showBatchDeleteConfirm(s);}
 async function refreshDuplicates(){deletedRows.clear();clearSelection();sortField=null;sortDirection='asc';await loadDuplicateTable();showToast('Duplicate list refreshed.','success');}
 
 function sortDuplicateData(d,f,dir){return [...d].sort((a,b)=>{let va,vb;switch(f){case'bikeNumber':va=a.bikeNumber;vb=b.bikeNumber;break;case'user':va=(a.user||'').toLowerCase();vb=(b.user||'').toLowerCase();break;case'timestamp':va=a.timestampRaw||0;vb=b.timestampRaw||0;break;default:return 0;}if(typeof va==='string'&&typeof vb==='string')return dir==='asc'?va.localeCompare(vb):vb.localeCompare(va);if(va<vb)return dir==='asc'?-1:1;if(va>vb)return dir==='asc'?1:-1;return 0;});}
@@ -976,20 +1423,53 @@ function applySortAndRender(){if(!window._dupGroups)return;let ar=[];window._dup
 
 function renderDuplicateTable(groups){const c=document.getElementById('duplicate-container');if(!groups||groups.length===0){c.innerHTML='<p class="text-sm text-gray-500 text-center py-4">✅ No duplicate registrations found.</p>';document.getElementById('dup-panel-badge').textContent='0';document.getElementById('dup-tab-badge').textContent='0';updateBatchDeleteButton();return;}const tdr=groups.reduce((s,g)=>s+g.records.length,0);window._dupGroups=groups;const si=f=>sortField===f?(sortDirection==='asc'?'▲':'▼'):'';let h=`<div class="dup-table-header"><div class="record-count">Showing ${tdr} duplicate records</div><div class="actions"><button id="batch-delete-btn" class="batch-delete-btn-red" onclick="handleBatchDelete()" disabled><i data-lucide="trash-2"></i> Delete <span class="count-badge">0</span></button><button onclick="refreshDuplicates()" class="batch-delete-btn-grey"><i data-lucide="refresh-cw"></i> Refresh</button></div></div>`;h+=`<div class="dup-table-wrap" style="min-width:100%;"><table class="records-table dup-table"><thead><tr>`;h+=`<th class="sortable ${sortField==='bikeNumber'?'sort-active':''}" onclick="handleSort('bikeNumber')">Bike # <span class="sort-indicator">${si('bikeNumber')}</span></th>`;h+=`<th class="sortable ${sortField==='timestamp'?'sort-active':''}" onclick="handleSort('timestamp')">Timestamp <span class="sort-indicator">${si('timestamp')}</span></th>`;h+=`<th class="sortable ${sortField==='user'?'sort-active':''}" onclick="handleSort('user')">User <span class="sort-indicator">${si('user')}</span></th><th>QR/Barcode</th><th>Photo</th><th>Delete</th>`;h+=`<th class="col-checkbox"><div class="select-all-wrap"><input type="checkbox" id="select-all-checkbox" onchange="toggleSelectAll()" /></div></th></tr></thead><tbody>`;dupPhotoStore=[];groups.forEach(g=>{const first=g.records[0],fts=first.timestampRaw,fu=first.user;g.records.forEach((rec,idx)=>{const isFirst=idx===0;const bi=`<i data-lucide="check-circle" class="w-3 h-3 text-green-500 inline"></i>`;const ti=isFirst?bi:(rec.timestampRaw===fts?bi:`<i data-lucide="x-circle" class="w-3 h-3 text-red-500 inline"></i>`);const ui=isFirst?bi:(rec.user===fu?bi:`<i data-lucide="x-circle" class="w-3 h-3 text-red-500 inline"></i>`);let pc='—';if(rec.photo&&rec.photo.length>10){const ip=dupPhotoStore.length;dupPhotoStore.push(rec.photo);pc=`<button class="photo-view-btn" data-index="${ip}" onclick="viewDupPhoto(this.dataset.index)"><i data-lucide="camera" class="w-3 h-3 text-blue-600 hover:text-blue-800 cursor-pointer"></i></button>`;}const isDel=deletedRows.has(rec.rowNumber);const db=isDel?`<button class="btn-delete" disabled><i data-lucide="trash-2" class="w-3 h-3"></i></button>`:`<button class="btn-delete" data-row="${rec.rowNumber}" onclick="showSingleDeleteConfirm(${rec.rowNumber}, '${rec.bikeNumber}')"><i data-lucide="trash-2" class="w-3 h-3"></i></button>`;const rc=rec.duplicateFlag&&rec.duplicateFlag.includes('WARNING')?'duplicate-warning':'';const bc=isFirst?'bg-green-50':'';const dc=isDel?'deleted':'';h+=`<tr class="${rc} ${bc} ${dc}" data-row="${rec.rowNumber}"><td>${rec.bikeNumber} ${bi}</td><td>${rec.timestamp} ${ti}</td><td>${rec.user} ${ui}</td><td class="max-w-[60px] truncate">${rec.barcode}</td><td>${pc}</td><td>${db}</td><td class="col-checkbox"><input type="checkbox" class="dup-row-checkbox" data-row="${rec.rowNumber}" data-bike="${rec.bikeNumber}" data-timestamp="${rec.timestamp}" ${isDel?'disabled':''} onchange="toggleRowCheckbox(${rec.rowNumber})" /></td></tr>`;});});h+='</tbody></table></div>';c.innerHTML=h;lucide.createIcons();document.getElementById('dup-panel-badge').textContent=tdr;document.getElementById('dup-tab-badge').textContent=tdr;clearSelection();updateBatchDeleteButton();}
 
-async function loadDuplicateTable(){const c=document.getElementById('duplicate-container');c.innerHTML='<p class="text-sm text-gray-500 text-center py-4"><i data-lucide="loader-2" class="w-5 h-5 animate-spin mx-auto"></i></p>';lucide.createIcons();deletedRows.clear();clearSelection();try{const MAX_ROWS=10000,PAGE_SIZE=500;let allRows=[],page=1,hm=true;while(hm&&allRows.length<MAX_ROWS){const pr=await apiCall('getRecords',{page,limit:PAGE_SIZE,includeRowNumbers:true});if(!pr.success)throw new Error(pr.message);const rows=pr.rows||[];if(rows.length===0)break;allRows=allRows.concat(rows);if(rows.length<PAGE_SIZE)break;page++;}if(allRows.length===0){c.innerHTML='<p class="text-sm text-gray-500 text-center py-4">No registration data available.</p>';document.getElementById('dup-panel-badge').textContent='0';document.getElementById('dup-tab-badge').textContent='0';updateBatchDeleteButton();return;}const rwr=allRows.map(item=>{const row=item.data,rn=item.rowNumber;if(row.length<5)return null;const ts=row[0]||'',u=row[1]||'',bn=row[2]||'',bc=row[3]||'',df=row[4]||'',ph=row[5]||'';let d=parseDateFromAnyString(ts);if(!d)d=new Date(ts);return{timestamp:ts,timestampRaw:d.getTime(),user:u,bikeNumber:bn,barcode:bc,duplicateFlag:df,photo:ph,rowNumber:rn};}).filter(r=>r!==null);const gs={};rwr.forEach(r=>{if(!gs[r.bikeNumber])gs[r.bikeNumber]=[];gs[r.bikeNumber].push(r);});const dg=[];for(const[b,rs]of Object.entries(gs)){if(rs.length>1){rs.sort((a,b)=>a.timestampRaw-b.timestampRaw);dg.push({bikeNumber:b,records:rs});}}dg.sort((a,b)=>a.bikeNumber.localeCompare(b.bikeNumber));if(dg.length===0){c.innerHTML='<p class="text-sm text-gray-500 text-center py-4">✅ No duplicate registrations found.</p>';document.getElementById('dup-panel-badge').textContent='0';document.getElementById('dup-tab-badge').textContent='0';updateBatchDeleteButton();return;}renderDuplicateTable(dg);}catch(e){c.innerHTML='<p class="text-sm text-red-500 text-center py-4">❌ Failed to load duplicate records.</p>';showToast('Failed to load duplicate table.','error');}}
+async function loadDuplicateTable(){
+  const c=document.getElementById('duplicate-container');
+  c.innerHTML='<p class="text-sm text-gray-500 text-center py-4"><i data-lucide="loader-2" class="w-5 h-5 animate-spin mx-auto"></i></p>';
+  lucide.createIcons();
+  deletedRows.clear();clearSelection();
+  try{
+    const MAX_ROWS=10000,PAGE_SIZE=500;
+    let allRows=[],page=1,hm=true;
+    while(hm&&allRows.length<MAX_ROWS){
+      const pr=await apiCall('getRecords',{page,limit:PAGE_SIZE,includeRowNumbers:true});
+      if(!pr.success)throw new Error('dup');
+      const rows=pr.rows||[];
+      if(rows.length===0)break;
+      allRows=allRows.concat(rows);
+      if(rows.length<PAGE_SIZE)break;
+      page++;
+    }
+    if(allRows.length===0){
+      c.innerHTML='<p class="text-sm text-gray-500 text-center py-4">No registration data available.</p>';
+      document.getElementById('dup-panel-badge').textContent='0';
+      document.getElementById('dup-tab-badge').textContent='0';
+      updateBatchDeleteButton();return;
+    }
+    const rwr=allRows.map(item=>{const row=item.data,rn=item.rowNumber;if(row.length<5)return null;const ts=row[0]||'',u=row[1]||'',bn=row[2]||'',bc=row[3]||'',df=row[4]||'',ph=row[5]||'';let d=parseDateFromAnyString(ts);if(!d)d=new Date(ts);return{timestamp:ts,timestampRaw:d.getTime(),user:u,bikeNumber:bn,barcode:bc,duplicateFlag:df,photo:ph,rowNumber:rn};}).filter(r=>r!==null);
+    const gs={};rwr.forEach(r=>{if(!gs[r.bikeNumber])gs[r.bikeNumber]=[];gs[r.bikeNumber].push(r);});
+    const dg=[];for(const[b,rs]of Object.entries(gs)){if(rs.length>1){rs.sort((a,b)=>a.timestampRaw-b.timestampRaw);dg.push({bikeNumber:b,records:rs});}}
+    dg.sort((a,b)=>a.bikeNumber.localeCompare(b.bikeNumber));
+    if(dg.length===0){
+      c.innerHTML='<p class="text-sm text-gray-500 text-center py-4">✅ No duplicate registrations found.</p>';
+      document.getElementById('dup-panel-badge').textContent='0';
+      document.getElementById('dup-tab-badge').textContent='0';
+      updateBatchDeleteButton();return;
+    }
+    renderDuplicateTable(dg);
+  }catch(e){
+    c.innerHTML='<p class="text-sm text-gray-500 text-center py-4">Could not load duplicate records.</p>';
+    showConnectionErrorModal();
+  }
+}
 
-document.addEventListener('keydown',function(e){if((e.ctrlKey||e.metaKey)&&e.key==='s'){e.preventDefault();if(!document.getElementById('view-data').classList.contains('hidden-view'))saveData();}if(e.key==='Escape'){document.querySelectorAll('.modal-overlay:not(.hidden-view)').forEach(m=>{const id=m.id;if(id==='qr-scanner-modal')stopQrScanner();else if(id==='camera-modal')closeCamera();else if(id==='photo-modal')closePhotoModal();else if(id==='dashboard-modal')closeDashboard();else if(id==='alert-modal')closeAlertModal();else if(id==='csv-progress-modal')closeModal('csv-progress-modal');else if(id==='delete-confirm-modal')cancelDelete();else if(id==='inactivity-warning-modal')stayLoggedIn();else if(id==='user-list-modal')closeUserListModal();else closeModal(id);});}});
+document.addEventListener('keydown',function(e){if((e.ctrlKey||e.metaKey)&&e.key==='s'){e.preventDefault();if(!document.getElementById('view-data').classList.contains('hidden-view'))saveData();}if(e.key==='Escape'){document.querySelectorAll('.modal-overlay:not(.hidden-view)').forEach(m=>{const id=m.id;if(id==='qr-scanner-modal')stopQrScanner();else if(id==='camera-modal')closeCamera();else if(id==='photo-modal')closePhotoModal();else if(id==='dashboard-modal')closeDashboard();else if(id==='dashboard-error-modal')closeModal('dashboard-error-modal');else if(id==='alert-modal')closeAlertModal();else if(id==='csv-progress-modal')closeModal('csv-progress-modal');else if(id==='outstanding-progress-modal')closeModal('outstanding-progress-modal');else if(id==='delete-confirm-modal')cancelDelete();else if(id==='inactivity-warning-modal')stayLoggedIn();else if(id==='user-list-modal')closeUserListModal();else closeModal(id);});}});
 document.addEventListener('touchend',function(e){const n=Date.now();if(n-(document.lastTouch||0)<300)e.preventDefault();document.lastTouch=n;},{passive:false});
 
 switchView('view-login');
 document.getElementById('login-user').focus();
 updateQueueUI();
-console.log(`✅ QR Code Bike Registration System ready (${APP_VERSION}).`);
-console.log('📊 Active endpoint (Data Set 3): '+GAS_WEB_APP_URL);
-console.log('📊 Data Set 2: '+GAS_WEB_APP_URL_DS2);
-console.log('📊 Data Set 1: '+GAS_WEB_APP_URL_DS1);
-console.log('📌 Version: '+APP_VERSION);
-console.log('🔧 v4.9: lightweight getRecordsLite/getCSVLite, page=500, cancel button, no hard cap.');
+console.log(`QR Code Bike Registration System ready (${APP_VERSION}).`);
 </script>
 </body>
 </html>
