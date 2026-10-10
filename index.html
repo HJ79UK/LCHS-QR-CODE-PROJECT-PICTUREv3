@@ -224,7 +224,7 @@ input,button,select,textarea{font-family:inherit;font-size:1rem}input:focus,butt
 <div id="toast-container"></div>
 
 <div id="view-login" class="w-full max-w-md card p-6 md:p-8">
-<span class="version-badge login-version">v6.6</span>
+<span class="version-badge login-version">v6.7</span>
 <div class="text-center mb-6">
 <div class="flex justify-center mb-3"><i data-lucide="bike" class="w-14 h-14 text-red-600"></i></div>
 <h1 class="text-2xl font-bold text-gray-800">QR CODE BIKE REGISTER</h1>
@@ -253,16 +253,14 @@ input,button,select,textarea{font-family:inherit;font-size:1rem}input:focus,butt
 <div class="flex items-center gap-2">
 <span id="logged-in-user" class="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full font-medium"></span>
 <span id="inactivity-timer" class="inactivity-timer"><i data-lucide="clock" class="w-3 h-3"></i><span id="timer-display">10:00</span></span>
-<span class="version-badge">v6.6</span>
+<span class="version-badge">v6.7</span>
 </div>
 </div>
-
 <div id="master-list-status" class="mb-3 text-xs px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 text-gray-700 flex items-center gap-2">
   <i id="master-list-status-icon" data-lucide="loader-2" class="w-3 h-3"></i>
   <span id="master-list-status-text">Bike list not loaded yet.</span>
   <button id="master-list-retry" class="ml-auto hidden text-xs font-semibold underline" onclick="reloadMasterList()">Retry</button>
 </div>
-
 <div id="queue-indicator" class="queue-indicator hidden"><span class="text-sm font-medium text-gray-600">Pending:</span><span id="queue-icons"></span><span class="text-xs text-gray-400 ml-1" id="queue-count-label">(0)</span><button id="sync-now-btn" class="sync-now-btn"><i data-lucide="refresh-cw" class="w-4 h-4"></i> Sync Now</button></div>
 <div id="queue-warning" class="queue-warning"><i data-lucide="alert-triangle" class="w-5 h-5 text-yellow-600"></i><span>Queue is large – please wait for the data to sync or connect to WiFi to force the sync.</span></div>
 <div class="space-y-5 flex-grow">
@@ -301,7 +299,7 @@ input,button,select,textarea{font-family:inherit;font-size:1rem}input:focus,butt
 <span id="countdown-timer" class="countdown-timer"><i data-lucide="clock" class="w-4 h-4"></i><span id="timer-text">--:--</span></span>
 <span id="status-dot" class="stat-dot ready"></span>
 <button onclick="logout()" class="text-sm text-gray-500 hover:text-gray-800 flex items-center gap-1"><i data-lucide="log-out" class="w-4 h-4"></i> Log Out</button>
-<span class="version-badge">v6.6</span>
+<span class="version-badge">v6.7</span>
 </div>
 </div>
 
@@ -386,7 +384,19 @@ input,button,select,textarea{font-family:inherit;font-size:1rem}input:focus,butt
 <div id="panel-records" class="p-4 overflow-y-auto scrollable" style="max-height:400px">
 <div class="flex justify-between items-center mb-3"><span class="text-sm font-medium text-gray-600">All bike registrations</span></div>
 <div class="search-box"><input type="text" id="search-bike-input" placeholder="Search by Bike Number" class="input-field" /><button onclick="searchRecords()" class="btn-red btn-sm">Search</button><button onclick="clearSearch()" class="btn-grey btn-sm">Clear</button></div>
-<div id="records-container" class="overflow-x-auto"><p class="text-sm text-gray-500 text-center py-4">Loading records…</p></div>
+
+<!-- v6.7 – Lazy placeholder for the records panel -->
+<div id="records-container" class="overflow-x-auto">
+  <div class="text-center py-8">
+    <i data-lucide="mouse-pointer-click" class="w-8 h-8 mx-auto text-gray-400 mb-2"></i>
+    <p class="text-sm text-gray-500 mb-1">Records not loaded yet.</p>
+    <p class="text-xs text-gray-400 mb-3">Click <strong>All Records</strong> above, or the button below.</p>
+    <button type="button" onclick="loadRecords(1)" class="btn-red btn-sm">
+      <i data-lucide="download" class="w-4 h-4"></i> Load Records
+    </button>
+  </div>
+</div>
+
 <div class="pagination-controls" id="pagination-controls"><button onclick="prevPage()" id="prev-btn" class="btn-grey btn-sm" disabled>Previous</button><span class="page-info" id="page-info">Page 1 of 1</span><button onclick="nextPage()" id="next-btn" class="btn-grey btn-sm" disabled>Next</button></div>
 </div>
 <div id="panel-duplicates" class="hidden p-4 flex-1 min-h-0 overflow-y-auto scrollable">
@@ -394,7 +404,18 @@ input,button,select,textarea{font-family:inherit;font-size:1rem}input:focus,butt
 <span class="text-sm font-medium text-yellow-600 flex items-center gap-2"><i data-lucide="alert-triangle" class="w-4 h-4"></i> Duplicates in the current data set <span id="dup-panel-badge" class="hidden">0</span></span>
 <span class="text-xs text-gray-400">Select up to 10 records</span>
 </div>
-<div id="duplicate-container" class="overflow-x-auto flex-1 min-h-0"><p class="text-sm text-gray-500 text-center py-4">Click the tab to load duplicates.</p></div>
+
+<!-- v6.7 – Lazy placeholder for the duplicates panel -->
+<div id="duplicate-container" class="overflow-x-auto flex-1 min-h-0">
+  <div class="text-center py-8">
+    <i data-lucide="mouse-pointer-click" class="w-8 h-8 mx-auto text-gray-400 mb-2"></i>
+    <p class="text-sm text-gray-500 mb-1">Duplicates not loaded yet.</p>
+    <p class="text-xs text-gray-400 mb-3">Click <strong>Duplicates</strong> above, or the button below.</p>
+    <button type="button" onclick="loadDuplicateTable()" class="btn-red btn-sm">
+      <i data-lucide="download" class="w-4 h-4"></i> Load Duplicates
+    </button>
+  </div>
+</div>
 </div>
 </div>
 </div>
@@ -431,6 +452,25 @@ input,button,select,textarea{font-family:inherit;font-size:1rem}input:focus,butt
 <div class="export-percent-text" id="outstanding-progress-percent">0%</div>
 <div class="export-diagnostics" id="outstanding-progress-log"></div>
 <button id="outstanding-cancel-btn" class="export-cancel-btn" onclick="cancelOutstandingExport()">Cancel Export</button>
+</div>
+</div>
+
+<!-- v6.7 – download-failed modal (after 3 retries) -->
+<div id="download-failed-modal" class="hidden-view fixed inset-0 modal-overlay z-[150]">
+<div class="modal-card max-w-sm p-6 text-center border-t-4 border-red-500">
+<div class="mx-auto flex items-center justify-center h-14 w-14 rounded-full bg-red-100 mb-4">
+<i data-lucide="alert-triangle" class="h-7 w-7 text-red-600"></i>
+</div>
+<h3 class="text-lg font-bold mb-2 text-gray-900">Download Failed</h3>
+<p class="text-sm text-gray-600 mb-2">The download failed after <strong>3 attempts</strong>.</p>
+<p id="download-failed-reason" class="text-xs text-red-500 mb-4 break-words"></p>
+<p class="text-sm text-gray-600 mb-4">You can try again, or contact the admin if the issue persists.</p>
+<div class="flex flex-col gap-2">
+<button id="download-failed-retry" class="w-full btn-red">
+  <i data-lucide="refresh-cw" class="w-4 h-4"></i> Retry Download
+</button>
+<button onclick="closeModal('download-failed-modal')" class="w-full btn-grey">Close</button>
+</div>
 </div>
 </div>
 
@@ -477,7 +517,6 @@ input,button,select,textarea{font-family:inherit;font-size:1rem}input:focus,butt
 </div>
 </div>
 
-<!-- v6.6 – bike-database failure modal (3-attempt logout) -->
 <div id="bikedb-error-modal" class="hidden-view fixed inset-0 modal-overlay z-[140]">
 <div class="modal-card max-w-sm p-6 text-center border-t-4 border-red-500">
 <div class="mx-auto flex items-center justify-center h-14 w-14 rounded-full bg-red-100 mb-4">
@@ -568,10 +607,11 @@ input,button,select,textarea{font-family:inherit;font-size:1rem}input:focus,butt
 </div>
 
 <script>
-console.log('🚲 QR Code Bike Registration System starting... (v6.6)');
+console.log('🚲 QR Code Bike Registration System starting... (v6.7)');
 
 const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzeUnu8qkwxb2TixDHxCyf78k7gyeL2CPxr0HQO-ypEtZRpBV3hlJkjr1otmg-x2HjKjg/exec";
-const APP_VERSION = "v6.6";
+const APP_VERSION = "v6.7";
+const DOWNLOAD_MAX_ATTEMPTS = 3;
 
 let exportAbortController = null;
 let outstandingAbortController = null;
@@ -600,7 +640,6 @@ function sanitizeLog(msg) {
     .replace(/\bSheet\d+/gi, 'data source')
     .replace(/\bSheet\b/gi, 'data source');
 }
-
 function escapeCsv(field) {
   if (field === null || field === undefined) return '';
   const s = String(field);
@@ -628,10 +667,7 @@ function formatBikeNumber(v) {
   }
   return s;
 }
-function formatBikeText(v) {
-  if (v === null || v === undefined) return '';
-  return String(v);
-}
+function formatBikeText(v) { if (v === null || v === undefined) return ''; return String(v); }
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
 // ─── STATE ───
@@ -726,10 +762,7 @@ async function apiCall(action,payload){
   }
 }
 
-function showConnectionErrorModal(){
-  if(!userTriggeredLoad){console.warn('[failure-modal suppressed] action was not user-triggered');return;}
-  showModal('dashboard-error-modal');
-}
+function showConnectionErrorModal(){if(!userTriggeredLoad){console.warn('[failure-modal suppressed] action was not user-triggered');return;}showModal('dashboard-error-modal');}
 function handleConnectionErrorOK(){ closeModal('dashboard-error-modal'); }
 function showDashboardErrorModal(){ showConnectionErrorModal(); }
 function handleDashboardErrorOK(){ handleConnectionErrorOK(); }
@@ -797,18 +830,10 @@ function setMasterListStatus(state, count) {
   }
   try { lucide.createIcons(); } catch(e) {}
 }
-
 async function reloadMasterList() {
   setMasterListStatus('loading');
-  try {
-    const count = await fetchMasterList();
-    setMasterListStatus('ready', count);
-    return true;
-  } catch (e) {
-    console.warn('[master list] reload failed:', e.message);
-    setMasterListStatus('error');
-    return false;
-  }
+  try { const count = await fetchMasterList(); setMasterListStatus('ready', count); return true; }
+  catch (e) { console.warn('[master list] reload failed:', e.message); setMasterListStatus('error'); return false; }
 }
 
 function updateQueueUI(){const count=pendingQueue.length;if(count>0){queueIndicator.classList.remove('hidden');let h='';for(let i=0;i<Math.min(count,5);i++)h+=`<span class="queue-icon">🚲</span>`;queueIconsContainer.innerHTML=h;queueCountLabel.textContent=`(${count})`;if(count>=QUEUE_WARNING_THRESHOLD){syncNowBtn.classList.add('visible');syncNowBtn.disabled=false;}else{syncNowBtn.classList.remove('visible');syncNowBtn.disabled=true;}}else{queueIndicator.classList.add('hidden');queueIconsContainer.innerHTML='';queueCountLabel.textContent='(0)';syncNowBtn.classList.remove('visible');syncNowBtn.disabled=true;syncFailCount=0;nextAllowedSyncTime=0;networkToastShown=false;}if(count>QUEUE_WARNING_THRESHOLD)queueWarning.classList.add('show');else queueWarning.classList.remove('show');localStorage.setItem('bikeQueue',JSON.stringify(pendingQueue));}
@@ -833,69 +858,33 @@ function showModal(id){document.getElementById(id).classList.remove('hidden-view
 function closeModal(id){document.getElementById(id).classList.add('hidden-view');document.body.style.overflow='';document.querySelectorAll('#'+id+' input').forEach(i=>i.value='');}
 function toggleSpinner(p,l,t){const lb=document.getElementById(p+'-text'),sp=document.getElementById(p+'-spinner');if(!lb||!sp)return;if(l){lb.textContent=t||'Processing…';sp.classList.remove('hidden');}else{lb.textContent=t||'Submit';sp.classList.add('hidden');}}
 function updateLoginProgress(p,l,s){loginProgressBar.style.width=p+'%';loginProgressPercent.textContent=p+'%';if(l)loginProgressLabel.textContent=l;if(s)loginProgressStatus.textContent=s;}
-
-async function stepProgress(pct, label, status, ms) {
-  updateLoginProgress(pct, label, status);
-  await new Promise(r => setTimeout(r, (typeof ms === 'number') ? ms : 400));
-}
+async function stepProgress(pct, label, status, ms) { updateLoginProgress(pct, label, status); await sleep(ms); }
 
 function setDashboardStep(text, state) {
   const stepEl = document.getElementById('dashboard-step-text');
   const dotEl  = document.getElementById('dashboard-status-dot');
   const wheel  = document.getElementById('dashboard-spin-wheel');
   const rBtn   = document.getElementById('dashboard-refresh-btn');
-  if (stepEl && text) {
-    stepEl.textContent = text;
-    stepEl.classList.remove('step-error', 'step-done');
-    if (state === 'error') stepEl.classList.add('step-error');
-    else if (state === 'done') stepEl.classList.add('step-done');
-  }
+  if (stepEl && text) { stepEl.textContent = text; stepEl.classList.remove('step-error','step-done'); if (state === 'error') stepEl.classList.add('step-error'); else if (state === 'done') stepEl.classList.add('step-done'); }
   const busy = (state === 'connecting' || state === 'fetching' || state === 'downloading' || state === 'graphing');
-  if (dotEl) {
-    dotEl.className = 'dashboard-status-dot';
-    if (state === 'done' || state === 'idle') dotEl.classList.add('status-green');
-    else if (state === 'error') dotEl.classList.add('status-red');
-    else if (busy) dotEl.classList.add('status-orange');
-    else dotEl.classList.add('status-green');
-  }
-  if (wheel) {
-    wheel.classList.remove('spin-green', 'spin-red', 'spin-orange');
-    if (state === 'error') wheel.classList.add('spin-red');
-    else if (busy) wheel.classList.add('spin-orange');
-    else wheel.classList.add('spin-green');
-    wheel.classList.toggle('spinning', busy);
-  }
+  if (dotEl) { dotEl.className = 'dashboard-status-dot'; if (state === 'done' || state === 'idle') dotEl.classList.add('status-green'); else if (state === 'error') dotEl.classList.add('status-red'); else if (busy) dotEl.classList.add('status-orange'); else dotEl.classList.add('status-green'); }
+  if (wheel) { wheel.classList.remove('spin-green','spin-red','spin-orange'); if (state === 'error') wheel.classList.add('spin-red'); else if (busy) wheel.classList.add('spin-orange'); else wheel.classList.add('spin-green'); wheel.classList.toggle('spinning', busy); }
   if (rBtn) rBtn.disabled = busy;
 }
 function resetDashboardStatus() { setDashboardStep('Ready', 'idle'); }
-
 function resetDashboardValues() {
-  const dashIds = {
-    'stat-today-date':'-','stat-completion-target':'-','stat-bike-target':'0','stat-outstanding-bikes':'0',
-    'stat-total-dash':'0','stat-unique-dash':'0','stat-today':'0','stat-yesterday':'0','stat-week':'0',
-    'stat-avg':'0','stat-avg3':'0','stat-net-days-left':'0','stat-total-days-left':'0',
-    'stat-bikes-per-day-net':'0','stat-bikes-per-day-total':'0'
-  };
-  for (const id in dashIds) {
-    const el = document.getElementById(id);
-    if (el) el.textContent = dashIds[id];
-  }
+  const ids = {'stat-today-date':'-','stat-completion-target':'-','stat-bike-target':'0','stat-outstanding-bikes':'0','stat-total-dash':'0','stat-unique-dash':'0','stat-today':'0','stat-yesterday':'0','stat-week':'0','stat-avg':'0','stat-avg3':'0','stat-net-days-left':'0','stat-total-days-left':'0','stat-bikes-per-day-net':'0','stat-bikes-per-day-total':'0'};
+  for (const id in ids) { const el = document.getElementById(id); if (el) el.textContent = ids[id]; }
 }
 
 async function loadDashboardData() {
-  setDashboardStep('Connecting to database...', 'connecting');
-  await new Promise(r => setTimeout(r, 100));
-  const mr = await apiCall('getMetrics', { _ts: Date.now() });
-  if (!mr.success) throw new Error('metrics');
-  setDashboardStep('Fetching data...', 'fetching');
-  await new Promise(r => setTimeout(r, 80));
-  const dr = await apiCall('getDailyEntries', { _ts: Date.now() });
-  if (!dr.success) throw new Error('daily');
+  setDashboardStep('Connecting to database...', 'connecting'); await sleep(100);
+  const mr = await apiCall('getMetrics', { _ts: Date.now() }); if (!mr.success) throw new Error('metrics');
+  setDashboardStep('Fetching data...', 'fetching'); await sleep(80);
+  const dr = await apiCall('getDailyEntries', { _ts: Date.now() }); if (!dr.success) throw new Error('daily');
   dailyEntries = dr.entries || [];
-  setDashboardStep('Downloading data...', 'downloading');
-  await new Promise(r => setTimeout(r, 80));
-  const ur = await apiCall('getUserBikeCounts', { _ts: Date.now() });
-  if (!ur.success) throw new Error('users');
+  setDashboardStep('Downloading data...', 'downloading'); await sleep(80);
+  const ur = await apiCall('getUserBikeCounts', { _ts: Date.now() }); if (!ur.success) throw new Error('users');
   userBikeCounts = ur.users || [];
   function fds(v){if(!v)return'-';let d=parseDateFromAnyString(v);if(d)return formatDateDDMMYYYY(d);if(typeof v==='number'){const dd=new Date((v-25569)*86400*1000);if(!isNaN(dd.getTime()))return formatDateDDMMYYYY(dd);}return v;}
   document.getElementById('stat-today-date').textContent=fds(mr.todayDate);
@@ -907,7 +896,6 @@ async function loadDashboardData() {
   document.getElementById('stat-today').textContent=mr.today||0;
   document.getElementById('stat-yesterday').textContent=mr.yesterday||0;
   document.getElementById('stat-week').textContent=mr.thisWeek||0;
-  document.getElementById('stat-total-dash').textContent=mr.total||0;
   const td=dailyEntries.length;let ad=0;
   if(td>0)ad=Math.floor(dailyEntries.reduce((a,e)=>a+e.total,0)/td);
   document.getElementById('stat-avg').textContent=ad;
@@ -919,9 +907,7 @@ async function loadDashboardData() {
   document.getElementById('stat-total-days-left').textContent=mr.totalDaysLeft||0;
   document.getElementById('stat-bikes-per-day-net').textContent=Math.floor(mr.bikesPerDayNet||0);
   document.getElementById('stat-bikes-per-day-total').textContent=Math.floor(mr.bikesPerDayTotal||0);
-  setDashboardStep('Creating graphs...', 'graphing');
-  await new Promise(r => setTimeout(r, 120));
-  updateDashboard();
+  setDashboardStep('Creating graphs...', 'graphing'); await sleep(120); updateDashboard();
   setDashboardStep('Dashboard ready', 'done');
 }
 
@@ -929,8 +915,7 @@ async function openDashboard() {
   if (downloadInProgress) { showToast('A download is in progress. Please wait for it to finish.', 'warning'); return; }
   showModal('dashboard-modal');
   document.getElementById('dashboard-charts').classList.add('hidden');
-  resetDashboardValues();
-  resetDashboardStatus();
+  resetDashboardValues(); resetDashboardStatus();
   userTriggeredLoad = true;
   try {
     await loadDashboardData();
@@ -948,17 +933,14 @@ function closeDashboard() {
   closeModal('dashboard-modal');
   if (chartTimeInstance) { chartTimeInstance.destroy(); chartTimeInstance = null; }
   if (chartUserInstance) { chartUserInstance.destroy(); chartUserInstance = null; }
-  dailyEntries = [];
-  userBikeCounts = [];
-  resetDashboardValues();
-  resetDashboardStatus();
+  dailyEntries = []; userBikeCounts = [];
+  resetDashboardValues(); resetDashboardStatus();
 }
 async function refreshDashboard() {
   if (downloadInProgress) { showToast('A download is in progress. Please wait for it to finish.', 'warning'); return; }
   if (dashboardRefreshing) return;
   dashboardRefreshing = true;
-  resetDashboardValues();
-  resetDashboardStatus();
+  resetDashboardValues(); resetDashboardStatus();
   userTriggeredLoad = true;
   try {
     await loadDashboardData();
@@ -1012,9 +994,6 @@ function setAdminTabVisualOnly(tab) {
     else if (k === 'duplicates') t.className = 'flex-1 py-3 px-4 text-sm font-medium text-gray-500 border-b-2 border-transparent hover:text-yellow-600 transition';
     else t.className = 'flex-1 py-3 px-4 text-sm font-medium text-gray-500 border-b-2 border-transparent hover:text-gray-700 transition';
   });
-  if (tab === 'duplicates') {
-    document.getElementById('duplicate-container').innerHTML = '<p class="text-sm text-gray-500 text-center py-4">Click the tab to load duplicates.</p>';
-  }
 }
 function switchAdminTab(tab) {
   if (downloadInProgress) { showToast('A download is in progress. Please wait.', 'warning'); return; }
@@ -1024,16 +1003,11 @@ function switchAdminTab(tab) {
   lucide.createIcons();
 }
 async function runAdminInitialSilentLoad() {
+  // v6.7 – only the summary tiles are fetched on login. Records and
+  // duplicates are lazy-loaded when the user clicks their tab.
   try { await loadStats({ silent: true }); } catch (e) { console.warn('Initial stats load failed (silent).'); }
-  try { await loadRecords(1, { silent: true }); } catch (e) { console.warn('Initial records load failed (silent).'); }
 }
 
-// ═══════════════════════════════════════════════════════════════════════
-//  v6.6 – BIKE DATABASE DOWNLOAD WITH 3-ATTEMPT RETRY
-//    · Updates the login progress UI at each attempt
-//    · Shows red status when retrying
-//    · Returns true on success, false after all attempts fail
-// ═══════════════════════════════════════════════════════════════════════
 const BIKE_DB_MAX_ATTEMPTS = 3;
 async function downloadBikesDatabaseWithRetry() {
   for (let attempt = 1; attempt <= BIKE_DB_MAX_ATTEMPTS; attempt++) {
@@ -1041,8 +1015,7 @@ async function downloadBikesDatabaseWithRetry() {
       updateLoginProgress(75, 'Downloading bikes database', 'Fetching valid bike numbers…');
       loginProgressStatus.style.color = '#6b7280';
     } else {
-      updateLoginProgress(75, 'Downloading bikes database',
-        `Download failed — retrying (${attempt} of ${BIKE_DB_MAX_ATTEMPTS})…`);
+      updateLoginProgress(75, 'Downloading bikes database', `Download failed — retrying (${attempt} of ${BIKE_DB_MAX_ATTEMPTS})…`);
       loginProgressStatus.style.color = '#dc2626';
     }
     try {
@@ -1058,52 +1031,25 @@ async function downloadBikesDatabaseWithRetry() {
   }
   return false;
 }
-
-// v6.6 – force logout after 3 consecutive bike DB failures
 function forceLogoutAfterBikeDbFailure() {
-  // Clear session state
-  currentUser = null;
-  currentUserRole = null;
-  masterListCache = [];
-  masterListSet = new Set();
-  // Wipe login progress UI
+  currentUser = null; currentUserRole = null;
+  masterListCache = []; masterListSet = new Set();
   loginProgressContainer.classList.remove('active');
-  loginProgressBar.style.width = '0%';
-  loginProgressPercent.textContent = '0%';
-  loginProgressLabel.textContent = 'Connecting...';
-  loginProgressStatus.textContent = 'Initialising...';
+  loginProgressBar.style.width = '0%'; loginProgressPercent.textContent = '0%';
+  loginProgressLabel.textContent = 'Connecting...'; loginProgressStatus.textContent = 'Initialising...';
   loginProgressStatus.style.color = '#6b7280';
-  // Reset the register-view banner
   const mlb = document.getElementById('master-list-status');
   if (mlb) { mlb.style.display=''; mlb.className='mb-3 text-xs px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 text-gray-700 flex items-center gap-2'; }
   const mlt = document.getElementById('master-list-status-text'); if (mlt) mlt.textContent = 'Bike list not loaded yet.';
   const mli = document.getElementById('master-list-status-icon'); if (mli) mli.className = 'w-3 h-3';
   const mlr = document.getElementById('master-list-retry'); if (mlr) mlr.classList.add('hidden');
-  // Reset any other auth state
   const lu = document.getElementById('logged-in-user'); if (lu) lu.textContent = '';
   document.getElementById('login-form').reset();
-  // Force back to login view and show error modal
   switchView('view-login');
   showModal('bikedb-error-modal');
 }
-function closeBikeDbErrorModal(){
-  closeModal('bikedb-error-modal');
-  setTimeout(() => { try { document.getElementById('login-user').focus(); } catch(e){} }, 50);
-}
+function closeBikeDbErrorModal(){ closeModal('bikedb-error-modal'); setTimeout(() => { try { document.getElementById('login-user').focus(); } catch(e){} }, 50); }
 
-// ═══════════════════════════════════════════════════════════════════════
-//  v6.6 – LOGIN with expanded user-role state machine
-//    Regular-user flow:
-//      0% Connecting / Initialising
-//      15% Connecting / Establishing connection
-//      40% Authenticating / Credentials verified
-//      52% Recording session / Please wait
-//      65% Preparing workspace / Please wait
-//      75% Downloading bikes database (with retries 1/3, 2/3, 3/3)
-//      90% Bikes database loaded
-//      100% Welcome / Login complete
-//    On 3 consecutive bike-DB failures → forced logout + error modal.
-// ═══════════════════════════════════════════════════════════════════════
 async function handleLogin(e){
   e.preventDefault();
   const u = document.getElementById('login-user').value.trim();
@@ -1119,74 +1065,44 @@ async function handleLogin(e){
   try {
     await stepProgress(0, 'Connecting...', 'Initialising...', 400);
     await stepProgress(15, 'Connecting...', 'Establishing connection...', 450);
-
     const res = await apiCall('login', { username: u, password: p });
     if(!res.success) throw { _credentials: true, message: 'Invalid credentials.' };
-
-    currentUser     = u;
-    currentUserRole = res.role || 'user';
-
+    currentUser = u; currentUserRole = res.role || 'user';
     await stepProgress(40, 'Authenticating...', 'Credentials verified.', 450);
-    logLoginToSheet(u, APP_VERSION).catch(() => { /* non-blocking */ });
+    logLoginToSheet(u, APP_VERSION).catch(() => {});
     await stepProgress(52, 'Recording session...', 'Please wait...', 400);
 
     if (currentUserRole === 'admin') {
       await stepProgress(65, 'Preparing admin panel...', 'Loading interface...', 450);
       switchView('view-admin');
       setAdminTabVisualOnly('records');
-
       await stepProgress(82, 'Loading admin data...', 'Please wait...', 400);
       await runAdminInitialSilentLoad();
       startRefreshCycle();
-
       await stepProgress(100, 'Welcome!', 'Login complete.', 500);
       setTimeout(() => loginProgressContainer.classList.remove('active'), 700);
       showToast('Admin welcome, ' + u + '!', 'success');
-
     } else {
-      // ── Regular user – full state machine with bike-DB retry ──
       await stepProgress(65, 'Preparing workspace...', 'Please wait...', 400);
-
-      // Download bikes database with retry (3 attempts)
       const dbOk = await downloadBikesDatabaseWithRetry();
-
-      if (!dbOk) {
-        // 3 consecutive failures → force logout + error modal
-        console.error('[login] bike database download failed after ' + BIKE_DB_MAX_ATTEMPTS + ' attempts — forcing logout');
-        forceLogoutAfterBikeDbFailure();
-        return;  // ← important: finally block still runs, but the button will
-                 //   be re-enabled for the next login attempt
-      }
-
-      // Success → grant access to the register screen
+      if (!dbOk) { forceLogoutAfterBikeDbFailure(); return; }
       document.getElementById('logged-in-user').textContent = u;
       switchView('view-data');
       setMasterListStatus('ready', masterListCache.length);
-
       await stepProgress(100, 'Welcome!', 'Login complete.', 500);
       setTimeout(() => loginProgressContainer.classList.remove('active'), 700);
       showToast('Welcome, ' + u + '!', 'success');
     }
-
     document.getElementById('login-form').reset();
-    testResultDiv.classList.add('hidden');
-    testResultDiv.innerHTML = '';
-
+    testResultDiv.classList.add('hidden'); testResultDiv.innerHTML = '';
   } catch(err) {
     const errorMsg = (err && err.message) || 'Login failed.';
-    if (err && err._credentials) {
-      showToast(errorMsg, 'error');
-    } else {
-      userTriggeredLoad = true;
-      showConnectionErrorModal();
-      userTriggeredLoad = false;
-    }
+    if (err && err._credentials) { showToast(errorMsg, 'error'); }
+    else { userTriggeredLoad = true; showConnectionErrorModal(); userTriggeredLoad = false; }
     loginProgressContainer.classList.remove('active');
-    loginProgressBar.style.width = '0%';
-    loginProgressPercent.textContent = '0%';
-    loginProgressLabel.textContent = 'Connecting...';
-    loginProgressStatus.textContent = 'Initialising...';
-    loginProgressStatus.style.color = '#6b7280';
+    loginProgressBar.style.width='0%'; loginProgressPercent.textContent='0%';
+    loginProgressLabel.textContent='Connecting...'; loginProgressStatus.textContent='Initialising...';
+    loginProgressStatus.style.color='#6b7280';
   } finally {
     toggleSpinner('login', false, 'Login');
     document.getElementById('login-btn').disabled = false;
@@ -1196,7 +1112,12 @@ async function handleLogin(e){
 function logout(){
   stopInactivityTimer();
   if (downloadInProgress) { showToast('Please wait for the current download to finish.', 'warning'); return; }
-  closeModal('inactivity-warning-modal');closeModal('user-list-modal');closeModal('dashboard-modal');closeModal('dashboard-error-modal');closeModal('outstanding-progress-modal');closeModal('bikedb-error-modal');currentUser=null;currentUserRole=null;if(refreshInterval){clearInterval(refreshInterval);refreshInterval=null;}if(syncIntervalId){clearInterval(syncIntervalId);syncIntervalId=null;}clearDataForm();stopQrScanner();if(cameraStream){cameraStream.getTracks().forEach(t=>t.stop());cameraStream=null;}
+  closeModal('inactivity-warning-modal');closeModal('user-list-modal');closeModal('dashboard-modal');closeModal('dashboard-error-modal');closeModal('outstanding-progress-modal');closeModal('bikedb-error-modal');closeModal('download-failed-modal');
+  currentUser=null;currentUserRole=null;
+  if(refreshInterval){clearInterval(refreshInterval);refreshInterval=null;}
+  if(syncIntervalId){clearInterval(syncIntervalId);syncIntervalId=null;}
+  clearDataForm();stopQrScanner();
+  if(cameraStream){cameraStream.getTracks().forEach(t=>t.stop());cameraStream=null;}
   masterListCache = []; masterListSet = new Set();
   const mlb = document.getElementById('master-list-status');
   if (mlb) { mlb.style.display=''; mlb.className='mb-3 text-xs px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 text-gray-700 flex items-center gap-2'; }
@@ -1223,34 +1144,12 @@ function checkBikeNumberInMasterList(n){if(!masterListSet.size)return false;retu
 function debouncedBikeCheck(){
   const v = bikeInput.value.trim();
   const f = validateBikeNumberFormat(v);
-  if(!f.valid){
-    feedback.innerHTML = '<span class="invalid">✗ ' + f.msg + '</span>';
-    bikeNumberValid = false;
-    lastCheckedBikeNumber = null;
-    lastInvalidShown = null;
-    updateSaveButton();
-    return;
-  }
-  if (!masterListSet.size) {
-    feedback.innerHTML = '<span class="invalid">⚠ Bike list not loaded — reloading…</span>';
-    bikeNumberValid = false;
-    updateSaveButton();
-    reloadMasterList().then(ok => { if (ok) debouncedBikeCheck(); });
-    return;
-  }
+  if(!f.valid){ feedback.innerHTML = '<span class="invalid">✗ ' + f.msg + '</span>'; bikeNumberValid=false; lastCheckedBikeNumber=null; lastInvalidShown=null; updateSaveButton(); return; }
+  if (!masterListSet.size) { feedback.innerHTML = '<span class="invalid">⚠ Bike list not loaded — reloading…</span>'; bikeNumberValid=false; updateSaveButton(); reloadMasterList().then(ok=>{if(ok)debouncedBikeCheck();}); return; }
   if(lastCheckedBikeNumber === f.value && bikeNumberValid) return;
   const exists = checkBikeNumberInMasterList(f.value);
-  if(exists){
-    feedback.innerHTML = '<span class="valid">✓ Valid bike number (found in master list)</span>';
-    bikeNumberValid = true;
-    lastCheckedBikeNumber = f.value;
-    lastInvalidShown = null;
-  } else {
-    feedback.innerHTML = '<span class="invalid">✗ Bike number not found in master list</span>';
-    bikeNumberValid = false;
-    lastCheckedBikeNumber = null;
-    if(lastInvalidShown !== f.value){ lastInvalidShown = f.value; showInvalidPopup(f.value); }
-  }
+  if(exists){ feedback.innerHTML = '<span class="valid">✓ Valid bike number (found in master list)</span>'; bikeNumberValid = true; lastCheckedBikeNumber = f.value; lastInvalidShown = null; }
+  else { feedback.innerHTML = '<span class="invalid">✗ Bike number not found in master list</span>'; bikeNumberValid = false; lastCheckedBikeNumber = null; if(lastInvalidShown !== f.value){ lastInvalidShown = f.value; showInvalidPopup(f.value); } }
   updateSaveButton();
 }
 
@@ -1263,11 +1162,7 @@ function stopQrScanner(){if(qrScannerInstance){try{qrScannerInstance.stop().then
 document.addEventListener('click',function(e){const m=document.getElementById('qr-scanner-modal');if(m&&!m.classList.contains('hidden-view')&&e.target===m)stopQrScanner();});
 
 async function saveData(){
-  if(!masterListSet.size){
-    showToast('Bike list not loaded yet. Please wait or tap Retry.','warning');
-    reloadMasterList();
-    return;
-  }
+  if(!masterListSet.size){ showToast('Bike list not loaded yet. Please wait or tap Retry.','warning'); reloadMasterList(); return; }
   if(!bikeNumberValid){showToast('Please enter a valid bike number from the master list.','error');return;}
   const b=barcodeInput.value.trim();
   if(!b)return showToast('Please enter or scan a barcode.','warning');
@@ -1297,8 +1192,7 @@ function renderRows(rows,total){const c=document.getElementById('records-contain
 function updatePaginationControls(p,t,l){const tp=Math.ceil(t/l);const pv=document.getElementById('prev-btn'),nx=document.getElementById('next-btn'),pi=document.getElementById('page-info');if(tp<=1){pv.disabled=true;nx.disabled=true;pi.textContent='Page 1 of 1';return;}pv.disabled=(p<=1);nx.disabled=(p>=tp);pi.textContent='Page '+p+' of '+tp;}
 
 async function loadRecords(page, opts){
-  opts = opts || {};
-  const silent = !!opts.silent;
+  opts = opts || {}; const silent = !!opts.silent;
   if(isSearchMode){clearSearch();return;}
   try{
     const c=document.getElementById('records-container');
@@ -1349,17 +1243,14 @@ function setStatsLoading(l){
 function flashValue(id,cls){const e=document.getElementById(id);if(!e)return;e.classList.remove('flash','flash-red','flash-purple','flash-teal','flash-orange','flash-indigo','flash-green');void e.offsetWidth;e.classList.add(cls);setTimeout(()=>e.classList.remove(cls),800);}
 
 async function loadStats(opts){
-  opts = opts || {};
-  const silent = !!opts.silent;
+  opts = opts || {}; const silent = !!opts.silent;
   if(statsLoading)return;
   setStatsLoading(true);
   try{
     const r=await apiCall('getMetrics',{_ts:Date.now()});
     if(!r.success)throw new Error('stats');
     const total=r.registrations||0, uc=r.totalUsers||0, qs=r.qrScans||0, ds=r.duplicateScans||0;
-    const uniq=r.uniqueCollections||0;
-    const donePct=r.doneToDatePct||0;
-    const leftPct=r.leftToBeDonePct||0;
+    const uniq=r.uniqueCollections||0, donePct=r.doneToDatePct||0, leftPct=r.leftToBeDonePct||0;
     const oT=parseInt(document.getElementById('stat-total').textContent)||0;
     const oU=parseInt(document.getElementById('stat-users').textContent)||0;
     const oP=parseInt(document.getElementById('stat-photos').textContent)||0;
@@ -1384,8 +1275,7 @@ function updateTimerDisplay(){if(!timerText)return;const m=Math.floor(countdownS
 
 function startRefreshCycle(){
   if(refreshInterval)clearInterval(refreshInterval);
-  countdownSeconds=900;
-  updateTimerDisplay();
+  countdownSeconds=900;updateTimerDisplay();
   refreshInterval=setInterval(()=>{
     countdownSeconds-=1;
     if(countdownSeconds<=0){
@@ -1399,7 +1289,7 @@ async function periodicAdminRefresh(){
   if (downloadInProgress) { console.log('[auto-refresh] deferred — a download is currently in progress'); return; }
   if (refreshCycleBusy)   { console.log('[auto-refresh] skipped — a refresh is already in progress'); return; }
   refreshCycleBusy = true;
-  try{ await loadStats({ silent: true }); await loadRecords(1, { silent: true }); }
+  try{ await loadStats({ silent: true }); }  // v6.7 – summary tiles only, records remain lazy
   catch(e){console.warn('Periodic auto-refresh failed (silent).');}
   finally { refreshCycleBusy = false; }
 }
@@ -1410,13 +1300,15 @@ async function refreshAll(inc){
   if(statsLoading)return;
   refreshCycleBusy = true;
   userTriggeredLoad = true;
-  showToast('Refreshing all data...','info');
+  showToast('Refreshing summary data...','info');
   try {
     await loadStats();
-    await loadRecords(1);
-    if(inc && adminTab==='duplicates'){sortField=null;sortDirection='asc';await loadDuplicateTable();}
-    else if(inc){document.getElementById('dup-tab-badge').textContent=parseInt(document.getElementById('stat-duplicates').textContent)||0;}
-    showToast('All data refreshed.','success');
+    // v6.7 – only refresh records/duplicates if the user has already loaded them
+    const recordsLoaded = !document.querySelector('#records-container .text-center.py-8');
+    const duplicatesLoaded = !document.querySelector('#duplicate-container .text-center.py-8');
+    if (recordsLoaded)    await loadRecords(1);
+    if (inc && adminTab==='duplicates' && duplicatesLoaded) { sortField=null; sortDirection='asc'; await loadDuplicateTable(); }
+    showToast('Summary refreshed.','success');
   } finally { userTriggeredLoad = false; refreshCycleBusy = false; }
 }
 
@@ -1435,9 +1327,7 @@ async function adminAction(t){
       if(passwordVisible)togglePasswordVisibility();
       await loadStats();
       toggleSpinner('admin-add',false,'Save User');
-    } else if(t==='downloadCSV'){
-      await downloadFullDatabaseCSV();
-    }
+    } else if(t==='downloadCSV'){ await downloadFullDatabaseCSV(); }
   } catch(e){
     closeModal('csv-progress-modal');
     showToast('Action failed.','error');
@@ -1449,94 +1339,122 @@ function updateExportProgress(pct,msg){const b=document.getElementById('csv-prog
 function logExport(msg,type){const log=document.getElementById('csv-progress-log');if(!log)return;const cls=type==='err'?'err':(type==='ok'?'ok':(type==='warn'?'warn':''));const div=document.createElement('div');if(cls)div.className=cls;div.textContent=sanitizeLog(msg);log.appendChild(div);log.scrollTop=log.scrollHeight;}
 function cancelExport(){if(exportAbortController){exportAbortController.abort();logExport('Export cancelled by user.','err');}const btn=document.getElementById('csv-cancel-btn');if(btn){btn.disabled=true;btn.textContent='Cancelling…';}}
 
+// ═══════════════════════════════════════════════════════════════════════
+//  v6.7 – DOWNLOAD-FAILED MODAL HELPER
+// ═══════════════════════════════════════════════════════════════════════
+function showDownloadFailedModal(which, reason) {
+  const reasonEl = document.getElementById('download-failed-reason');
+  const retryBtn = document.getElementById('download-failed-retry');
+  if (reasonEl) reasonEl.textContent = reason ? ('Reason: ' + reason) : '';
+  if (retryBtn) {
+    retryBtn.onclick = function() {
+      closeModal('download-failed-modal');
+      setTimeout(() => {
+        if (which === 'full_database') downloadFullDatabaseCSV();
+        else if (which === 'outstanding') downloadOutstandingBikesCSV();
+      }, 300);
+    };
+  }
+  showModal('download-failed-modal');
+  try { lucide.createIcons(); } catch(e) {}
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+//  v6.7 – FULL DATABASE DOWNLOAD  (with 3-attempt auto-retry)
+// ═══════════════════════════════════════════════════════════════════════
 async function downloadFullDatabaseCSV(){
   if (downloadInProgress) { showToast('Another download is already in progress. Please wait.', 'warning'); return; }
   downloadInProgress = true;
   try {
     showModal('csv-progress-modal');
-    const logEl=document.getElementById('csv-progress-log'); if(logEl)logEl.innerHTML='';
-    const cancelBtn=document.getElementById('csv-cancel-btn'); if(cancelBtn){cancelBtn.disabled=false;cancelBtn.textContent='Cancel Export';}
-    exportAbortController=new AbortController();
-    const signal=exportAbortController.signal;
-    updateExportProgress(2,'Connecting to the database...');
-    logExport('Connecting to the database...');
-    await new Promise(r=>setTimeout(r,150));
-    let expectedTotal = 0;
-    try {
-      const pre = await fetchJSONWithRetry(GAS_WEB_APP_URL, { action: 'getFullDatabaseCount', _ts: Date.now() }, signal, 2);
-      if (!pre || pre.success === false) throw new Error((pre && pre.message) || 'Connection failed');
-      expectedTotal = Number(pre.total) || 0;
-    } catch (e) {
-      if (e && e.message === 'ABORTED') { finishCancelledExport(); return; }
-      logExport('Not connected to the database', 'err');
-      updateExportProgress(100,'Not connected to the database');
-      await new Promise(r=>setTimeout(r,700));
-      closeModal('csv-progress-modal'); exportAbortController = null;
-      userTriggeredLoad = true; showConnectionErrorModal(); userTriggeredLoad = false;
-      return;
+    const logEl = document.getElementById('csv-progress-log'); if (logEl) logEl.innerHTML = '';
+    const cancelBtn = document.getElementById('csv-cancel-btn'); if (cancelBtn) { cancelBtn.disabled = false; cancelBtn.textContent = 'Cancel Export'; }
+
+    let lastError = '';
+    for (let attempt = 1; attempt <= DOWNLOAD_MAX_ATTEMPTS; attempt++) {
+      exportAbortController = new AbortController();
+      const signal = exportAbortController.signal;
+
+      if (attempt > 1) {
+        logExport(`\n--- Retry attempt ${attempt} of ${DOWNLOAD_MAX_ATTEMPTS} ---`, 'warn');
+        updateExportProgress(2, `Retrying download (attempt ${attempt} of ${DOWNLOAD_MAX_ATTEMPTS})…`);
+        await sleep(1500);
+      } else {
+        updateExportProgress(2, 'Connecting to the database...');
+        logExport('Connecting to the database...');
+        await sleep(150);
+      }
+
+      try {
+        await runFullDatabaseAttempt(signal);
+        // Success — download already triggered
+        closeModal('csv-progress-modal');
+        exportAbortController = null;
+        return;
+      } catch (e) {
+        if (e && e.message === 'ABORTED') { finishCancelledExport(); return; }
+        lastError = (e && e.message) || 'Unknown error';
+        logExport(`Attempt ${attempt} failed: ${lastError}`, 'err');
+      }
     }
-    logExport('Connected to the database', 'ok');
-    updateExportProgress(8,'Connected to the database');
-    await new Promise(r=>setTimeout(r,250));
-    updateExportProgress(12,'Identifying records to download');
-    logExport('Identifying records to download');
-    if (expectedTotal > 0) logExport(`Full database source reports ${expectedTotal} total records`);
-    await new Promise(r=>setTimeout(r,120));
-    updateExportProgress(25,'Downloading records from the full database…');
-    logExport('Requesting complete dataset in a single call…');
-    let animTimer = setInterval(() => {
-      const cur = parseInt(document.getElementById('csv-progress-percent').textContent, 10) || 25;
-      if (cur < 85) updateExportProgress(cur + 1, 'Downloading records from the full database…');
-    }, 350);
-    let payload;
-    try {
-      payload = await fetchJSONWithRetry(GAS_WEB_APP_URL, { action: 'getFullDatabaseAll', _ts: Date.now() }, signal, 3);
-    } catch (e) {
-      clearInterval(animTimer);
-      if (e && e.message === 'ABORTED') { finishCancelledExport(); return; }
-      updateExportProgress(100,'Export failed.');
-      logExport(`Failed: ${e.message}`,'err');
-      await new Promise(r=>setTimeout(r,900));
-      closeModal('csv-progress-modal'); exportAbortController=null;
-      userTriggeredLoad = true; showConnectionErrorModal(); userTriggeredLoad = false;
-      return;
-    }
-    clearInterval(animTimer);
-    if (!payload || payload.success === false) {
-      updateExportProgress(100,'Export failed.');
-      logExport(`Failed: ${(payload && payload.message) || 'Server error'}`,'err');
-      await new Promise(r=>setTimeout(r,900));
-      closeModal('csv-progress-modal'); exportAbortController=null;
-      userTriggeredLoad = true; showConnectionErrorModal(); userTriggeredLoad = false;
-      return;
-    }
-    const allRecords = payload.rows || [];
-    if (allRecords.length === 0) {
-      updateExportProgress(100,'No records could be fetched.');
-      logExport('Total records: 0 — export aborted.','err');
-      await new Promise(r=>setTimeout(r,1200));
-      closeModal('csv-progress-modal');exportAbortController=null;
-      userTriggeredLoad = true; showConnectionErrorModal(); userTriggeredLoad = false;
-      return;
-    }
-    logExport(`Received ${allRecords.length} records in one payload`);
-    updateExportProgress(90,'Finalizing the output and saving the data into the .csv file…');
-    const lines = ['Date,User,BikeNo,QRcode,Duplicate,BikePhoto'];
-    for (let i = 0; i < allRecords.length; i++) {
-      const r = allRecords[i];
-      lines.push(escapeCsv(r[0])+','+escapeCsv(r[1])+','+escapeCsv(r[2])+','+escapeCsv(r[3])+','+escapeCsv(r[4])+','+escapeCsv(r[5]));
-    }
-    const finalCsv = lines.join('\n');
-    updateExportProgress(100,`Done — ${allRecords.length} records exported.`);
-    logExport(`Total: ${allRecords.length} records saved.`,'ok');
-    await new Promise(r=>setTimeout(r,300));
-    closeModal('csv-progress-modal');exportAbortController=null;
-    downloadFile('bike_registrations_full',finalCsv);
-    showToast(`Full CSV saved — ${allRecords.length} records.`,'success');
-  } finally { downloadInProgress = false; }
+    // All attempts failed
+    closeModal('csv-progress-modal');
+    exportAbortController = null;
+    showDownloadFailedModal('full_database', lastError);
+  } finally {
+    downloadInProgress = false;
+  }
+}
+async function runFullDatabaseAttempt(signal){
+  let expectedTotal = 0;
+  const pre = await fetchJSONWithRetry(GAS_WEB_APP_URL, { action: 'getFullDatabaseCount', _ts: Date.now() }, signal, 2);
+  if (!pre || pre.success === false) throw new Error((pre && pre.message) || 'Could not reach the database');
+  expectedTotal = Number(pre.total) || 0;
+
+  logExport('Connected to the database', 'ok');
+  updateExportProgress(8, 'Connected to the database');
+  await sleep(250);
+
+  updateExportProgress(12, 'Identifying records to download');
+  logExport('Identifying records to download');
+  if (expectedTotal > 0) logExport(`Full database source reports ${expectedTotal} total records`);
+  await sleep(120);
+
+  updateExportProgress(25, 'Downloading records from the full database…');
+  logExport('Requesting complete dataset in a single call…');
+  let animTimer = setInterval(() => {
+    const cur = parseInt(document.getElementById('csv-progress-percent').textContent, 10) || 25;
+    if (cur < 85) updateExportProgress(cur + 1, 'Downloading records from the full database…');
+  }, 350);
+  let payload;
+  try {
+    payload = await fetchJSONWithRetry(GAS_WEB_APP_URL, { action: 'getFullDatabaseAll', _ts: Date.now() }, signal, 3);
+  } finally { clearInterval(animTimer); }
+  if (!payload || payload.success === false) throw new Error((payload && payload.message) || 'Server error');
+
+  const allRecords = payload.rows || [];
+  if (allRecords.length === 0) throw new Error('No records returned from the database');
+
+  logExport(`Received ${allRecords.length} records`);
+  updateExportProgress(90, 'Finalizing the output and saving the data into the .csv file…');
+  const lines = ['Date,User,BikeNo,QRcode,Duplicate,BikePhoto'];
+  for (let i = 0; i < allRecords.length; i++) {
+    const r = allRecords[i];
+    lines.push(escapeCsv(r[0])+','+escapeCsv(r[1])+','+escapeCsv(r[2])+','+escapeCsv(r[3])+','+escapeCsv(r[4])+','+escapeCsv(r[5]));
+  }
+  const finalCsv = lines.join('\n');
+
+  updateExportProgress(100, `Done — ${allRecords.length} records exported.`);
+  logExport(`Total: ${allRecords.length} records saved.`, 'ok');
+  await sleep(300);
+  downloadFile('bike_registrations_full', finalCsv);
+  showToast(`Full CSV saved — ${allRecords.length} records.`, 'success');
 }
 function finishCancelledExport(){exportAbortController=null;closeModal('csv-progress-modal');showToast('Export cancelled.','info');const btn=document.getElementById('csv-cancel-btn');if(btn){btn.disabled=false;btn.textContent='Cancel Export';}}
 
+// ═══════════════════════════════════════════════════════════════════════
+//  v6.7 – OUTSTANDING BIKES DOWNLOAD  (with 3-attempt auto-retry)
+// ═══════════════════════════════════════════════════════════════════════
 function updateOutstandingProgress(pct,msg){const b=document.getElementById('outstanding-progress-bar');const p=document.getElementById('outstanding-progress-percent');const t=document.getElementById('outstanding-progress-text');if(b)b.style.width=pct+'%';if(p)p.textContent=pct+'%';if(t&&msg)t.textContent=sanitizeLog(msg);}
 function logExportOutstanding(msg,type){const log=document.getElementById('outstanding-progress-log');if(!log)return;const cls=type==='err'?'err':(type==='ok'?'ok':(type==='warn'?'warn':''));const div=document.createElement('div');if(cls)div.className=cls;div.textContent=sanitizeLog(msg);log.appendChild(div);log.scrollTop=log.scrollHeight;}
 function cancelOutstandingExport(){if(outstandingAbortController){outstandingAbortController.abort();logExportOutstanding('Export cancelled by user.','err');}const btn=document.getElementById('outstanding-cancel-btn');if(btn){btn.disabled=true;btn.textContent='Cancelling…';}}
@@ -1547,88 +1465,97 @@ async function downloadOutstandingBikesCSV(){
   downloadInProgress = true;
   try {
     showModal('outstanding-progress-modal');
-    const logEl=document.getElementById('outstanding-progress-log'); if(logEl)logEl.innerHTML='';
-    const cancelBtn=document.getElementById('outstanding-cancel-btn'); if(cancelBtn){cancelBtn.disabled=false;cancelBtn.textContent='Cancel Export';}
-    outstandingAbortController=new AbortController();
-    const signal=outstandingAbortController.signal;
-    updateOutstandingProgress(2,'Connecting to the database...');
-    logExportOutstanding('Connecting to the database...');
-    await new Promise(r=>setTimeout(r,150));
-    let expectedTotal = 0;
-    try {
-      const pre = await fetchJSONWithRetry(GAS_WEB_APP_URL, { action: 'getOutstandingCount', _ts: Date.now() }, signal, 2);
-      if (!pre || pre.success === false) throw new Error((pre && pre.message) || 'Connection failed');
-      expectedTotal = Number(pre.total) || 0;
-    } catch (e) {
-      if (e && e.message === 'ABORTED') { finishCancelledOutstanding(); return; }
-      logExportOutstanding('Not connected to the database', 'err');
-      updateOutstandingProgress(100,'Not connected to the database');
-      await new Promise(r=>setTimeout(r,700));
-      closeModal('outstanding-progress-modal'); outstandingAbortController = null;
-      userTriggeredLoad = true; showConnectionErrorModal(); userTriggeredLoad = false;
-      return;
+    const logEl = document.getElementById('outstanding-progress-log'); if (logEl) logEl.innerHTML = '';
+    const cancelBtn = document.getElementById('outstanding-cancel-btn'); if (cancelBtn) { cancelBtn.disabled = false; cancelBtn.textContent = 'Cancel Export'; }
+
+    let lastError = '';
+    for (let attempt = 1; attempt <= DOWNLOAD_MAX_ATTEMPTS; attempt++) {
+      outstandingAbortController = new AbortController();
+      const signal = outstandingAbortController.signal;
+
+      if (attempt > 1) {
+        logExportOutstanding(`\n--- Retry attempt ${attempt} of ${DOWNLOAD_MAX_ATTEMPTS} ---`, 'warn');
+        updateOutstandingProgress(2, `Retrying download (attempt ${attempt} of ${DOWNLOAD_MAX_ATTEMPTS})…`);
+        await sleep(1500);
+      } else {
+        updateOutstandingProgress(2, 'Connecting to the database...');
+        logExportOutstanding('Connecting to the database...');
+        await sleep(150);
+      }
+
+      try {
+        await runOutstandingAttempt(signal);
+        closeModal('outstanding-progress-modal');
+        outstandingAbortController = null;
+        return;
+      } catch (e) {
+        if (e && e.message === 'ABORTED') { finishCancelledOutstanding(); return; }
+        lastError = (e && e.message) || 'Unknown error';
+        logExportOutstanding(`Attempt ${attempt} failed: ${lastError}`, 'err');
+      }
     }
-    logExportOutstanding('Connected to the database', 'ok');
-    updateOutstandingProgress(8,'Connected to the database');
-    await new Promise(r=>setTimeout(r,250));
-    updateOutstandingProgress(12,'Identifying records to download');
-    logExportOutstanding('Identifying records to download');
-    if (expectedTotal > 0) logExportOutstanding(`Outstanding bikes source reports ${expectedTotal} total records`);
-    await new Promise(r=>setTimeout(r,120));
-    updateOutstandingProgress(25,'Downloading records from the outstanding bikes source…');
-    logExportOutstanding('Requesting complete dataset in a single call…');
-    let animTimer = setInterval(() => {
-      const cur = parseInt(document.getElementById('outstanding-progress-percent').textContent, 10) || 25;
-      if (cur < 85) updateOutstandingProgress(cur + 1, 'Downloading records from the outstanding bikes source…');
-    }, 350);
-    let payload;
-    try {
-      payload = await fetchJSONWithRetry(GAS_WEB_APP_URL, { action: 'getOutstandingAll', _ts: Date.now() }, signal, 3);
-    } catch (e) {
-      clearInterval(animTimer);
-      if (e && e.message === 'ABORTED') { finishCancelledOutstanding(); return; }
-      updateOutstandingProgress(100,'Export failed.');
-      logExportOutstanding(`Failed: ${e.message}`,'err');
-      await new Promise(r=>setTimeout(r,900));
-      closeModal('outstanding-progress-modal'); outstandingAbortController=null;
-      userTriggeredLoad = true; showConnectionErrorModal(); userTriggeredLoad = false;
-      return;
-    }
-    clearInterval(animTimer);
-    if (!payload || payload.success === false) {
-      updateOutstandingProgress(100,'Export failed.');
-      logExportOutstanding(`Failed: ${(payload && payload.message) || 'Server error'}`,'err');
-      await new Promise(r=>setTimeout(r,900));
-      closeModal('outstanding-progress-modal'); outstandingAbortController=null;
-      userTriggeredLoad = true; showConnectionErrorModal(); userTriggeredLoad = false;
-      return;
-    }
-    const allRecords = payload.rows || [];
-    if (allRecords.length === 0) {
-      updateOutstandingProgress(100,'No outstanding bikes found.');
-      logExportOutstanding('Total records: 0 — export aborted.','err');
-      await new Promise(r=>setTimeout(r,1200));
-      closeModal('outstanding-progress-modal');outstandingAbortController=null;
-      showToast('No outstanding bikes found.','info');
-      return;
-    }
-    logExportOutstanding(`Received ${allRecords.length} records in one payload`);
-    updateOutstandingProgress(90,'Finalizing the output and saving the data into the .csv file…');
-    const lines = ['Bike Number,Description'];
-    for (let i = 0; i < allRecords.length; i++) {
-      const r = allRecords[i];
-      const bike = formatBikeNumber(r[0]);
-      const desc = formatBikeText(r[1]);
-      lines.push(escapeCsv(bike) + ',' + escapeCsv(desc));
-    }
-    const finalCsv = lines.join('\n');
-    updateOutstandingProgress(100,`Done — ${allRecords.length} records exported.`);
-    logExportOutstanding(`Total: ${allRecords.length} records saved.`,'ok');
-    await new Promise(r=>setTimeout(r,300));
-    closeModal('outstanding-progress-modal');outstandingAbortController=null;
-    downloadFile('outstanding_bikes',finalCsv);
-    showToast(`Outstanding bikes CSV saved — ${allRecords.length} records.`,'success');
-  } finally { downloadInProgress = false; }
+    closeModal('outstanding-progress-modal');
+    outstandingAbortController = null;
+    showDownloadFailedModal('outstanding', lastError);
+  } finally {
+    downloadInProgress = false;
+  }
+}
+async function runOutstandingAttempt(signal){
+  let expectedTotal = 0;
+  const pre = await fetchJSONWithRetry(GAS_WEB_APP_URL, { action: 'getOutstandingCount', _ts: Date.now() }, signal, 2);
+  if (!pre || pre.success === false) throw new Error((pre && pre.message) || 'Could not reach the database');
+  expectedTotal = Number(pre.total) || 0;
+
+  logExportOutstanding('Connected to the database', 'ok');
+  updateOutstandingProgress(8, 'Connected to the database');
+  await sleep(250);
+
+  updateOutstandingProgress(12, 'Identifying records to download');
+  logExportOutstanding('Identifying records to download');
+  if (expectedTotal > 0) logExportOutstanding(`Outstanding bikes source reports ${expectedTotal} total records`);
+  await sleep(120);
+
+  updateOutstandingProgress(25, 'Downloading records from the outstanding bikes source…');
+  logExportOutstanding('Requesting complete dataset in a single call…');
+  let animTimer = setInterval(() => {
+    const cur = parseInt(document.getElementById('outstanding-progress-percent').textContent, 10) || 25;
+    if (cur < 85) updateOutstandingProgress(cur + 1, 'Downloading records from the outstanding bikes source…');
+  }, 350);
+  let payload;
+  try {
+    payload = await fetchJSONWithRetry(GAS_WEB_APP_URL, { action: 'getOutstandingAll', _ts: Date.now() }, signal, 3);
+  } finally { clearInterval(animTimer); }
+  if (!payload || payload.success === false) throw new Error((payload && payload.message) || 'Server error');
+
+  const allRecords = payload.rows || [];
+  if (allRecords.length === 0) {
+    // No records is a legitimate end-state, not a failure — show info and return
+    updateOutstandingProgress(100, 'No outstanding bikes found.');
+    logExportOutstanding('No records returned.', 'warn');
+    await sleep(800);
+    closeModal('outstanding-progress-modal');
+    outstandingAbortController = null;
+    showToast('No outstanding bikes found.', 'info');
+    return;
+  }
+
+  logExportOutstanding(`Received ${allRecords.length} records`);
+  updateOutstandingProgress(90, 'Finalizing the output and saving the data into the .csv file…');
+  const lines = ['Bike Number,Description'];
+  for (let i = 0; i < allRecords.length; i++) {
+    const r = allRecords[i];
+    const bike = formatBikeNumber(r[0]);
+    const desc = formatBikeText(r[1]) || 'Please apply the QR code';
+    lines.push(escapeCsv(bike) + ',' + escapeCsv(desc));
+  }
+  const finalCsv = lines.join('\n');
+
+  updateOutstandingProgress(100, `Done — ${allRecords.length} records exported.`);
+  logExportOutstanding(`Total: ${allRecords.length} records saved.`, 'ok');
+  await sleep(300);
+  downloadFile('outstanding_bikes', finalCsv);
+  showToast(`Outstanding bikes CSV saved — ${allRecords.length} records.`, 'success');
 }
 
 function downloadFile(baseName,text){
@@ -1665,8 +1592,7 @@ function applySortAndRender(){if(!window._dupGroups)return;let ar=[];window._dup
 function renderDuplicateTable(groups){const c=document.getElementById('duplicate-container');if(!groups||groups.length===0){c.innerHTML='<p class="text-sm text-gray-500 text-center py-4">✅ No duplicate registrations found.</p>';document.getElementById('dup-tab-badge').textContent='0';updateBatchDeleteButton();return;}const tdr=groups.reduce((s,g)=>s+g.records.length,0);window._dupGroups=groups;const si=f=>sortField===f?(sortDirection==='asc'?'▲':'▼'):'';let h=`<div class="dup-table-header"><div class="record-count">Showing ${tdr} duplicate records</div><div class="actions"><button id="batch-delete-btn" class="batch-delete-btn-red" onclick="handleBatchDelete()" disabled><i data-lucide="trash-2"></i> Delete <span class="count-badge">0</span></button><button onclick="refreshDuplicates()" class="batch-delete-btn-grey"><i data-lucide="refresh-cw"></i> Refresh</button></div></div>`;h+=`<div class="dup-table-wrap" style="min-width:100%;"><table class="records-table dup-table"><thead><tr>`;h+=`<th class="sortable ${sortField==='bikeNumber'?'sort-active':''}" onclick="handleSort('bikeNumber')">Bike # <span class="sort-indicator">${si('bikeNumber')}</span></th>`;h+=`<th class="sortable ${sortField==='timestamp'?'sort-active':''}" onclick="handleSort('timestamp')">Timestamp <span class="sort-indicator">${si('timestamp')}</span></th>`;h+=`<th class="sortable ${sortField==='user'?'sort-active':''}" onclick="handleSort('user')">User <span class="sort-indicator">${si('user')}</span></th><th>QR/Barcode</th><th>Photo</th><th>Delete</th>`;h+=`<th class="col-checkbox"><div class="select-all-wrap"><input type="checkbox" id="select-all-checkbox" onchange="toggleSelectAll()" /></div></th></tr></thead><tbody>`;dupPhotoStore=[];groups.forEach(g=>{const first=g.records[0],fts=first.timestampRaw,fu=first.user;g.records.forEach((rec,idx)=>{const isFirst=idx===0;const bi=`<i data-lucide="check-circle" class="w-3 h-3 text-green-500 inline"></i>`;const ti=isFirst?bi:(rec.timestampRaw===fts?bi:`<i data-lucide="x-circle" class="w-3 h-3 text-red-500 inline"></i>`);const ui=isFirst?bi:(rec.user===fu?bi:`<i data-lucide="x-circle" class="w-3 h-3 text-red-500 inline"></i>`);let pc='—';if(rec.photo&&rec.photo.length>10){const ip=dupPhotoStore.length;dupPhotoStore.push(rec.photo);pc=`<button class="photo-view-btn" data-index="${ip}" onclick="viewDupPhoto(this.dataset.index)"><i data-lucide="camera" class="w-3 h-3 text-blue-600 hover:text-blue-800 cursor-pointer"></i></button>`;}const isDel=deletedRows.has(rec.rowNumber);const db=isDel?`<button class="btn-delete" disabled><i data-lucide="trash-2" class="w-3 h-3"></i></button>`:`<button class="btn-delete" data-row="${rec.rowNumber}" onclick="showSingleDeleteConfirm(${rec.rowNumber}, '${rec.bikeNumber}')"><i data-lucide="trash-2" class="w-3 h-3"></i></button>`;const rc=rec.duplicateFlag&&rec.duplicateFlag.includes('WARNING')?'duplicate-warning':'';const bc=isFirst?'bg-green-50':'';const dc=isDel?'deleted':'';h+=`<tr class="${rc} ${bc} ${dc}" data-row="${rec.rowNumber}"><td>${rec.bikeNumber} ${bi}</td><td>${rec.timestamp} ${ti}</td><td>${rec.user} ${ui}</td><td class="max-w-[60px] truncate">${rec.barcode}</td><td>${pc}</td><td>${db}</td><td class="col-checkbox"><input type="checkbox" class="dup-row-checkbox" data-row="${rec.rowNumber}" data-bike="${rec.bikeNumber}" data-timestamp="${rec.timestamp}" ${isDel?'disabled':''} onchange="toggleRowCheckbox(${rec.rowNumber})" /></td></tr>`;});});h+='</tbody></table></div>';c.innerHTML=h;lucide.createIcons();document.getElementById('dup-tab-badge').textContent=tdr;clearSelection();updateBatchDeleteButton();}
 
 async function loadDuplicateTable(opts){
-  opts = opts || {};
-  const silent = !!opts.silent;
+  opts = opts || {}; const silent = !!opts.silent;
   if (downloadInProgress) { console.log('[dup table] skipped — a download is currently in progress'); return; }
   const c=document.getElementById('duplicate-container');
   c.innerHTML='<p class="text-sm text-gray-500 text-center py-4"><i data-lucide="loader-2" class="w-5 h-5 animate-spin mx-auto"></i></p>';
@@ -1694,7 +1620,7 @@ async function loadDuplicateTable(opts){
   }catch(e){c.innerHTML='<p class="text-sm text-gray-500 text-center py-4">Could not load duplicate records.</p>';if (!silent) showConnectionErrorModal();}
 }
 
-document.addEventListener('keydown',function(e){if((e.ctrlKey||e.metaKey)&&e.key==='s'){e.preventDefault();if(!document.getElementById('view-data').classList.contains('hidden-view'))saveData();}if(e.key==='Escape'){document.querySelectorAll('.modal-overlay:not(.hidden-view)').forEach(m=>{const id=m.id;if(id==='qr-scanner-modal')stopQrScanner();else if(id==='camera-modal')closeCamera();else if(id==='photo-modal')closePhotoModal();else if(id==='dashboard-modal')closeDashboard();else if(id==='dashboard-error-modal')closeModal('dashboard-error-modal');else if(id==='alert-modal')closeAlertModal();else if(id==='csv-progress-modal')closeModal('csv-progress-modal');else if(id==='outstanding-progress-modal')closeModal('outstanding-progress-modal');else if(id==='bikedb-error-modal')closeBikeDbErrorModal();else if(id==='delete-confirm-modal')cancelDelete();else if(id==='inactivity-warning-modal')stayLoggedIn();else if(id==='user-list-modal')closeUserListModal();else closeModal(id);});}});
+document.addEventListener('keydown',function(e){if((e.ctrlKey||e.metaKey)&&e.key==='s'){e.preventDefault();if(!document.getElementById('view-data').classList.contains('hidden-view'))saveData();}if(e.key==='Escape'){document.querySelectorAll('.modal-overlay:not(.hidden-view)').forEach(m=>{const id=m.id;if(id==='qr-scanner-modal')stopQrScanner();else if(id==='camera-modal')closeCamera();else if(id==='photo-modal')closePhotoModal();else if(id==='dashboard-modal')closeDashboard();else if(id==='dashboard-error-modal')closeModal('dashboard-error-modal');else if(id==='alert-modal')closeAlertModal();else if(id==='csv-progress-modal')closeModal('csv-progress-modal');else if(id==='outstanding-progress-modal')closeModal('outstanding-progress-modal');else if(id==='bikedb-error-modal')closeBikeDbErrorModal();else if(id==='download-failed-modal')closeModal('download-failed-modal');else if(id==='delete-confirm-modal')cancelDelete();else if(id==='inactivity-warning-modal')stayLoggedIn();else if(id==='user-list-modal')closeUserListModal();else closeModal(id);});}});
 document.addEventListener('touchend',function(e){const n=Date.now();if(n-(document.lastTouch||0)<300)e.preventDefault();document.lastTouch=n;},{passive:false});
 
 switchView('view-login');
