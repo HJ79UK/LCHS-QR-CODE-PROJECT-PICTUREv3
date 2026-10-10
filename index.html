@@ -224,7 +224,7 @@ input,button,select,textarea{font-family:inherit;font-size:1rem}input:focus,butt
 <div id="toast-container"></div>
 
 <div id="view-login" class="w-full max-w-md card p-6 md:p-8">
-<span class="version-badge login-version">v6.5</span>
+<span class="version-badge login-version">v6.6</span>
 <div class="text-center mb-6">
 <div class="flex justify-center mb-3"><i data-lucide="bike" class="w-14 h-14 text-red-600"></i></div>
 <h1 class="text-2xl font-bold text-gray-800">QR CODE BIKE REGISTER</h1>
@@ -253,7 +253,7 @@ input,button,select,textarea{font-family:inherit;font-size:1rem}input:focus,butt
 <div class="flex items-center gap-2">
 <span id="logged-in-user" class="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full font-medium"></span>
 <span id="inactivity-timer" class="inactivity-timer"><i data-lucide="clock" class="w-3 h-3"></i><span id="timer-display">10:00</span></span>
-<span class="version-badge">v6.5</span>
+<span class="version-badge">v6.6</span>
 </div>
 </div>
 
@@ -301,7 +301,7 @@ input,button,select,textarea{font-family:inherit;font-size:1rem}input:focus,butt
 <span id="countdown-timer" class="countdown-timer"><i data-lucide="clock" class="w-4 h-4"></i><span id="timer-text">--:--</span></span>
 <span id="status-dot" class="stat-dot ready"></span>
 <button onclick="logout()" class="text-sm text-gray-500 hover:text-gray-800 flex items-center gap-1"><i data-lucide="log-out" class="w-4 h-4"></i> Log Out</button>
-<span class="version-badge">v6.5</span>
+<span class="version-badge">v6.6</span>
 </div>
 </div>
 
@@ -477,6 +477,19 @@ input,button,select,textarea{font-family:inherit;font-size:1rem}input:focus,butt
 </div>
 </div>
 
+<!-- v6.6 – bike-database failure modal (3-attempt logout) -->
+<div id="bikedb-error-modal" class="hidden-view fixed inset-0 modal-overlay z-[140]">
+<div class="modal-card max-w-sm p-6 text-center border-t-4 border-red-500">
+<div class="mx-auto flex items-center justify-center h-14 w-14 rounded-full bg-red-100 mb-4">
+<i data-lucide="alert-triangle" class="h-7 w-7 text-red-600"></i>
+</div>
+<h3 class="text-lg font-bold mb-2 text-gray-900">Bike Database Unavailable</h3>
+<p class="text-sm text-gray-600 mb-2">The bike validation database could not be downloaded after <strong>3 attempts</strong>.</p>
+<p class="text-sm text-gray-600 mb-6">You have been logged out. Please wait a moment, then log in again.</p>
+<button onclick="closeBikeDbErrorModal()" class="w-full btn-red">OK</button>
+</div>
+</div>
+
 <div id="qr-scanner-modal" class="hidden-view fixed inset-0 modal-overlay z-50">
 <div class="modal-card max-w-md p-5">
 <div class="flex justify-between items-center mb-4"><h3 class="text-lg font-bold text-gray-900 flex items-center gap-2"><i data-lucide="scan" class="w-5 h-5 text-red-600"></i> Scan QR Code</h3><button onclick="stopQrScanner()" class="text-gray-500 text-2xl">&times;</button></div>
@@ -555,20 +568,13 @@ input,button,select,textarea{font-family:inherit;font-size:1rem}input:focus,butt
 </div>
 
 <script>
-console.log('🚲 QR Code Bike Registration System starting... (v6.5)');
+console.log('🚲 QR Code Bike Registration System starting... (v6.6)');
 
 const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzeUnu8qkwxb2TixDHxCyf78k7gyeL2CPxr0HQO-ypEtZRpBV3hlJkjr1otmg-x2HjKjg/exec";
-const APP_VERSION = "v6.5";
+const APP_VERSION = "v6.6";
 
 let exportAbortController = null;
 let outstandingAbortController = null;
-
-// ═══════════════════════════════════════════════════════════════════════
-//  v6.5 – "ONE CONNECTION AT A TIME" MUTEX FLAGS
-//    downloadInProgress  – true while any CSV export is running
-//    refreshCycleBusy    – true while an admin refresh is running
-//  Background refreshes and downloads must never overlap.
-// ═══════════════════════════════════════════════════════════════════════
 let downloadInProgress = false;
 let refreshCycleBusy   = false;
 
@@ -613,10 +619,7 @@ function fmtPct(v) {
 }
 function formatBikeNumber(v) {
   if (v === null || v === undefined || v === '') return '';
-  if (typeof v === 'number') {
-    if (!isFinite(v)) return '';
-    return v;
-  }
+  if (typeof v === 'number') { if (!isFinite(v)) return ''; return v; }
   const s = String(v).trim();
   if (s === '') return '';
   if (/^-?\d+(\.\d+)?$/.test(s)) {
@@ -629,6 +632,7 @@ function formatBikeText(v) {
   if (v === null || v === undefined) return '';
   return String(v);
 }
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
 // ─── STATE ───
 let currentUser=null,currentUserRole=null,adminTab='records';
@@ -723,24 +727,10 @@ async function apiCall(action,payload){
 }
 
 function showConnectionErrorModal(){
-  if(!userTriggeredLoad){
-    console.warn('[failure-modal suppressed] action was not user-triggered');
-    return;
-  }
+  if(!userTriggeredLoad){console.warn('[failure-modal suppressed] action was not user-triggered');return;}
   showModal('dashboard-error-modal');
 }
-
-// ═══════════════════════════════════════════════════════════════════════
-//  v6.5 – handleConnectionErrorOK now ONLY closes the modal.
-//    Previously it auto-triggered loadStats()+loadRecords() on the
-//    admin panel, or refreshDashboard() on the dashboard. That auto
-//    retry was the primary cause of the "double connection" symptom
-//    when a download's error modal was dismissed.
-//    The user can now explicitly refresh via the Refresh buttons.
-// ═══════════════════════════════════════════════════════════════════════
-function handleConnectionErrorOK(){
-  closeModal('dashboard-error-modal');
-}
+function handleConnectionErrorOK(){ closeModal('dashboard-error-modal'); }
 function showDashboardErrorModal(){ showConnectionErrorModal(); }
 function handleDashboardErrorOK(){ handleConnectionErrorOK(); }
 
@@ -771,12 +761,8 @@ async function logLoginToSheet(u,v){try{await apiCall('logLogin',{username:u,app
 
 async function fetchMasterList() {
   const r = await apiCall('getMasterList', {});
-  if (!r || r.success !== true) {
-    throw new Error((r && r.message) || 'Master list fetch failed');
-  }
-  if (!Array.isArray(r.numbers)) {
-    throw new Error('Master list returned an invalid shape');
-  }
+  if (!r || r.success !== true) throw new Error((r && r.message) || 'Master list fetch failed');
+  if (!Array.isArray(r.numbers)) throw new Error('Master list returned an invalid shape');
   masterListCache = r.numbers.map(n => String(n).toUpperCase().trim()).filter(n => n !== '');
   masterListSet   = new Set(masterListCache);
   console.log('[master list] loaded ' + masterListCache.length + ' valid bike numbers');
@@ -838,7 +824,7 @@ async function forceSync(){if(isForceSyncing||pendingQueue.length===0)return;isF
 function scrollToSubmit(){if(submitBtn)setTimeout(()=>submitBtn.scrollIntoView({behavior:'smooth',block:'center'}),300);}
 async function testBackend(){testResultDiv.classList.remove('hidden');testResultDiv.innerHTML='Testing connection...';testResultDiv.className='mt-3 text-xs text-blue-600 text-center';try{const r=await apiCall('getStats',{});if(r.success){testResultDiv.innerHTML='Backend reachable.';testResultDiv.className='mt-3 text-xs text-green-600 text-center';showToast('Backend OK.','success');}else{testResultDiv.innerHTML='Backend test failed.';testResultDiv.className='mt-3 text-xs text-red-600 text-center';}}catch(e){testResultDiv.innerHTML='Connection test failed.';testResultDiv.className='mt-3 text-xs text-red-600 text-center';}}
 
-function clearLoginForm(){document.getElementById('login-form').reset();testResultDiv.classList.add('hidden');testResultDiv.innerHTML='';loginProgressContainer.classList.remove('active');loginProgressBar.style.width='0%';loginProgressPercent.textContent='0%';loginProgressLabel.textContent='Connecting...';loginProgressStatus.textContent='Initialising...';testConnBtn.classList.remove('visible');}
+function clearLoginForm(){document.getElementById('login-form').reset();testResultDiv.classList.add('hidden');testResultDiv.innerHTML='';loginProgressContainer.classList.remove('active');loginProgressBar.style.width='0%';loginProgressPercent.textContent='0%';loginProgressLabel.textContent='Connecting...';loginProgressStatus.textContent='Initialising...';loginProgressStatus.style.color='#6b7280';testConnBtn.classList.remove('visible');}
 
 function showToast(msg,type){type=type||'success';const c=document.getElementById('toast-container'),m={success:'toast-success',error:'toast-error',warning:'toast-warning',info:'toast-info'},i={success:'check-circle',error:'alert-circle',warning:'alert-triangle',info:'info'};const e=document.createElement('div');e.className='toast '+(m[type]||'toast-info');e.innerHTML='<i data-lucide="'+(i[type]||'bell')+'" class="w-5 h-5 flex-shrink-0"></i><span>'+sanitizeLog(msg)+'</span>';c.appendChild(e);lucide.createIcons();setTimeout(()=>{e.classList.add('removing');setTimeout(()=>e.remove(),350);},4000);}
 
@@ -939,12 +925,8 @@ async function loadDashboardData() {
   setDashboardStep('Dashboard ready', 'done');
 }
 
-// v6.5 – refuse to open the dashboard while a CSV export is running
 async function openDashboard() {
-  if (downloadInProgress) {
-    showToast('A download is in progress. Please wait for it to finish.', 'warning');
-    return;
-  }
+  if (downloadInProgress) { showToast('A download is in progress. Please wait for it to finish.', 'warning'); return; }
   showModal('dashboard-modal');
   document.getElementById('dashboard-charts').classList.add('hidden');
   resetDashboardValues();
@@ -971,12 +953,8 @@ function closeDashboard() {
   resetDashboardValues();
   resetDashboardStatus();
 }
-// v6.5 – refuse to refresh the dashboard while a CSV export is running
 async function refreshDashboard() {
-  if (downloadInProgress) {
-    showToast('A download is in progress. Please wait for it to finish.', 'warning');
-    return;
-  }
+  if (downloadInProgress) { showToast('A download is in progress. Please wait for it to finish.', 'warning'); return; }
   if (dashboardRefreshing) return;
   dashboardRefreshing = true;
   resetDashboardValues();
@@ -1038,25 +1016,94 @@ function setAdminTabVisualOnly(tab) {
     document.getElementById('duplicate-container').innerHTML = '<p class="text-sm text-gray-500 text-center py-4">Click the tab to load duplicates.</p>';
   }
 }
-
 function switchAdminTab(tab) {
-  if (downloadInProgress) {
-    showToast('A download is in progress. Please wait.', 'warning');
-    return;
-  }
+  if (downloadInProgress) { showToast('A download is in progress. Please wait.', 'warning'); return; }
   setAdminTabVisualOnly(tab);
   if (tab === 'records')    { loadRecords(1); }
   if (tab === 'duplicates') { sortField = null; sortDirection = 'asc'; loadDuplicateTable(); }
   lucide.createIcons();
 }
-
 async function runAdminInitialSilentLoad() {
-  try { await loadStats({ silent: true }); }
-  catch (e) { console.warn('Initial stats load failed (silent).'); }
-  try { await loadRecords(1, { silent: true }); }
-  catch (e) { console.warn('Initial records load failed (silent).'); }
+  try { await loadStats({ silent: true }); } catch (e) { console.warn('Initial stats load failed (silent).'); }
+  try { await loadRecords(1, { silent: true }); } catch (e) { console.warn('Initial records load failed (silent).'); }
 }
 
+// ═══════════════════════════════════════════════════════════════════════
+//  v6.6 – BIKE DATABASE DOWNLOAD WITH 3-ATTEMPT RETRY
+//    · Updates the login progress UI at each attempt
+//    · Shows red status when retrying
+//    · Returns true on success, false after all attempts fail
+// ═══════════════════════════════════════════════════════════════════════
+const BIKE_DB_MAX_ATTEMPTS = 3;
+async function downloadBikesDatabaseWithRetry() {
+  for (let attempt = 1; attempt <= BIKE_DB_MAX_ATTEMPTS; attempt++) {
+    if (attempt === 1) {
+      updateLoginProgress(75, 'Downloading bikes database', 'Fetching valid bike numbers…');
+      loginProgressStatus.style.color = '#6b7280';
+    } else {
+      updateLoginProgress(75, 'Downloading bikes database',
+        `Download failed — retrying (${attempt} of ${BIKE_DB_MAX_ATTEMPTS})…`);
+      loginProgressStatus.style.color = '#dc2626';
+    }
+    try {
+      const count = await fetchMasterList();
+      updateLoginProgress(90, 'Bikes database loaded', `${count} valid bike numbers ready`);
+      loginProgressStatus.style.color = '#16a34a';
+      await sleep(500);
+      return true;
+    } catch (err) {
+      console.warn(`[login] bike DB attempt ${attempt}/${BIKE_DB_MAX_ATTEMPTS} failed: ${err.message}`);
+      if (attempt < BIKE_DB_MAX_ATTEMPTS) await sleep(900);
+    }
+  }
+  return false;
+}
+
+// v6.6 – force logout after 3 consecutive bike DB failures
+function forceLogoutAfterBikeDbFailure() {
+  // Clear session state
+  currentUser = null;
+  currentUserRole = null;
+  masterListCache = [];
+  masterListSet = new Set();
+  // Wipe login progress UI
+  loginProgressContainer.classList.remove('active');
+  loginProgressBar.style.width = '0%';
+  loginProgressPercent.textContent = '0%';
+  loginProgressLabel.textContent = 'Connecting...';
+  loginProgressStatus.textContent = 'Initialising...';
+  loginProgressStatus.style.color = '#6b7280';
+  // Reset the register-view banner
+  const mlb = document.getElementById('master-list-status');
+  if (mlb) { mlb.style.display=''; mlb.className='mb-3 text-xs px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 text-gray-700 flex items-center gap-2'; }
+  const mlt = document.getElementById('master-list-status-text'); if (mlt) mlt.textContent = 'Bike list not loaded yet.';
+  const mli = document.getElementById('master-list-status-icon'); if (mli) mli.className = 'w-3 h-3';
+  const mlr = document.getElementById('master-list-retry'); if (mlr) mlr.classList.add('hidden');
+  // Reset any other auth state
+  const lu = document.getElementById('logged-in-user'); if (lu) lu.textContent = '';
+  document.getElementById('login-form').reset();
+  // Force back to login view and show error modal
+  switchView('view-login');
+  showModal('bikedb-error-modal');
+}
+function closeBikeDbErrorModal(){
+  closeModal('bikedb-error-modal');
+  setTimeout(() => { try { document.getElementById('login-user').focus(); } catch(e){} }, 50);
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+//  v6.6 – LOGIN with expanded user-role state machine
+//    Regular-user flow:
+//      0% Connecting / Initialising
+//      15% Connecting / Establishing connection
+//      40% Authenticating / Credentials verified
+//      52% Recording session / Please wait
+//      65% Preparing workspace / Please wait
+//      75% Downloading bikes database (with retries 1/3, 2/3, 3/3)
+//      90% Bikes database loaded
+//      100% Welcome / Login complete
+//    On 3 consecutive bike-DB failures → forced logout + error modal.
+// ═══════════════════════════════════════════════════════════════════════
 async function handleLogin(e){
   e.preventDefault();
   const u = document.getElementById('login-user').value.trim();
@@ -1067,6 +1114,7 @@ async function handleLogin(e){
   loginProgressContainer.classList.add('active');
   toggleSpinner('login', true);
   document.getElementById('login-btn').disabled = true;
+  loginProgressStatus.style.color = '#6b7280';
 
   try {
     await stepProgress(0, 'Connecting...', 'Initialising...', 400);
@@ -1094,37 +1142,30 @@ async function handleLogin(e){
       await stepProgress(100, 'Welcome!', 'Login complete.', 500);
       setTimeout(() => loginProgressContainer.classList.remove('active'), 700);
       showToast('Admin welcome, ' + u + '!', 'success');
-    } else {
-      await stepProgress(70, 'Preparing workspace...', 'Please wait...', 400);
 
-      setMasterListStatus('loading');
-      let masterLoaded = false;
-      for (let attempt = 1; attempt <= 3; attempt++) {
-        try {
-          const count = await fetchMasterList();
-          masterLoaded = true;
-          console.log('[login] master list ready: ' + count + ' bikes (attempt ' + attempt + ')');
-          break;
-        } catch (err) {
-          console.warn('[login] master list attempt ' + attempt + '/3 failed: ' + err.message);
-          if (attempt < 3) await new Promise(r => setTimeout(r, 600 * attempt));
-        }
+    } else {
+      // ── Regular user – full state machine with bike-DB retry ──
+      await stepProgress(65, 'Preparing workspace...', 'Please wait...', 400);
+
+      // Download bikes database with retry (3 attempts)
+      const dbOk = await downloadBikesDatabaseWithRetry();
+
+      if (!dbOk) {
+        // 3 consecutive failures → force logout + error modal
+        console.error('[login] bike database download failed after ' + BIKE_DB_MAX_ATTEMPTS + ' attempts — forcing logout');
+        forceLogoutAfterBikeDbFailure();
+        return;  // ← important: finally block still runs, but the button will
+                 //   be re-enabled for the next login attempt
       }
 
+      // Success → grant access to the register screen
       document.getElementById('logged-in-user').textContent = u;
       switchView('view-data');
-
-      if (masterLoaded) {
-        setMasterListStatus('ready', masterListCache.length);
-      } else {
-        setMasterListStatus('error');
-      }
+      setMasterListStatus('ready', masterListCache.length);
 
       await stepProgress(100, 'Welcome!', 'Login complete.', 500);
       setTimeout(() => loginProgressContainer.classList.remove('active'), 700);
-
-      if (masterLoaded) showToast('Welcome, ' + u + '!', 'success');
-      else              showToast('Bike list could not be loaded. Tap Retry.', 'warning');
+      showToast('Welcome, ' + u + '!', 'success');
     }
 
     document.getElementById('login-form').reset();
@@ -1154,20 +1195,14 @@ async function handleLogin(e){
 
 function logout(){
   stopInactivityTimer();
-  // v6.5 – if a download is running, ask the user to wait
-  if (downloadInProgress) {
-    showToast('Please wait for the current download to finish.', 'warning');
-    return;
-  }
-  closeModal('inactivity-warning-modal');closeModal('user-list-modal');closeModal('dashboard-modal');closeModal('dashboard-error-modal');closeModal('outstanding-progress-modal');currentUser=null;currentUserRole=null;if(refreshInterval){clearInterval(refreshInterval);refreshInterval=null;}if(syncIntervalId){clearInterval(syncIntervalId);syncIntervalId=null;}clearDataForm();stopQrScanner();if(cameraStream){cameraStream.getTracks().forEach(t=>t.stop());cameraStream=null;}
-  masterListCache = [];
-  masterListSet   = new Set();
+  if (downloadInProgress) { showToast('Please wait for the current download to finish.', 'warning'); return; }
+  closeModal('inactivity-warning-modal');closeModal('user-list-modal');closeModal('dashboard-modal');closeModal('dashboard-error-modal');closeModal('outstanding-progress-modal');closeModal('bikedb-error-modal');currentUser=null;currentUserRole=null;if(refreshInterval){clearInterval(refreshInterval);refreshInterval=null;}if(syncIntervalId){clearInterval(syncIntervalId);syncIntervalId=null;}clearDataForm();stopQrScanner();if(cameraStream){cameraStream.getTracks().forEach(t=>t.stop());cameraStream=null;}
+  masterListCache = []; masterListSet = new Set();
   const mlb = document.getElementById('master-list-status');
   if (mlb) { mlb.style.display=''; mlb.className='mb-3 text-xs px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 text-gray-700 flex items-center gap-2'; }
   const mlt = document.getElementById('master-list-status-text'); if (mlt) mlt.textContent = 'Bike list not loaded yet.';
   const mli = document.getElementById('master-list-status-icon'); if (mli) mli.className = 'w-3 h-3';
   const mlr = document.getElementById('master-list-retry'); if (mlr) mlr.classList.add('hidden');
-
   switchView('view-login');showToast('Logged out.','info');loginProgressContainer.classList.remove('active');loginProgressBar.style.width='0%';loginProgressPercent.textContent='0%';loginProgressLabel.textContent='Connecting...';loginProgressStatus.textContent='Initialising...';loginProgressStatus.style.color='#6b7280';testConnBtn.classList.remove('visible');testResultDiv.classList.add('hidden');testResultDiv.innerHTML='';
 }
 
@@ -1245,10 +1280,7 @@ function clearDataForm(){bikeInput.value='';barcodeInput.value='';feedback.inner
 function showCustomAlert(t,m){isInvalidBikePopup=false;document.getElementById('alert-title').textContent=t;document.getElementById('alert-message').innerHTML=m;showModal('alert-modal');}
 
 async function openUserListModal(){
-  if (downloadInProgress) {
-    showToast('A download is in progress. Please wait.', 'warning');
-    return;
-  }
+  if (downloadInProgress) { showToast('A download is in progress. Please wait.', 'warning'); return; }
   showModal('user-list-modal');
   const l=document.getElementById('user-list-loading'),c=document.getElementById('user-list-container-modal');
   l.classList.remove('hidden');c.classList.add('hidden');c.innerHTML='';
@@ -1285,10 +1317,7 @@ function nextPage(){if(!isSearchMode&&currentPage<Math.ceil(totalRecords/pageLim
 function prevPage(){if(!isSearchMode&&currentPage>1)loadRecords(currentPage-1);}
 
 async function searchRecords(){
-  if (downloadInProgress) {
-    showToast('A download is in progress. Please wait.', 'warning');
-    return;
-  }
+  if (downloadInProgress) { showToast('A download is in progress. Please wait.', 'warning'); return; }
   const si=document.getElementById('search-bike-input');
   const bn=si.value.trim();
   if(!bn){showToast('Enter a bike number.','warning');return;}
@@ -1353,11 +1382,6 @@ async function loadStats(opts){
 }
 function updateTimerDisplay(){if(!timerText)return;const m=Math.floor(countdownSeconds/60),s=countdownSeconds%60;timerText.textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;}
 
-// ═══════════════════════════════════════════════════════════════════════
-//  v6.5 – REFRESH CYCLE with download-aware timing
-//    When the 15-minute timer fires while a download is in progress,
-//    the refresh is deferred by 30 s instead of being forced through.
-// ═══════════════════════════════════════════════════════════════════════
 function startRefreshCycle(){
   if(refreshInterval)clearInterval(refreshInterval);
   countdownSeconds=900;
@@ -1366,42 +1390,21 @@ function startRefreshCycle(){
     countdownSeconds-=1;
     if(countdownSeconds<=0){
       countdownSeconds=0;updateTimerDisplay();
-      if(!statsLoading && !downloadInProgress && !refreshCycleBusy){
-        periodicAdminRefresh();
-        countdownSeconds=900;
-      } else {
-        // Defer — try again in 30 s once the current activity finishes
-        countdownSeconds=30;
-      }
+      if(!statsLoading && !downloadInProgress && !refreshCycleBusy){ periodicAdminRefresh(); countdownSeconds=900; }
+      else { countdownSeconds=30; }
     }else{updateTimerDisplay();}
   },1000);
 }
-
-// v6.5 – refuses to run while a download is in progress
 async function periodicAdminRefresh(){
-  if (downloadInProgress) {
-    console.log('[auto-refresh] deferred — a download is currently in progress');
-    return;
-  }
-  if (refreshCycleBusy) {
-    console.log('[auto-refresh] skipped — a refresh is already in progress');
-    return;
-  }
+  if (downloadInProgress) { console.log('[auto-refresh] deferred — a download is currently in progress'); return; }
+  if (refreshCycleBusy)   { console.log('[auto-refresh] skipped — a refresh is already in progress'); return; }
   refreshCycleBusy = true;
-  try{
-    await loadStats({ silent: true });
-    await loadRecords(1, { silent: true });
-  }
+  try{ await loadStats({ silent: true }); await loadRecords(1, { silent: true }); }
   catch(e){console.warn('Periodic auto-refresh failed (silent).');}
   finally { refreshCycleBusy = false; }
 }
-
-// v6.5 – refuses to run while a download is in progress
 async function refreshAll(inc){
-  if (downloadInProgress) {
-    showToast('A download is in progress. Please wait for it to finish.', 'warning');
-    return;
-  }
+  if (downloadInProgress) { showToast('A download is in progress. Please wait for it to finish.', 'warning'); return; }
   if (refreshCycleBusy) return;
   inc=inc!==false;
   if(statsLoading)return;
@@ -1414,10 +1417,7 @@ async function refreshAll(inc){
     if(inc && adminTab==='duplicates'){sortField=null;sortDirection='asc';await loadDuplicateTable();}
     else if(inc){document.getElementById('dup-tab-badge').textContent=parseInt(document.getElementById('stat-duplicates').textContent)||0;}
     showToast('All data refreshed.','success');
-  } finally {
-    userTriggeredLoad = false;
-    refreshCycleBusy = false;
-  }
+  } finally { userTriggeredLoad = false; refreshCycleBusy = false; }
 }
 
 async function adminAction(t){
@@ -1449,24 +1449,13 @@ function updateExportProgress(pct,msg){const b=document.getElementById('csv-prog
 function logExport(msg,type){const log=document.getElementById('csv-progress-log');if(!log)return;const cls=type==='err'?'err':(type==='ok'?'ok':(type==='warn'?'warn':''));const div=document.createElement('div');if(cls)div.className=cls;div.textContent=sanitizeLog(msg);log.appendChild(div);log.scrollTop=log.scrollHeight;}
 function cancelExport(){if(exportAbortController){exportAbortController.abort();logExport('Export cancelled by user.','err');}const btn=document.getElementById('csv-cancel-btn');if(btn){btn.disabled=true;btn.textContent='Cancelling…';}}
 
-// ═══════════════════════════════════════════════════════════════════════
-//  v6.5 – downloadFullDatabaseCSV wrapped in the download mutex.
-//    · Refuses if another download is already running
-//    · Sets downloadInProgress = true for the whole operation
-//    · Clears it in `finally` so it is always released
-// ═══════════════════════════════════════════════════════════════════════
 async function downloadFullDatabaseCSV(){
-  if (downloadInProgress) {
-    showToast('Another download is already in progress. Please wait.', 'warning');
-    return;
-  }
+  if (downloadInProgress) { showToast('Another download is already in progress. Please wait.', 'warning'); return; }
   downloadInProgress = true;
   try {
     showModal('csv-progress-modal');
-    const logEl=document.getElementById('csv-progress-log');
-    if(logEl)logEl.innerHTML='';
-    const cancelBtn=document.getElementById('csv-cancel-btn');
-    if(cancelBtn){cancelBtn.disabled=false;cancelBtn.textContent='Cancel Export';}
+    const logEl=document.getElementById('csv-progress-log'); if(logEl)logEl.innerHTML='';
+    const cancelBtn=document.getElementById('csv-cancel-btn'); if(cancelBtn){cancelBtn.disabled=false;cancelBtn.textContent='Cancel Export';}
     exportAbortController=new AbortController();
     const signal=exportAbortController.signal;
     updateExportProgress(2,'Connecting to the database...');
@@ -1544,9 +1533,7 @@ async function downloadFullDatabaseCSV(){
     closeModal('csv-progress-modal');exportAbortController=null;
     downloadFile('bike_registrations_full',finalCsv);
     showToast(`Full CSV saved — ${allRecords.length} records.`,'success');
-  } finally {
-    downloadInProgress = false;
-  }
+  } finally { downloadInProgress = false; }
 }
 function finishCancelledExport(){exportAbortController=null;closeModal('csv-progress-modal');showToast('Export cancelled.','info');const btn=document.getElementById('csv-cancel-btn');if(btn){btn.disabled=false;btn.textContent='Cancel Export';}}
 
@@ -1555,21 +1542,13 @@ function logExportOutstanding(msg,type){const log=document.getElementById('outst
 function cancelOutstandingExport(){if(outstandingAbortController){outstandingAbortController.abort();logExportOutstanding('Export cancelled by user.','err');}const btn=document.getElementById('outstanding-cancel-btn');if(btn){btn.disabled=true;btn.textContent='Cancelling…';}}
 function finishCancelledOutstanding(){outstandingAbortController=null;closeModal('outstanding-progress-modal');showToast('Export cancelled.','info');const btn=document.getElementById('outstanding-cancel-btn');if(btn){btn.disabled=false;btn.textContent='Cancel Export';}}
 
-// ═══════════════════════════════════════════════════════════════════════
-//  v6.5 – downloadOutstandingBikesCSV wrapped in the same download mutex.
-// ═══════════════════════════════════════════════════════════════════════
 async function downloadOutstandingBikesCSV(){
-  if (downloadInProgress) {
-    showToast('Another download is already in progress. Please wait.', 'warning');
-    return;
-  }
+  if (downloadInProgress) { showToast('Another download is already in progress. Please wait.', 'warning'); return; }
   downloadInProgress = true;
   try {
     showModal('outstanding-progress-modal');
-    const logEl=document.getElementById('outstanding-progress-log');
-    if(logEl)logEl.innerHTML='';
-    const cancelBtn=document.getElementById('outstanding-cancel-btn');
-    if(cancelBtn){cancelBtn.disabled=false;cancelBtn.textContent='Cancel Export';}
+    const logEl=document.getElementById('outstanding-progress-log'); if(logEl)logEl.innerHTML='';
+    const cancelBtn=document.getElementById('outstanding-cancel-btn'); if(cancelBtn){cancelBtn.disabled=false;cancelBtn.textContent='Cancel Export';}
     outstandingAbortController=new AbortController();
     const signal=outstandingAbortController.signal;
     updateOutstandingProgress(2,'Connecting to the database...');
@@ -1649,9 +1628,7 @@ async function downloadOutstandingBikesCSV(){
     closeModal('outstanding-progress-modal');outstandingAbortController=null;
     downloadFile('outstanding_bikes',finalCsv);
     showToast(`Outstanding bikes CSV saved — ${allRecords.length} records.`,'success');
-  } finally {
-    downloadInProgress = false;
-  }
+  } finally { downloadInProgress = false; }
 }
 
 function downloadFile(baseName,text){
@@ -1690,10 +1667,7 @@ function renderDuplicateTable(groups){const c=document.getElementById('duplicate
 async function loadDuplicateTable(opts){
   opts = opts || {};
   const silent = !!opts.silent;
-  if (downloadInProgress) {
-    console.log('[dup table] skipped — a download is currently in progress');
-    return;
-  }
+  if (downloadInProgress) { console.log('[dup table] skipped — a download is currently in progress'); return; }
   const c=document.getElementById('duplicate-container');
   c.innerHTML='<p class="text-sm text-gray-500 text-center py-4"><i data-lucide="loader-2" class="w-5 h-5 animate-spin mx-auto"></i></p>';
   lucide.createIcons();
@@ -1720,7 +1694,7 @@ async function loadDuplicateTable(opts){
   }catch(e){c.innerHTML='<p class="text-sm text-gray-500 text-center py-4">Could not load duplicate records.</p>';if (!silent) showConnectionErrorModal();}
 }
 
-document.addEventListener('keydown',function(e){if((e.ctrlKey||e.metaKey)&&e.key==='s'){e.preventDefault();if(!document.getElementById('view-data').classList.contains('hidden-view'))saveData();}if(e.key==='Escape'){document.querySelectorAll('.modal-overlay:not(.hidden-view)').forEach(m=>{const id=m.id;if(id==='qr-scanner-modal')stopQrScanner();else if(id==='camera-modal')closeCamera();else if(id==='photo-modal')closePhotoModal();else if(id==='dashboard-modal')closeDashboard();else if(id==='dashboard-error-modal')closeModal('dashboard-error-modal');else if(id==='alert-modal')closeAlertModal();else if(id==='csv-progress-modal')closeModal('csv-progress-modal');else if(id==='outstanding-progress-modal')closeModal('outstanding-progress-modal');else if(id==='delete-confirm-modal')cancelDelete();else if(id==='inactivity-warning-modal')stayLoggedIn();else if(id==='user-list-modal')closeUserListModal();else closeModal(id);});}});
+document.addEventListener('keydown',function(e){if((e.ctrlKey||e.metaKey)&&e.key==='s'){e.preventDefault();if(!document.getElementById('view-data').classList.contains('hidden-view'))saveData();}if(e.key==='Escape'){document.querySelectorAll('.modal-overlay:not(.hidden-view)').forEach(m=>{const id=m.id;if(id==='qr-scanner-modal')stopQrScanner();else if(id==='camera-modal')closeCamera();else if(id==='photo-modal')closePhotoModal();else if(id==='dashboard-modal')closeDashboard();else if(id==='dashboard-error-modal')closeModal('dashboard-error-modal');else if(id==='alert-modal')closeAlertModal();else if(id==='csv-progress-modal')closeModal('csv-progress-modal');else if(id==='outstanding-progress-modal')closeModal('outstanding-progress-modal');else if(id==='bikedb-error-modal')closeBikeDbErrorModal();else if(id==='delete-confirm-modal')cancelDelete();else if(id==='inactivity-warning-modal')stayLoggedIn();else if(id==='user-list-modal')closeUserListModal();else closeModal(id);});}});
 document.addEventListener('touchend',function(e){const n=Date.now();if(n-(document.lastTouch||0)<300)e.preventDefault();document.lastTouch=n;},{passive:false});
 
 switchView('view-login');
